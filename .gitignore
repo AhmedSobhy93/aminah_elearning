@@ -1,0 +1,7 @@
+.mvn/
+target/
+*.log
+*.iml
+/.idea/
+.DS_Store
+/src/main/resources/application.properties

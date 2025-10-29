@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Navbar</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<!-- Navbar Fragment -->
+<div th:fragment="navbar">
+    <nav style="height: 80px; background-color: #FFFFFF; position: fixed; top: 0; left: 0;
+        right: 0; z-index: 999; display: flex; justify-content: space-between; align-items: center;
+        padding: 0 20px; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+
+        <img src="/image/logo-trim-navbar.png" alt="LearningKart Logo" style="height:60px;">
+
+        <!-- Guest View -->
+        <div th:if="!${session.user}" style="display: flex; align-items: center;">
+            <a th:href="@{/}" class="nav-path">Home</a>
+            <a th:href="@{/search}" class="nav-
