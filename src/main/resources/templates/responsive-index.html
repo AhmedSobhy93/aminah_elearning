@@ -45,7 +45,7 @@
 
             <div class="flex justify-center">
            <span th:if="!${session.name}">
-               <a th:href="@{/login}" style=" color: #FFFFFF; text-decoration: none; font-size: 18px; text-transform: uppercase; padding: 0.5rem 0.85rem; background-color: #6674CC; border: 1px solid #6674CC; border-radius: 0.375rem; display: flex; align-items: center;" href="#">
+               <a th:href="@{profile/}" style=" color: #FFFFFF; text-decoration: none; font-size: 18px; text-transform: uppercase; padding: 0.5rem 0.85rem; background-color: #6674CC; border: 1px solid #6674CC; border-radius: 0.375rem; display: flex; align-items: center;" href="#">
                     Login
                     <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="ml-2 text-xl" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                         <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
@@ -61,7 +61,7 @@
 
         <div class="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
             <img class="object-cover object-center rounded" alt="Unable to fetch please connect to the Internet"
-                 src="/image/Home.jpg">
+                 src="/images/Home.jpg">
         </div>
 
     </div>
@@ -80,7 +80,7 @@
     width: 150px; /* Set a fixed width for the circular image */
     height: 150px; /* Set a fixed height for the circular image */
     object-fit: cover; /* Maintain aspect ratio and cover the entire circle */
-    border: 3px solid #fff; '" src="/image/teachers/Khushhal_Photo.jpg" alt="Founder Image" />
+    border: 3px solid #fff; '" src="/images/teachers/Khushhal_Photo.jpg" alt="Founder Image" />
         <div th:style="'--tw-space-y-reverse: 0;
     margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
     margin-bottom: calc(1rem * var(--tw-space-y-reverse));font-family: Rubik,sans-serif;    text-align: center;'">
@@ -98,11 +98,11 @@
 
     <div th:style="'opacity: 1;
     transform: none;gap: 0;grid-template-columns: repeat(3,minmax(0,1fr));padding-top: 2.5rem;    padding-bottom: 6rem;    display: grid;'">
-        <div th:style="'    margin-left: 150px; '"><img src="/image/amdocs-logo.svg.png" alt="company logo" class="mx-auto w-fit"><p class="text-xl text-textpara">Ex-Amdocs , SWE</p>
+        <div th:style="'    margin-left: 150px; '"><img src="/images/amdocs-logo.svg.png" alt="company logo" class="mx-auto w-fit"><p class="text-xl text-textpara">Ex-Amdocs , SWE</p>
         </div>
-        <div th:style="' margin-left: 150px; '"><img src="/image/1280px-Sears_logo_(2020).svg.png" alt="company logo" class="mx-auto w-fit"><p class="text-xl text-textpara">Ex-sears holdings, SWE</p>
+        <div th:style="' margin-left: 150px; '"><img src="/images/1280px-Sears_logo_(2020).svg.png" alt="company logo" class="mx-auto w-fit"><p class="text-xl text-textpara">Ex-sears holdings, SWE</p>
         </div>
-        <div th:style="''"><img src="/image/Nike-Logo.png" alt="company logo" class="mx-auto w-fit"><p class="text-xl text-textpara">Currently @Nike</p></div>
+        <div th:style="''"><img src="/images/Nike-Logo.png" alt="company logo" class="mx-auto w-fit"><p class="text-xl text-textpara">Currently @Nike</p></div>
     </div>
 
 

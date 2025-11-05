@@ -3,8 +3,9 @@ package com.aminah.elearning.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -30,12 +31,16 @@ public class Course {
 
     private boolean published = false;
 
-    private String thumbnailUrl;
-
     private String videoUrl; // Cloudinary or external URL
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "course")
     private List<CourseEnrollment> enrollments;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User author; // DR
+
+    @OneToMany(mappedBy="course", cascade=CascadeType.ALL, orphanRemoval=true)
+    private List<Tutorial> tutorials = new ArrayList<>();
 }

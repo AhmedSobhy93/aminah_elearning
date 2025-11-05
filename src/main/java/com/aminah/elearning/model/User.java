@@ -3,9 +3,10 @@ package com.aminah.elearning.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+
 
 @Entity
 @Table(name = "users")
@@ -27,14 +28,24 @@ public class User {
     @Column(nullable=false)
     private String password;
 
-    @Column(nullable=false)
+    @Column(unique=true,nullable=false)
     private String email;
 
-    private boolean active = true;
+    @Column(nullable=false)
+    private String fullName;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="user_roles",
-            joinColumns = @JoinColumn(name="user_id"),
-            inverseJoinColumns = @JoinColumn(name="role_id"))
-    private Set<Role> roles = new HashSet<>();
+    private boolean enabled = false; // becomes true after verification
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VerificationToken> verificationTokens = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PasswordResetToken> resetTokens = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "user")
+//    private Set<VerificationToken> tokens;
+
+    private Role role;
+
+
 }

@@ -52,4 +52,5 @@ public class CourseEnrollment {
 
     @Column(name = "completion_status")
     private Boolean completed = false;
+
 }

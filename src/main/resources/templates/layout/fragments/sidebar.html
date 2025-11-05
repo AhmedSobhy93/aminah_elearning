@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<body>
+<div th:fragment="sidebar">
+
+    <aside class="bg-light border-end vh-100 p-3" style="width: 250px;">
+        <a th:href="@{/}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
+            <i class="bi bi-hospital fs-4 text-primary me-2"></i>
+            <span class="fs-5 fw-semibold text-dark">Aminah Hospital</span>
+        </a>
+        <hr>
+
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center text-dark" th:href="@{/}" aria-current="page">
+                    <i class="bi bi-speedometer2 me-2 text-primary"></i>
+                    Home
+                </a>
+            </li>
+
+            <li>
+                <a class="nav-link d-flex align-items-center text-dark" th:href="@{/courses}">
+                    <i class="bi bi-journal-text me-2 text-primary"></i>
+                    Courses
+                </a>
+            </li>
+
+            <li sec:authorize="hasRole('ADMIN')">
+                <a class="nav-link d-flex align-items-center text-dark" th:href="@{/admin}">
+                    <i class="bi bi-gear me-2 text-primary"></i>
+                    Admin Panel
+                </a>
+            </li>
+
+            <li>
+                <a class="nav-link d-flex align-items-center text-dark" th:href="@{/profile/profile}">
+                    <i class="bi bi-person-circle me-2 text-primary"></i>
+                    Profile
+                </a>
+            </li>
+        </ul>
+
+        <hr>
+
+        <div class="dropdown mt-auto">
+            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="dropdownUser"
+               data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="" width="32" height="32"
+                     class="rounded-circle me-2">
+                <strong sec:authentication="name">User</strong>
+            </a>
+            <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser">
+                <li><a class="dropdown-item" th:href="@{/profile/profile}">Profile</a></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <a class="dropdown-item" th:href="@{/profile/logout}">Sign out</a>
+                </li>
+                <li sec:authorize="isAnonymous()">
+                    <a class="dropdown-item" th:href="@{/profile/login}">Login</a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+    <!--    <aside class="bg-light border-end vh-100 p-3" style="width: 250px;">-->
+<!--        <h5 class="fw-bold mb-4">Navigation</h5>-->
+<!--        <ul class="nav flex-column">-->
+<!--            <li class="nav-item"><a class="nav-link link-primary link-offset-2"  th:href="@{/}">Dashboard</a></li>-->
+<!--            <li class="nav-item"><a class="nav-link link-primary link-offset-2"   th:href="@{/courses}" >Courses</a></li>-->
+<!--            <li class="nav-item" sec:authorize="hasRole('ADMIN')">-->
+<!--                <a class="nav-link link-primary link-offset-2"  th:href="@{/admin}" >Admin Panel</a>-->
+<!--            </li>-->
+<!--            <li class="nav-item"><a class="nav-link link-primary link-offset-2"  th:href="@{/profile/profile}" >Profile</a></li>-->
+<!--        </ul>-->
+<!--    </aside>-->
+</div>
+</body>
+</html>

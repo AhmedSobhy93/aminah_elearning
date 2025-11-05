@@ -1,0 +1,60 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{'layout/base'}">
+
+<section layout:fragment="content">
+    <span th:if="${message}">
+    <h1 style="text-align: center; padding-bottom:200px;color: #4B5563;" th:text="${message}"></h1>
+    </span>
+    <div th:if="${user == null}">
+        <p>Please log in to view your profile.</p>
+    </div>
+    <div th:if="${user != null}">
+        <div class="d-flex justify-content-center align-items-center vh-100">
+            <div class="card shadow-lg p-4" style="width: 400px;">
+                <h3 class="text-center mb-3">Profile</h3>
+
+                <form th:action="@{/profile/update}" method="post" th:object="${user}">
+                    <input type="hidden" id="id" th:field="${user.id}" required>
+                    <div class="mb-3">
+                        <input type="text" name="name" class="form-control" placeholder="Enter your UserName"
+                               th:field="*{username}" required/>
+                    </div>
+
+                    <div class=" mb-3">
+                        <input type="text" name="password" class="form-control" placeholder="Enter your Password"
+                               required/>
+                    </div>
+                    <div class=" mb-3">
+                        <input type="email" name="email" class="form-control" placeholder="Enter your Email"
+                               th:field="*{email}" required/>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn">Update</button>
+                    </div>
+
+                    <!--                <div class="container text-center mt-4">-->
+                    <!--                    <button type="submit"-->
+                    <!--                            class="btn text-white"-->
+                    <!--                            style="border-radius:4rem;background-color:#6674CC;">-->
+                    <!--                        Update-->
+                    <!--                    </button>-->
+
+
+                </form>
+
+                <!--            <div id="register-link" class="text-right mt-4">-->
+                <!--                <a th:if="${user?.id > 4}" th:href="@{/delete-profile}" class="delete-link">Delete profile</a>-->
+                <!--                <a th:if="${user?.id > 4}" href="#" class="delete-link" style="color:red !important;">-->
+                <!--                    Delete Profile (disabled for this user)-->
+                <!--                </a>-->
+            </div>
+
+        </div>
+
+
+    </div>
+</section>
+</html>

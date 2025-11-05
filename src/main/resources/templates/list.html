@@ -1,0 +1,21 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/fragments/header :: head('Courses')}"></head>
+<body>
+<div th:replace="~{layout/fragments/header :: navbar}"></div>
+<main class="container py-4">
+    <h1>Courses</h1>
+    <div class="row g-3">
+        <div class="col-md-4" th:each="c : ${courses}">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 th:text="${c.title}">Title</h5>
+                    <p th:text="${#strings.abbreviate(c.description, 120)}">Desc</p>
+                    <a th:href="@{/courses/{id}(id=${c.id})}" class="btn btn-sm btn-primary">Open</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

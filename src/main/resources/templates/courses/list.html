@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<section layout:fragment="content">
+    <h2>Available Courses</h2>
+    <div class="course-grid">
+        <div class="course-card" th:each="c : ${courses}">
+            <h3 th:text="${c.title}">Course Title</h3>
+            <p th:text="${c.description}">Description</p>
+            <a th:href="@{'/courses/' + ${c.id}}" class="btn">View Details</a>
+        </div>
+    </div>
+</section>
+</html>
