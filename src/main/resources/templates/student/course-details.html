@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<section layout:fragment="content">
+    <div class="container py-5">
+        <h2 th:text="${course.courseName}"></h2>
+        <p th:text="${course.description}"></p>
+
+        <div th:if="${enrollment == null}">
+            <form th:action="@{/student/enroll/{id}(id=${course.id})}" method="post">
+                <button class="btn btn-primary">Enroll</button>
+            </form>
+        </div>
+
+        <div th:if="${enrollment != null}">
+            <h4>Progress: <span th:text="${enrollment.progressPercentage+'%'}"></span></h4>
+            <div class="row mt-3">
+                <div th:each="tut : ${tutorials}" class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 th:text="${tut.title}"></h5>
+                            <div th:switch="${tut.type}">
+                                <div th:case="'VIDEO'">
+                                    <video width="100%" controls>
+                                        <source th:src="@{${tut.filePath}}" type="video/mp4">
+                                    </video>
+                                </div>
+                                <div th:case="'PDF'">
+                                    <iframe th:src="@{${tut.filePath}}" width="100%" height="400px"></iframe>
+                                </div>
+                                <div th:case="'ARTICLE'">
+                                    <div th:utext="${tut.filePath}"></div>
+                                </div>
+                                <div th:case="'QUIZ'">
+                                    <a th:href="@{/student/quiz/{id}(id=${tut.id})}" class="btn btn-warning">Take Quiz</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--<section layout:fragment="content">-->
+<!--    <div class="container my-5">-->
+<!--        <h1 th:text="${course.courseName}"></h1>-->
+<!--        <p th:text="${course.description}"></p>-->
+<!--        <h4>Tutorials</h4>-->
+<!--        <div th:each="tut : ${tutorials}" class="card mb-2 p-2">-->
+<!--            <div class="d-flex justify-content-between align-items-center">-->
+<!--                <span th:text="${tut.title + ' (' + tut.type + ')'}"></span>-->
+<!--                <a th:if="${tut.type == T(com.aminah.elearning.model.TutorialType).PDF}" th:href="@{${tut.filePath}}" target="_blank" class="btn btn-sm btn-outline-primary">View PDF</a>-->
+<!--                <a th:if="${tut.type == T(com.aminah.elearning.model.TutorialType).VIDEO}" th:href="@{${tut.filePath}}" target="_blank" class="btn btn-sm btn-outline-primary">Watch Video</a>-->
+<!--                <a th:if="${tut.type == T(com.aminah.elearning.model.TutorialType).ARTICLE}" th:href="@{${tut.filePath}}" target="_blank" class="btn btn-sm btn-outline-secondary">Read</a>-->
+<!--                <a th:if="${tut.type == T(com.aminah.elearning.model.TutorialType).QUIZ}" th:href="@{/student/course/{courseId}/quiz/{tutorialId}(courseId=${course.id}, tutorialId=${tut.id})}" class="btn btn-sm btn-outline-success">Take Quiz</a>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div th:if="${enrollment.completed}">-->
+<!--            <a th:href="@{/student/certificate/download/{id}(id=${enrollment.id})}" class="btn btn-success mt-3">Download Certificate</a>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</section>-->

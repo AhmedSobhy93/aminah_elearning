@@ -45,7 +45,7 @@ public class PaymentController {
         CourseEnrollment e = new CourseEnrollment();
         e.setUser(user);
         e.setCourse(c);
-        e.setStatus("PENDING");
+        e.setPaymentStatus("PENDING");
         courseEnrollmentRepository.save(e);
 
         Payment p = new Payment();

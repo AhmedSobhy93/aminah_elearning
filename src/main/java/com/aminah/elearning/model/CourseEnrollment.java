@@ -33,13 +33,6 @@ public class CourseEnrollment {
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
-    /** Enrollment status: PENDING, ACTIVE, COMPLETED, CANCELLED */
-    private String status;
-
-
-    @Column(name = "user_name", nullable = false)
-    private String userName;
-
 
     @Column(name = "enrollment_date", updatable = false)
     private LocalDateTime enrollmentDate = LocalDateTime.now();
@@ -52,5 +45,7 @@ public class CourseEnrollment {
 
     @Column(name = "completion_status")
     private Boolean completed = false;
+    private Boolean certificateIssued = false;
+
 
 }

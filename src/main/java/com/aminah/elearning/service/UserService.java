@@ -1,12 +1,9 @@
 package com.aminah.elearning.service;
 
-import com.aminah.elearning.model.PasswordResetToken;
-import com.aminah.elearning.model.Role;
 import com.aminah.elearning.model.User;
 import com.aminah.elearning.repository.PasswordResetTokenRepository;
 import com.aminah.elearning.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,7 +17,7 @@ import java.util.List;
 
 @Service
 public class UserService implements UserDetailsService {
-    private final UserRepository userRepo;
+    private final UserRepository userRepository;
     @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepo;
     @Autowired
@@ -30,25 +27,57 @@ public class UserService implements UserDetailsService {
 
 
     public UserService(UserRepository repo, PasswordEncoder passwordEncoder) {
-        this.userRepo = repo;
+        this.userRepository = repo;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Not found"));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Not found"));
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
                 List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole())));
     }
 
     public User userUpdate(User updatedUser) {
-        User existingUser = userRepo.findById(updatedUser.getId())
+        User existingUser = userRepository.findById(updatedUser.getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
 //        existingUser.setFullName(updatedUser.getFullName());
         existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         existingUser.setEmail(updatedUser.getEmail());
-        return userRepo.save(existingUser);
+        return userRepository.save(existingUser);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    public void enableUser(Long id) {
+        User user = getUserById(id);
+        user.setEnabled(true);
+        userRepository.save(user);
+    }
+
+    public void updateUser(Long id, User updatedUser) {
+        User user = getUserById(id);
+        user.setFullName(updatedUser.getFullName());
+        user.setEmail(updatedUser.getEmail());
+        user.setRole(updatedUser.getRole());
+        user.setEnabled(updatedUser.isEnabled());
+        userRepository.save(user);
     }
 
 

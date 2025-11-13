@@ -24,9 +24,22 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item"><a class="nav-link" th:href="@{/courses}">Courses</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/about}">About Us</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/contact}">Contact</a></li>
+                <!-- Admin Only -->
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link" th:href="@{/admin/users}">Manage Users</a></li>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link" th:href="@{/admin/courses}">Manage Courses</a></li>
+
+                <!-- Doctor -->
+                <li class="nav-item" sec:authorize="hasRole('DR')"><a class="nav-link" th:href="@{/dr/courses}">My Courses</a></li>
+<!--                <li class="nav-item" sec:authorize="hasRole('DR')"><a class="nav-link" th:href="@{/dr/create-course}">Create Course</a></li>-->
+
+                <!-- Student -->
+                <li class="nav-item" sec:authorize="hasRole('STUDENT')"><a class="nav-link" th:href="@{/student/courses}">Available Courses</a></li>
+                <li class="nav-item" sec:authorize="hasRole('STUDENT')"><a class="nav-link" th:href="@{/student/my-courses}">My Learning</a></li>
+
+                <!-- Non Admin -->
+                <li class="nav-item" sec:authorize="!hasRole('ADMIN')" ><a class="nav-link" th:href="@{/about}">About Us</a></li>
+                <li class="nav-item" sec:authorize="!hasRole('ADMIN')"><a class="nav-link" th:href="@{/contact}">Contact</a></li>
+
 
                 <li class="nav-item dropdown ms-2">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -43,10 +56,10 @@
                                 <button type="submit" class="dropdown-item text-danger">Logout</button>
                             </form>
                         </li>
-                        <li sec:authorize="isAnonymous()">
+                        <li sec:authorize="isAnonymous() and !hasRole('ADMIN')">
                             <a class="dropdown-item" th:href="@{/profile/login}">Login</a>
                         </li>
-                        <li sec:authorize="isAnonymous()">
+                        <li sec:authorize="isAnonymous() and !hasRole('ADMIN')">
                             <a class="dropdown-item" th:href="@{/profile/register}">Register</a>
                         </li>
                     </ul>

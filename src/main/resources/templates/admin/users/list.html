@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<link rel="stylesheet" th:href="@{/css/users/usersStyle.css}">
+
+<section layout:fragment="content">
+    <h2 class="text-2xl font-bold mb-4">Manage Users</h2>
+
+    <div class="table-container">
+        <table class="user-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="u : ${users}">
+                <td th:text="${u.id}">1</td>
+                <td th:text="${u.username}">username</td>
+                <td th:text="${u.fullName}">Full Name</td>
+                <td th:text="${u.email}">email@example.com</td>
+                <td th:text="${u.role}">ADMIN</td>
+                <td>
+                        <span th:text="${u.enabled ? 'Active' : 'Inactive'}"
+                              th:classappend="${u.enabled} ? 'status-active' : 'status-inactive'">
+                        </span>
+                </td>
+                <td>
+                    <a th:href="@{'/admin/users/' + ${u.id}}" class="btn btn-view">View</a>
+                    <a th:href="@{'/admin/users/edit/' + ${u.id}}" class="btn btn-edit">Edit</a>
+                    <a th:href="@{'/admin/users/delete/' + ${u.id}}"
+                       onclick="return confirm('Are you sure you want to delete this user?')"
+                       class="btn btn-delete">Delete</a>
+                    <a th:if="${!u.enabled}"
+                       th:href="@{'/admin/users/enable/' + ${u.id}}"
+                       class="btn btn-enable">Enable</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</html>

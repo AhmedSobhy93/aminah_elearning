@@ -8,8 +8,15 @@ import com.aminah.elearning.repository.UserRepository;
 import com.aminah.elearning.repository.VerificationTokenRepository;
 import com.aminah.elearning.service.RegistrationService;
 import com.aminah.elearning.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -29,13 +36,17 @@ public class ProfileController {
     private final UserService userService;
     @Value("${app.url:http://localhost:8081}")
     private String appUrl;
+    private final AuthenticationManager authenticationManager;
 
-    public ProfileController(UserRepository userRepository, PasswordEncoder passwordEncoder, RegistrationService registrationService, VerificationTokenRepository verificationTokenRepository, UserService userService) {
+    public ProfileController(UserRepository userRepository, PasswordEncoder passwordEncoder, RegistrationService registrationService, VerificationTokenRepository verificationTokenRepository, UserService userService, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.registrationService=registrationService;
         this.verificationTokenRepository = verificationTokenRepository;
         this.userService = userService;
+
+
+        this.authenticationManager = authenticationManager;
     }
 
     @GetMapping("/profile")
@@ -45,6 +56,7 @@ public class ProfileController {
 
         if (auth == null) {
             // no user logged in
+            model.addAttribute("error", "Please Login in first");
             return "redirect:/";
         }
 
@@ -55,7 +67,7 @@ public class ProfileController {
         if (user == null) {
             // This means the logged-in user isn’t in DB
             model.addAttribute("error", "User not found in the database");
-            return "error";
+            return "/profile/login";
         }
         model.addAttribute("user", user != null ? user : new User());
         return "/profile/profile";
@@ -115,19 +127,32 @@ public class ProfileController {
         return "profile/login";
     }
 
-//    // Handle login form POST
-//    @PostMapping("/login")
-//    public String processLogin(@RequestParam String username,
-//                               @RequestParam String password,
-//                               Model model) {
-//
-//        if ("admin".equals(username) && "1234".equals(password)) {
-//            return "redirect:/";
-//        } else {
-//            model.addAttribute("error", "Invalid credentials");
-//            return "profile/login";
-//        }
-//    }
+    // Handle login form POST
+    @PostMapping("/login")
+    public String processLogin(@RequestParam String username,
+                               @RequestParam String password, HttpServletRequest request,
+                               Model model) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password)
+            );
+
+            // Set authenticated user in session
+            HttpSession session = request.getSession(true);
+            session.setAttribute("SPRING_SECURITY_CONTEXT", authentication);
+
+            return "redirect:/";
+
+        } catch (BadCredentialsException e) {
+            model.addAttribute("error", "Invalid username or password");
+        } catch (DisabledException e) {
+            model.addAttribute("error", "Your account is disabled. Please contact admin.");
+        } catch (AuthenticationException e) {
+            model.addAttribute("error", "Login failed: " + e.getMessage());
+        }
+           return "profile/login";
+
+    }
 
     // Optional: logout
     @GetMapping("/logout")

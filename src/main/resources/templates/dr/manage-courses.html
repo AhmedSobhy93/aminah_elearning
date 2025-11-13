@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<section layout:fragment="content">
+<body class="bg-light">
+<div class="container mt-4">
+    <h2 class="text-primary mb-3"><i class="fa-solid fa-book"></i> Manage Courses</h2>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <!-- CREATE COURSE -->
+    <div class="card p-3 mb-4 shadow-sm">
+        <form th:action="@{/dr/courses/create}" th:object="${newCourse}" method="post" class="row g-2">
+            <div class="col-md-3"><input type="text" th:field="*{title}" class="form-control" placeholder="Title" required></div>
+            <div class="col-md-3"><input type="text" th:field="*{courseName}" class="form-control" placeholder="Course Name" required></div>
+            <div class="col-md-3"><input type="number" step="0.01" th:field="*{price}" class="form-control" placeholder="Price" required></div>
+            <div class="col-md-3 d-grid"><button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Course</button></div>
+            <div class="col-12"><textarea th:field="*{description}" class="form-control" placeholder="Description"></textarea></div>
+        </form>
+    </div>
+
+    <!-- COURSE LIST -->
+    <div th:each="course : ${courses}" class="card course-card mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <span><i class="fa-solid fa-graduation-cap"></i> <strong th:text="${course.title}"></strong></span>
+            <div>
+                <a th:href="@{/dr/courses/{id}/students(id=${course.id})}" class="btn btn-light btn-sm"><i class="fa-solid fa-users"></i></a>
+                <form th:action="@{/dr/courses/delete/{id}(id=${course.id})}" method="post" class="d-inline">
+                    <button class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                </form>
+                <form th:action="@{/dr/courses/{id}/publish(id=${course.id})}" method="post" class="d-inline">
+                    <button class="btn btn-warning btn-sm" th:text="${course.published ? 'Unpublish' : 'Publish'}"></button>
+                </form>
+            </div>
+        </div>
+        <div class="card-body bg-white">
+            <p><strong>Course Name:</strong> <span th:text="${course.courseName}"></span></p>
+            <p th:text="${course.description}"></p>
+            <p><strong>Price:</strong> <span th:text="${course.price}"></span> EGP</p>
+
+            <!-- Tutorials -->
+            <h6><i class="fa-solid fa-video"></i> Tutorials</h6>
+            <ul class="list-group list-group-flush mb-2">
+                <li class="list-group-item" th:each="tutorial : ${course.tutorials}">
+                    <i class="fa-solid fa-circle-play text-success"></i> <span th:text="${tutorial.title}"></span>
+                    <small class="text-muted" th:text="${tutorial.type}"></small>
+                </li>
+            </ul>
+
+            <!-- Add Tutorial -->
+            <form th:action="@{/dr/courses/{courseId}/tutorials/add(courseId=${course.id})}" method="post" enctype="multipart/form-data" class="row g-2">
+                <div class="col-md-3"><input type="text" name="title" class="form-control" placeholder="Tutorial title" required></div>
+                <div class="col-md-3">
+                    <select name="type" class="form-select">
+                        <option th:each="type : ${tutorialTypes}" th:value="${type}" th:text="${type}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3"><input type="file" name="file" class="form-control" required></div>
+                <div class="col-md-3 d-grid"><button class="btn btn-success"><i class="fa-solid fa-plus"></i> Add Tutorial</button></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <nav>
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage == 0}? 'disabled'">
+                <a class="page-link" th:href="@{/dr/courses(page=${currentPage-1})}">Previous</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages-1)}" th:classappend="${i == currentPage}? 'active'">
+                <a class="page-link" th:href="@{/dr/courses(page=${i})}" th:text="${i+1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage+1 >= totalPages}? 'disabled'">
+                <a class="page-link" th:href="@{/dr/courses(page=${currentPage+1})}">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</body>
+</section>
+</html>

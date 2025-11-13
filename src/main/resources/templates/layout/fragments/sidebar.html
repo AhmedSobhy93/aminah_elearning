@@ -28,7 +28,7 @@
             </li>
 
             <li sec:authorize="hasRole('ADMIN')">
-                <a class="nav-link d-flex align-items-center text-dark" th:href="@{/admin}">
+                <a class="nav-link d-flex align-items-center text-dark" th:href="@{/}">
                     <i class="bi bi-gear me-2 text-primary"></i>
                     Admin Panel
                 </a>
@@ -57,7 +57,9 @@
                     <hr class="dropdown-divider">
                 </li>
                 <li sec:authorize="isAuthenticated()">
-                    <a class="dropdown-item" th:href="@{/profile/logout}">Sign out</a>
+                    <form th:action="@{/profile/logout}" method="post" class="m-0">
+                        <button type="submit" class="dropdown-item text-danger">Logout</button>
+                    </form>
                 </li>
                 <li sec:authorize="isAnonymous()">
                     <a class="dropdown-item" th:href="@{/profile/login}">Login</a>

@@ -7,6 +7,7 @@
     <title th:text="${pageTitle} ?: 'Aminah eLearning'">Aminah eLearning</title>
     <!-- ✅ Global CSS -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
@@ -20,7 +21,7 @@
 <div class="d-flex flex-grow-1">
     <!-- ✅ Sidebar -->
 <!--    <button class="btn btn-outline-primary d-lg-none me-2" id="sidebarToggle">-->
-<!--        <i class="bi bi-list"></i>-->
+<!--        <i class="bi bi-list.html"></i>-->
 <!--    </button>-->
 
 <!--    <script>-->
@@ -31,7 +32,7 @@
     <div th:replace="~{'layout/fragments/sidebar' :: sidebar}"></div>
 
     <!-- ✅ Page content -->
-    <main class="flex-grow-1 p-4" layout:fragment="content">
+    <main class="flex-grow-1 p-3" layout:fragment="content">
         <!-- Page content goes here -->
     </main>
 </div>

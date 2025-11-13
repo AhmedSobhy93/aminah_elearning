@@ -6,6 +6,7 @@ import com.aminah.elearning.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CourseEnrollmentRepository extends JpaRepository<CourseEnrollment, Long> {
 
@@ -17,5 +18,9 @@ public interface CourseEnrollmentRepository extends JpaRepository<CourseEnrollme
 
     boolean existsByCourseIdAndUserId(int courseId, Long id);
 
-    boolean existsByUserAndCourse(User user, Course course);
+    boolean existsByUserAndCourse(User user, Optional<Course> course);
+    Optional<CourseEnrollment> findByUserAndCourse(User user, Course course);
+    List<CourseEnrollment> findAlllByUser(User user);
+
+    List<CourseEnrollment> findByCourse(Course course);
 }

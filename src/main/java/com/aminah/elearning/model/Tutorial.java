@@ -3,6 +3,8 @@ package com.aminah.elearning.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -17,6 +19,7 @@ public class Tutorial {
     private String filePath; // relative path or external URL
     private int orderIndex = 0;
 
+    private LocalDateTime uploadedAt = LocalDateTime.now();
     @ManyToOne(fetch = FetchType.LAZY)
     private Course course;
 }

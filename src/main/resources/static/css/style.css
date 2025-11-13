@@ -7,11 +7,14 @@
     --primary: #1E88E5;
     --secondary: #00ACC1;
     --accent: #43A047;
-    --warning: #FBC02D;
+    /*--warning: #FBC02D;*/
+    --warning: #f38f08;
     --light-bg: #F5F7FA;
     --text-color: #333;
-    --nav-bg: #1565C0;
-    --footer-bg: #0D47A1;
+    /*--nav-bg: #1565C0;*/
+    --nav-bg: #218583;
+    /*--footer-bg: #0D47A1;*/
+    --footer-bg: #218583;
     --font-main: 'Poppins', 'Segoe UI', sans-serif;
 }
 
@@ -195,3 +198,14 @@ aside .nav-link:hover {
     }
 }
 
+.card-course { border-left: 4px solid #0d6efd; }
+.sortable tr.dragging { opacity: 0.6; background:#f1f5ff; }
+.small-preview { width:160px; height:90px; object-fit:cover; border-radius:6px; }
+.toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 1080; }
+.card-header { font-weight: bold; }
+.sortable tr { cursor: grab; }
+.table td, .table th { vertical-align: middle; }
+.pagination .btn { min-width: 35px; }
+
+.course-card { border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.progress { height: 6px; }

@@ -6,7 +6,9 @@
     <span th:if="${message}">
     <h1 style="text-align: center; padding-bottom:200px;color: #4B5563;" th:text="${message}"></h1>
     </span>
-    <div class="d-flex justify-content-center align-items-center vh-100">
+    <div th:if="${error}" class="alert alert-danger mt-3" th:text="${error}"></div>
+
+    <div class="d-flex justify-content-center align-items-center vh-40">
         <div class="card shadow-lg p-4" style="width: 400px;">
             <h3 class="text-center mb-3">Login</h3>
     <form th:action="@{/profile/login}" method="post">
