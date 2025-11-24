@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -52,7 +53,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    public User getUserById(Long id) {
+    public User getUserById(String id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
@@ -61,17 +62,17 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    public void deleteUser(Long id) {
+    public void deleteUser(String id) {
         userRepository.deleteById(id);
     }
 
-    public void enableUser(Long id) {
+    public void enableUser(String id) {
         User user = getUserById(id);
         user.setEnabled(true);
         userRepository.save(user);
     }
 
-    public void updateUser(Long id, User updatedUser) {
+    public void updateUser(String id, User updatedUser) {
         User user = getUserById(id);
         user.setFullName(updatedUser.getFullName());
         user.setEmail(updatedUser.getEmail());
@@ -79,6 +80,7 @@ public class UserService implements UserDetailsService {
         user.setEnabled(updatedUser.isEnabled());
         userRepository.save(user);
     }
+
 
 
 //    public void createPasswordResetToken(String email) {

@@ -107,7 +107,9 @@ public class ProfileController {
             return "error/expired";
         }
 
-        User user = verificationToken.getUser();
+        Optional<User> optionalUser= userRepository.findById(verificationToken.getUserId());
+        User user = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
+
         user.setEnabled(true);
         userRepository.save(user);
         verificationTokenRepository.delete(verificationToken);

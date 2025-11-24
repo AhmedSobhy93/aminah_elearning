@@ -7,7 +7,7 @@ import com.aminah.elearning.repository.CourseRepository;
 import com.aminah.elearning.repository.TutorialRepository;
 import com.aminah.elearning.repository.UserRepository;
 import com.aminah.elearning.utils.FileUploadUtil;
-import jakarta.transaction.Transactional;
+//import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,14 +29,14 @@ public class CourseService {
     private final UserRepository userRepository;
 
 
-    public Page<Course> getCoursesByDoctor(Long doctorId, Pageable pageable) {
-        Page<Course> page = courseRepository.findByAuthorId(doctorId, pageable);
+    public Page<Course> getCoursesByDoctor(String doctorUserName, Pageable pageable) {
+        Page<Course> page = courseRepository.findByAuthorUsername(doctorUserName, pageable);
         // convert PersistentBag to ArrayList for safe usage in template
-        page.getContent().forEach(c -> c.setTutorials(List.copyOf(c.getTutorials())));
+//        page.getContent().forEach(c -> c.setTutorialIds.(List.copyOf(c.getTutorials())));
         return page;
     }
 
-    public Course getCourse(Long id) {
+    public Course getCourse(String id) {
         return courseRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Course not found"));
     }
 
@@ -44,14 +44,14 @@ public class CourseService {
         return courseRepository.save(c);
     }
 
-    public void deleteCourse(Long id) {
+    public void deleteCourse(String id) {
         courseRepository.deleteById(id);
     }
 
-    @Transactional
-    public void reorderTutorials(List<Long> orderedIds) {
+//    @Transactional
+    public void reorderTutorials(List<String> orderedIds) {
         int index = 0;
-        for (Long id : orderedIds) {
+        for (String id : orderedIds) {
             Tutorial t = tutorialRepository.findById(id).orElseThrow();
             t.setOrderIndex(index++);
             tutorialRepository.save(t);
@@ -108,7 +108,7 @@ public class CourseService {
     public Course createCourse(Course course, String drUsername) {
         User dr = userRepository.findByUsername(drUsername)
                 .orElseThrow(() -> new RuntimeException("DR not found"));
-        course.setAuthor(dr);
+        course.setAuthorUsername(dr.getUsername());
         return courseRepository.save(course);
     }
 //
@@ -138,15 +138,15 @@ public class CourseService {
 //    }
 
     // Tutorials
-    public Tutorial addTutorial(Long courseId, Tutorial tutorial, MultipartFile file) throws IOException {
+    public Tutorial addTutorial(String courseId, Tutorial tutorial, MultipartFile file) throws IOException {
         Course course = getCourse(courseId);
         String path = FileUploadUtil.saveFile("uploads/tutorials", file);
         tutorial.setFilePath(path);
-        tutorial.setCourse(course);
+        tutorial.setCourseId(course.getId());
         return tutorialRepository.save(tutorial);
     }
     public List<Tutorial> getTutorials(Course course){
-        return tutorialRepository.findAllByCourseOrderByOrderIndexAsc(course);
+        return tutorialRepository.findByCourseId(course.getId());
     }
     public Page<Course> getCoursesByDR(String drUsername, Pageable pageable) {
         return courseRepository.findByAuthorUsername(drUsername, pageable);

@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -38,7 +39,7 @@ public class RegistrationService {
         String token = UUID.randomUUID().toString();
         VerificationToken verificationToken = new VerificationToken();
         verificationToken.setToken(token);
-        verificationToken.setUser(user);
+        verificationToken.setUserId(user.getId());
         verificationToken.setExpiryDate(LocalDateTime.now().plusHours(24));
         tokenRepository.save(verificationToken);
 
@@ -63,7 +64,10 @@ public class RegistrationService {
         if (vToken.getExpiryDate().isBefore(LocalDateTime.now())) {
             return false;
         }
-        User user = vToken.getUser();
+
+        Optional<User> optionalUser= userRepository.findById(vToken.getUserId());
+        User user = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
+
         user.setEnabled(true);
         userRepository.save(user);
         return true;

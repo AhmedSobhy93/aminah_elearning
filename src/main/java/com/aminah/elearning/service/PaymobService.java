@@ -22,7 +22,7 @@ public class PaymobService {
     // In a real app, you’d use WebClient or RestTemplate to call Paymob APIs
     public String createPaymentRequest(Payment payment) {
         // Mock behavior for testing
-        Long courseId = payment.getCourseEnrollment().getCourse().getId();
+        String courseId = payment.getCourseId();//getCourseEnrollmentId().getCourse().getId();
         return "/payments/mock-success/" + courseId;
     }
 

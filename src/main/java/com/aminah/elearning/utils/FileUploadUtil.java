@@ -2,7 +2,7 @@ package com.aminah.elearning.utils;
 
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.config.ResourceHandlerRegistry;
+//import org.springframework.web.reactive.config.ResourceHandlerRegistry;
 
 import java.io.IOException;
 import java.io.InputStream;

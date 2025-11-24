@@ -72,7 +72,7 @@ public class StudentController {
 //    }
 
     @PostMapping("/enroll/{id}")
-    public String enrollCourse(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails){
+    public String enrollCourse(@PathVariable String id, @AuthenticationPrincipal UserDetails userDetails){
         Course course = courseService.getCourse(id);
         User student = userService.findByUsername(userDetails.getUsername());
         CourseEnrollment enrollment = enrollmentService.enrollUser(student.getId(),student, course);
@@ -80,14 +80,14 @@ public class StudentController {
     }
 
     @PostMapping("/pay/success/{paymentId}")
-    public String paymentSuccess(@PathVariable Long paymentId) {
+    public String paymentSuccess(@PathVariable String paymentId) {
         Payment payment = paymentService.getPaymentById(paymentId);
         paymentService.updatePaymentStatus(payment, "SUCCESS");
 
-        CourseEnrollment enrollment = payment.getCourseEnrollment();
-        enrollment.setPaymentStatus("SUCCESS");
-        enrollment.setPaymentStatus("ACTIVE");
-        studentService.updateProgress(enrollment, 0.0);
+//        CourseEnrollment enrollment = payment.getCourseEnrollment();
+//        enrollment.setPaymentStatus("SUCCESS");
+//        enrollment.setPaymentStatus("ACTIVE");
+//        studentService.updateProgress(enrollment, 0.0);
 
         return "redirect:/student/my-courses";
     }
@@ -102,7 +102,7 @@ public class StudentController {
     }
 
     @GetMapping("/course/{id}")
-    public String courseDetails(@PathVariable Long id, Model model, Principal principal){
+    public String courseDetails(@PathVariable String id, Model model, Principal principal){
         Course course = courseService.getCourse(id);
         model.addAttribute("course", course);
         model.addAttribute("tutorials", courseService.getTutorials(course));
@@ -113,7 +113,7 @@ public class StudentController {
             User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
             enrollmentService.getUserEnrollments(user.getId()).stream()
-                    .filter(e -> e.getCourse().getId().equals(id))
+                    .filter(e -> e.getCourseId().equals(id))
                     .findFirst()
                     .ifPresent(e -> model.addAttribute("enrollment", e));
         }
@@ -127,12 +127,12 @@ public class StudentController {
                 .filter(e -> e.getId().equals(enrollmentId))
                 .findFirst().orElseThrow();
 
-        paymentService.processPayment((User) ((Authentication) principal).getPrincipal(), enrollment, enrollment.getCourse().getPrice(), "PAYMOB");
-        return "redirect:/student/course/" + enrollment.getCourse().getId();
+//        paymentService.processPayment((User) ((Authentication) principal).getPrincipal(), enrollment, enrollment.getCourseId(), "PAYMOB");
+        return "redirect:/student/course/" + enrollment.getCourseId();
     }
     // Payment Page
     @GetMapping("/pay/{paymentId}")
-    public String payPage(@PathVariable Long paymentId, Model model) {
+    public String payPage(@PathVariable String paymentId, Model model) {
         Payment payment = paymentService.getPaymentById(paymentId);
         model.addAttribute("payment", payment);
         return "student/payment";
@@ -140,7 +140,7 @@ public class StudentController {
 
     // Confirm Payment (simulate Stripe/Paymob)
     @PostMapping("/pay/confirm/{paymentId}")
-    public String confirmPayment(@PathVariable Long paymentId,
+    public String confirmPayment(@PathVariable String paymentId,
                                  @RequestParam String gateway) {
         Payment payment = paymentService.getPaymentById(paymentId);
 
@@ -151,10 +151,10 @@ public class StudentController {
         paymentService.updatePaymentStatus(payment, "SUCCESS");
 
         // Update enrollment status
-        CourseEnrollment enrollment = payment.getCourseEnrollment();
-        enrollment.setPaymentStatus("SUCCESS");
-        enrollment.setPaymentStatus("ACTIVE");
-        studentService.updateProgress(enrollment, 0.0);
+//        CourseEnrollment enrollment = payment.getCourseEnrollmentId();
+//        enrollment.setPaymentStatus("SUCCESS");
+//        enrollment.setPaymentStatus("ACTIVE");
+//        studentService.updateProgress(enrollment, 0.0);
 
         return "redirect:/student/my-courses";
     }

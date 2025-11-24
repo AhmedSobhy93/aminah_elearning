@@ -16,15 +16,15 @@ public class CourseEnrollmentService {
 
     private final CourseEnrollmentRepository enrollmentRepository;
 
-    public CourseEnrollment enrollUser(Long userId, User user, Course course) {
-        if (enrollmentRepository.existsByUserIdAndCourseId(user.getId(), course.getId())) {
+    public CourseEnrollment enrollUser(String userId, User user, Course course) {
+        if (enrollmentRepository.existsByCourseIdAndCourseEnrollmentUserId(user.getId(), course.getId())) {
             throw new IllegalStateException("User already enrolled in this course");
         }
 
         CourseEnrollment enrollment = new CourseEnrollment();
 
-        enrollment.setUser(user);
-        enrollment.setCourse(course);
+        enrollment.setCourseEnrollmentUserId(user.getId());
+        enrollment.setCourseId(course.getId());
         enrollment.setPaymentStatus("PENDING");
         enrollment.setProgressPercentage(0.0);
         enrollment.setCompleted(false);
@@ -32,18 +32,18 @@ public class CourseEnrollmentService {
         return enrollmentRepository.save(enrollment);
     }
 
-    public List<CourseEnrollment> getUserEnrollments(Long userId) {
-        return enrollmentRepository.findByUserId(userId);
+    public List<CourseEnrollment> getUserEnrollments(String userId) {
+        return enrollmentRepository.findByCourseEnrollmentUserId(userId);
     }
 
-    public CourseEnrollment updatePaymentStatus(Long enrollmentId, String status) {
+    public CourseEnrollment updatePaymentStatus(String enrollmentId, String status) {
         CourseEnrollment enrollment = enrollmentRepository.findById(enrollmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid enrollment ID"));
         enrollment.setPaymentStatus(status);
         return enrollmentRepository.save(enrollment);
     }
 
-    public CourseEnrollment updateProgress(Long enrollmentId, double progress) {
+    public CourseEnrollment updateProgress(String enrollmentId, double progress) {
         CourseEnrollment enrollment = enrollmentRepository.findById(enrollmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid enrollment ID"));
         enrollment.setProgressPercentage(progress);

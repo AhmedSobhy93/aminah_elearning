@@ -1,84 +1,149 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Manage Courses</title>-->
+<!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
+<!--    <style>-->
+<!--        .file-group, .article-group, .quiz-group { display: none; }-->
+<!--        .quiz-question { border: 1px dashed #ccc; padding: 10px; margin-bottom: 10px; }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/base}">
+      layout:decorate="~{'layout/base'}">
+<style>
+        .file-group, .article-group, .quiz-group { display: none; }
+        .quiz-question { border: 1px dashed #ccc; padding: 10px; margin-bottom: 10px; }
+    </style>
+<section layout:fragment="content" class="text-gray-600 body-font">
+<div class="container mt-5">
+    <h2>Manage Courses</h2>
 
-<section layout:fragment="content">
-<body class="bg-light">
-<div class="container mt-4">
-    <h2 class="text-primary mb-3"><i class="fa-solid fa-book"></i> Manage Courses</h2>
-
+    <!-- Flash messages -->
     <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-    <!-- CREATE COURSE -->
-    <div class="card p-3 mb-4 shadow-sm">
-        <form th:action="@{/dr/courses/create}" th:object="${newCourse}" method="post" class="row g-2">
-            <div class="col-md-3"><input type="text" th:field="*{title}" class="form-control" placeholder="Title" required></div>
-            <div class="col-md-3"><input type="text" th:field="*{courseName}" class="form-control" placeholder="Course Name" required></div>
-            <div class="col-md-3"><input type="number" step="0.01" th:field="*{price}" class="form-control" placeholder="Price" required></div>
-            <div class="col-md-3 d-grid"><button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Course</button></div>
-            <div class="col-12"><textarea th:field="*{description}" class="form-control" placeholder="Description"></textarea></div>
-        </form>
-    </div>
-
-    <!-- COURSE LIST -->
-    <div th:each="course : ${courses}" class="card course-card mb-4">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <span><i class="fa-solid fa-graduation-cap"></i> <strong th:text="${course.title}"></strong></span>
-            <div>
-                <a th:href="@{/dr/courses/{id}/students(id=${course.id})}" class="btn btn-light btn-sm"><i class="fa-solid fa-users"></i></a>
-                <form th:action="@{/dr/courses/delete/{id}(id=${course.id})}" method="post" class="d-inline">
-                    <button class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
-                </form>
-                <form th:action="@{/dr/courses/{id}/publish(id=${course.id})}" method="post" class="d-inline">
-                    <button class="btn btn-warning btn-sm" th:text="${course.published ? 'Unpublish' : 'Publish'}"></button>
-                </form>
-            </div>
+    <!-- Create new course -->
+    <form th:action="@{/dr/courses/create}" method="post" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="title" class="form-control" placeholder="New Course Title" required>
+            <button type="submit" class="btn btn-primary">Create Course</button>
         </div>
-        <div class="card-body bg-white">
-            <p><strong>Course Name:</strong> <span th:text="${course.courseName}"></span></p>
-            <p th:text="${course.description}"></p>
-            <p><strong>Price:</strong> <span th:text="${course.price}"></span> EGP</p>
+    </form>
 
-            <!-- Tutorials -->
-            <h6><i class="fa-solid fa-video"></i> Tutorials</h6>
-            <ul class="list-group list-group-flush mb-2">
-                <li class="list-group-item" th:each="tutorial : ${course.tutorials}">
-                    <i class="fa-solid fa-circle-play text-success"></i> <span th:text="${tutorial.title}"></span>
-                    <small class="text-muted" th:text="${tutorial.type}"></small>
+    <!-- Courses list -->
+    <div th:each="course : ${courses}" class="card mb-3">
+        <div class="card-body">
+            <h5 th:text="${course.title}"></h5>
+
+            <!-- Tutorials list -->
+            <ul class="list-group mb-2">
+                <li class="list-group-item" th:each="tut : ${tutorialsMap[course.id]}">
+                    <span th:text="${tut.title} + ' (' + tut.type + ')'"></span>
+                    <form th:action="@{'/dr/tutorials/delete/' + ${tut.id}}" method="post" class="d-inline float-end">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
                 </li>
             </ul>
 
-            <!-- Add Tutorial -->
-            <form th:action="@{/dr/courses/{courseId}/tutorials/add(courseId=${course.id})}" method="post" enctype="multipart/form-data" class="row g-2">
-                <div class="col-md-3"><input type="text" name="title" class="form-control" placeholder="Tutorial title" required></div>
-                <div class="col-md-3">
-                    <select name="type" class="form-select">
-                        <option th:each="type : ${tutorialTypes}" th:value="${type}" th:text="${type}"></option>
-                    </select>
+            <!-- Add tutorial -->
+            <form th:action="@{'/dr/courses/' + ${course.id} + '/tutorials/add'}"
+                  method="post" enctype="multipart/form-data" class="tutorial-form">
+                <input type="text" name="title" class="form-control mb-2" placeholder="Tutorial Title" required>
+
+                <select name="type" class="form-select mb-2 tutorial-type" required>
+                    <option th:each="type : ${tutorialTypes}" th:value="${type}" th:text="${type}"></option>
+                </select>
+
+                <!-- File input -->
+                <div class="file-group mb-2">
+                    <input type="file" name="file" class="form-control">
                 </div>
-                <div class="col-md-3"><input type="file" name="file" class="form-control" required></div>
-                <div class="col-md-3 d-grid"><button class="btn btn-success"><i class="fa-solid fa-plus"></i> Add Tutorial</button></div>
+
+                <!-- Article input -->
+                <div class="article-group mb-2">
+                    <textarea name="articleContent" class="form-control" placeholder="Article content"></textarea>
+                </div>
+
+                <!-- Quiz input -->
+                <div class="quiz-group mb-2">
+                    <div class="quiz-container"></div>
+                    <button class="btn btn-secondary btn-sm add-quiz-question mb-2">Add Question</button>
+                </div>
+
+                <button type="submit" class="btn btn-success">Add Tutorial</button>
             </form>
         </div>
     </div>
 
     <!-- Pagination -->
-    <nav>
-        <ul class="pagination justify-content-center">
+    <nav th:if="${totalPages > 1}">
+        <ul class="pagination">
             <li class="page-item" th:classappend="${currentPage == 0}? 'disabled'">
                 <a class="page-link" th:href="@{/dr/courses(page=${currentPage-1})}">Previous</a>
             </li>
-            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages-1)}" th:classappend="${i == currentPage}? 'active'">
+            <li class="page-item" th:each="i : ${#numbers.sequence(0,totalPages-1)}"
+                th:classappend="${currentPage == i}? 'active'">
                 <a class="page-link" th:href="@{/dr/courses(page=${i})}" th:text="${i+1}"></a>
             </li>
-            <li class="page-item" th:classappend="${currentPage+1 >= totalPages}? 'disabled'">
+            <li class="page-item" th:classappend="${currentPage == totalPages-1}? 'disabled'">
                 <a class="page-link" th:href="@{/dr/courses(page=${currentPage+1})}">Next</a>
             </li>
         </ul>
     </nav>
 </div>
-</body>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".tutorial-form").forEach(form => {
+            const typeSelect = form.querySelector(".tutorial-type");
+            const fileGroup = form.querySelector(".file-group");
+            const articleGroup = form.querySelector(".article-group");
+            const quizGroup = form.querySelector(".quiz-group");
+            const quizContainer = form.querySelector(".quiz-container");
+            const addQuizBtn = form.querySelector(".add-quiz-question");
+
+            const updateInputs = () => {
+                const type = typeSelect.value;
+                fileGroup.style.display = (type === "VIDEO" || type === "PDF") ? "block" : "none";
+                articleGroup.style.display = (type === "ARTICLE") ? "block" : "none";
+                quizGroup.style.display = (type === "QUIZ") ? "block" : "none";
+            };
+
+            typeSelect.addEventListener("change", updateInputs);
+            updateInputs();
+
+            addQuizBtn.addEventListener("click", e => {
+                e.preventDefault();
+                const idx = quizContainer.children.length;
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("quiz-question");
+                questionDiv.innerHTML = `
+                <input type="text" name="questions" class="form-control mb-1" placeholder="Question ${idx+1}" required>
+                <input type="text" name="options" class="form-control mb-1" placeholder="Options (comma-separated)" required>
+                <input type="text" name="answers" class="form-control mb-1" placeholder="Answer" required>
+            `;
+                quizContainer.appendChild(questionDiv);
+            });
+
+            form.addEventListener("submit", e => {
+                const type = typeSelect.value;
+                if ((type === "VIDEO" || type === "PDF") && !fileGroup.querySelector("input").files.length) {
+                    e.preventDefault(); alert("Please select a file.");
+                }
+                if (type === "ARTICLE" && !articleGroup.querySelector("textarea").value.trim()) {
+                    e.preventDefault(); alert("Please enter article content.");
+                }
+                if (type === "QUIZ" && quizContainer.children.length === 0) {
+                    e.preventDefault(); alert("Please add at least one quiz question.");
+                }
+            });
+        });
+    });
+</script>
+<!--</body>-->
 </section>
 </html>

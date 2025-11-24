@@ -33,14 +33,16 @@ public class StorageService {
     /**
      * Stores file organized by doctorId/courseId/type
      */
-    public String storeFile(MultipartFile file, Long doctorId, Long courseId, TutorialType type) throws IOException {
+    public String storeFile(MultipartFile file, String doctorId, String courseId, TutorialType type) throws IOException {
         String folder = switch (type) {
             case VIDEO -> "videos";
             case PDF -> "pdfs";
             case ARTICLE -> "articles";
             case QUIZ -> "quizzes";
         };
-
+        if (type.equals(TutorialType.VIDEO) && !file.getOriginalFilename().endsWith(".mp4")) {
+            throw new RuntimeException("Invalid video type – only MP4 allowed.");
+        }
         Path targetDir = rootUpload.resolve(String.valueOf(doctorId))
                 .resolve(String.valueOf(courseId))
                 .resolve(folder);
@@ -51,7 +53,7 @@ public class StorageService {
         Path targetPath = targetDir.resolve(fileName);
 
         Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-        return doctorId + "/" + courseId + "/" + folder + "/" + fileName; // Relative path stored in DB
+        return "/"+rootUpload.toString()+"/"+doctorId + "/" + courseId + "/" + folder + "/" + fileName; // Relative path stored in DB
     }
 
     public Path getFilePath(String relativePath) {

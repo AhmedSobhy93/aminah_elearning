@@ -1,27 +1,32 @@
 package com.aminah.elearning.controller;
 
 import com.aminah.elearning.model.*;
-import com.aminah.elearning.repository.CourseEnrollmentRepository;
-import com.aminah.elearning.repository.CourseRepository;
-import com.aminah.elearning.repository.TutorialRepository;
-import com.aminah.elearning.repository.UserRepository;
+import com.aminah.elearning.repository.*;
 import com.aminah.elearning.service.CourseService;
 import com.aminah.elearning.service.StorageService;
+//import jakarta.annotation.Resource;
+import com.aminah.elearning.service.TutorialService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @RequestMapping("/dr")
@@ -30,9 +35,10 @@ public class DoctorController {
     private final CourseService courseService;
     private final CourseRepository courseRepository;
     private final TutorialRepository tutorialRepository;
+    private final TutorialService tutorialService;
     private final UserRepository userRepository;
     private final StorageService storageService;
-
+    private final QuizQuestionRepository quizQuestionRepository;
     private static final int COURSES_PER_PAGE = 2;
     private final CourseEnrollmentRepository courseEnrollmentRepository;
 
@@ -43,12 +49,22 @@ public class DoctorController {
         User doctor = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
-        Page<Course> coursesPage = courseRepository.findByAuthorId(doctor.getId(),
+        Page<Course> coursesPage = courseRepository.findByAuthorUsername(doctor.getUsername(),
                 PageRequest.of(page, COURSES_PER_PAGE));
 
         // Sort tutorials for each course
-        coursesPage.getContent()
-                .forEach(c -> c.getTutorials().sort(Comparator.comparingInt(Tutorial::getOrderIndex)));
+//        coursesPage.getContent()
+//                .forEach(c -> c.getTutorialIds().sort(Comparator.comparing(Tutorial::getOrderIndex)));
+        List<Course> courses = courseService.getCoursesByDR(doctor.getUsername());
+
+        // Fetch tutorials for each course
+        Map<String, List<Tutorial>> tutorialsMap = new HashMap<>();
+        for (Course course : courses) {
+            List<Tutorial> tutorials = (List<Tutorial>) tutorialService.getTutorialsForCourse(course.getId());
+            tutorialsMap.put(course.getId(), tutorials);
+        }
+
+        model.addAttribute("tutorialsMap", tutorialsMap);
 
         model.addAttribute("coursesPage", coursesPage);
         model.addAttribute("courses", coursesPage.getContent());
@@ -66,7 +82,7 @@ public class DoctorController {
                                Principal principal, RedirectAttributes ra) {
         try {
             User doctor = userRepository.findByUsername(principal.getName()).orElseThrow();
-            course.setAuthor(doctor);
+            course.setAuthorUsername(doctor.getUsername());
             courseService.saveCourse(course);
             ra.addFlashAttribute("success", "Course created successfully!");
         } catch (Exception e) {
@@ -77,7 +93,7 @@ public class DoctorController {
 
     // --- Delete course ---
     @PostMapping("/courses/delete/{id}")
-    public String deleteCourse(@PathVariable Long id, RedirectAttributes ra) {
+    public String deleteCourse(@PathVariable String id, RedirectAttributes ra) {
         try {
             courseService.deleteCourse(id);
             ra.addFlashAttribute("success", "Course deleted successfully!");
@@ -88,30 +104,90 @@ public class DoctorController {
     }
 
     // --- Add tutorial ---
-    @PostMapping("/courses/{courseId}/tutorials/add")
-    public String addTutorial(@PathVariable Long courseId,
+    @PostMapping(value = "/courses/{courseId}/tutorials/add",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public String addTutorial(@PathVariable String courseId,
                               @RequestParam String title,
                               @RequestParam TutorialType type,
                               @RequestParam MultipartFile file,
+                              @RequestParam(required = false) String articleContent,
+                              @RequestParam(required = false) List<String> questions,
+                              @RequestParam(required = false) List<String> options,
+                              @RequestParam(required = false) List<String> answers,
                               Principal principal, RedirectAttributes ra) {
         try {
             User doctor = userRepository.findByUsername(principal.getName()).orElseThrow();
             Course course = courseRepository.findById(courseId)
                     .orElseThrow(() -> new RuntimeException("Course not found"));
+            Tutorial tutorial = new Tutorial();
+            tutorial.setTitle(title);
+            tutorial.setType(type);
 
-            if (!file.isEmpty()) {
+            tutorial.setOrderIndex(course.getTutorialIds().size());
+            tutorial.setCourseId(course.getId());
+
+            if(type.equals(TutorialType.VIDEO)){
+                if (file.isEmpty()){
+                    throw new IllegalArgumentException("Please upload a video file.");
+
+                }else{
+                    String originalName = file.getOriginalFilename().toLowerCase();
+
+                    // EXTENSION VALIDATION
+                    if (!originalName.endsWith(".mp4")) {
+                        throw new IllegalArgumentException("Only MP4 videos are allowed.");
+                    }
+
+                    // MIME TYPE VALIDATION
+                    if (!file.getContentType().equals("video/mp4")) {
+                        throw new IllegalArgumentException("Invalid video format. Only MP4 is supported.");
+                    }
+                    String path = storageService.storeFile(file, doctor.getId(), courseId, type);
+                    tutorial.setFilePath(path);
+                }
+            }else if(type.equals(TutorialType.PDF)){
                 String path = storageService.storeFile(file, doctor.getId(), courseId, type);
-
-                Tutorial tutorial = new Tutorial();
-                tutorial.setTitle(title);
-                tutorial.setType(type);
                 tutorial.setFilePath(path);
-                tutorial.setOrderIndex(course.getTutorials().size());
-                tutorial.setCourse(course);
+            }else if(type.equals(TutorialType.ARTICLE)){
+                tutorial.setArticleContent(articleContent);
+            }else if(type.equals(TutorialType.QUIZ)){
+                if(questions == null || questions.isEmpty()) {
+                    ra.addFlashAttribute("error", "Quiz must have at least one question.");
+                    return "redirect:/dr/courses";
+                }
+//                List<QuizQuestion> quizQuestions = new ArrayList<>();
+//                for (int i = 0; i < questions.size(); i++) {
+//                    QuizQuestion q = new QuizQuestion();
+//                    q.setQuestion(questions.get(i));
+//                    q.setOptions(options.get(i));  // comma-separated or JSON
+//                    q.setAnswer(answers.get(i));
+//                    q.setTutorialId(tutorial.getId());
+//                    quizQuestions.add(q);
+//                }
+//                tutorial.setQuizQuestionsIds(quizQuestions);
+//            }
+                List<String> questionIds = new ArrayList<>();
 
+                for (int i = 0; i < questions.size(); i++) {
+                    QuizQuestion q = new QuizQuestion();
+                    q.setTutorialId(tutorial.getId());
+                    q.setQuestion(questions.get(i));
+                    q.setOptions(List.of(options.get(i).split(",")));
+                    q.setAnswer(answers.get(i));
+
+                    QuizQuestion saved = quizQuestionRepository.save(q);
+                    questionIds.add(saved.getId());
+                }
+
+                tutorial.setQuizQuestionsIds(questionIds);
                 tutorialRepository.save(tutorial);
-            }
+                tutorialRepository.save(tutorial);
+                course.getTutorialIds().add(tutorial.getId());
+                courseRepository.save(course);
+
             ra.addFlashAttribute("success", "Tutorial added successfully!");
+        }
         } catch (IOException e) {
             ra.addFlashAttribute("error", "File upload failed: " + e.getMessage());
         } catch (Exception e) {
@@ -122,7 +198,7 @@ public class DoctorController {
 
     // --- Edit tutorial ---
     @PostMapping("/tutorials/edit/{id}")
-    public String editTutorial(@PathVariable Long id,
+    public String editTutorial(@PathVariable String id,
                                @RequestParam String title,
                                @RequestParam TutorialType type,
                                @RequestParam(required = false) MultipartFile file,
@@ -132,7 +208,7 @@ public class DoctorController {
             Tutorial tutorial = tutorialRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Tutorial not found"));
 
-            if (!tutorial.getCourse().getAuthor().getUsername().equals(principal.getName()))
+            if (!tutorial.getUserId().equals(principal.getName()))
                 throw new RuntimeException("Unauthorized");
 
             tutorial.setTitle(title);
@@ -140,8 +216,8 @@ public class DoctorController {
 
             if (file != null && !file.isEmpty()) {
                 String path = storageService.storeFile(file,
-                        tutorial.getCourse().getAuthor().getId(),
-                        tutorial.getCourse().getId(), type);
+                        tutorial.getUserId(),
+                        tutorial.getCourseId(), type);
                 tutorial.setFilePath(path);
             }
 
@@ -155,7 +231,7 @@ public class DoctorController {
 
     // --- Delete tutorial ---
     @PostMapping("/tutorials/delete/{id}")
-    public String deleteTutorial(@PathVariable Long id, RedirectAttributes ra) {
+    public String deleteTutorial(@PathVariable String id, RedirectAttributes ra) {
         try {
             Tutorial tutorial = tutorialRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Tutorial not found"));
@@ -168,21 +244,38 @@ public class DoctorController {
     }
 
     @GetMapping("/courses/{courseId}/students")
-    public String viewCourseStudents(@PathVariable Long courseId, Model model) {
+    public String viewCourseStudents(@PathVariable String courseId, Model model) {
         Course course = courseRepository.findById(courseId).orElseThrow();
-        List<CourseEnrollment> enrollments = courseEnrollmentRepository.findByCourse(course);
+        List<CourseEnrollment> enrollments = courseEnrollmentRepository.findByCourseId(courseId);
         model.addAttribute("course", course);
         model.addAttribute("enrollments", enrollments);
         return "dr/course-students";
     }
 
     @PostMapping("/courses/{id}/publish")
-    public String togglePublish(@PathVariable Long id) {
+    public String togglePublish(@PathVariable String id) {
         Course course = courseRepository.findById(id).orElseThrow();
         course.setPublished(!course.isPublished());
         courseRepository.save(course);
         return "redirect:/dr/courses";
     }
+
+    @GetMapping("/tutorials/{id}/stream")
+    public ResponseEntity<Resource> streamVideo(@PathVariable String id) throws IOException {
+        Optional<Tutorial> tutorial = tutorialRepository.findById(id);
+        Path path = Paths.get(tutorial.get().getFilePath());
+        Resource resource = new UrlResource(path.toUri());
+
+        if (!resource.exists()) {
+            throw new FileNotFoundException("Video not found");
+        }
+
+        String contentType = Files.probeContentType(path); // detect MIME type automatically
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType != null ? contentType : "application/octet-stream"))
+                .body(resource);
+    }
+
 
 }
 

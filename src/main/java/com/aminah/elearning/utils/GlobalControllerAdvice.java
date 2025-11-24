@@ -12,9 +12,9 @@ import static com.fasterxml.jackson.databind.type.LogicalType.Map;
 @ControllerAdvice
 public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    @ResponseBody
-    public ResponseEntity<?> handleAll(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(java.util.Map.of("error", ex.getMessage()));
-    }
+//    @ExceptionHandler(Exception.class)
+//    @ResponseBody
+//    public ResponseEntity<?> handleAll(Exception ex) {
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(java.util.Map.of("error", ex.getMessage()));
+//    }
 }

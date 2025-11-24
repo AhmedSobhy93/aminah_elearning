@@ -41,7 +41,10 @@ public class SecurityConfig {
                 .logout(logout -> logout.logoutUrl("/profile/logout").logoutSuccessUrl("/profile/login?logout=true")
                         .invalidateHttpSession(true)
                         .clearAuthentication(true).deleteCookies("JSESSIONID").permitAll())
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/uploads/**"));
+
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/uploads/**"))
+                .headers(headers -> headers
+                .frameOptions(frame -> frame.sameOrigin())); // allow same-origin iframe embedding);
         return http.build();
     }
     @Bean

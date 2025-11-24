@@ -1,13 +1,23 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.w3.org/1999/xhtml"
       layout:decorate="~{layout/base}">
 <section layout:fragment="content">
-    <div class="text-center py-5">
+    <div class="text-center py-4">
         <img th:src="@{/images/logo.png}" alt="Aminah Logo" width="120" class="mb-3">
-        <h1 class="display-5 fw-bold text-primary">Welcome to Aminah E-Learning (Medical)</h1>
-        <p class="lead text-muted">Interactive online medical courses, practical simulations, and real-world learning.</p>
-        <a th:href="@{/courses}" class="btn btn-primary btn-lg mt-3">Explore Courses</a>
+        <h1 class="display-6 fw-bold text-primary">Welcome to Aminah E-Learning</h1>
+        <p class=" text-muted">Interactive online medical courses, practical simulations, and real-world learning.</p>
+<!--        <a th:href="@{/courses}" class="btn btn-primary btn-lg mt-3">Explore Courses</a>-->
+
+        <!-- Admin Only -->
+        <a class="btn btn-primary btn-lg mt-3" sec:authorize="hasRole('ADMIN')" th:href="@{/admin/users}">Manage Users</a>
+
+        <!-- Doctor -->
+        <a class="btn btn-primary btn-lg mt-3" sec:authorize="hasRole('DR')" th:href="@{/dr/courses}">My Courses</a>
+
+        <!-- Student -->
+        <a class="btn btn-primary btn-lg mt-3" sec:authorize="hasRole('STUDENT')" th:href="@{/student/courses}">Available Courses</a>
+
     </div>
 
     <div class="row mt-5 text-center">

@@ -8,6 +8,7 @@ import com.aminah.elearning.repository.CourseEnrollmentRepository;
 import com.aminah.elearning.repository.CourseRepository;
 import com.aminah.elearning.repository.TutorialRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,16 +27,16 @@ public class StudentService {
     }
 
     public List<CourseEnrollment> getEnrolledCourses(User student) {
-        return enrollmentRepository.findByUserId(student.getId());
+        return enrollmentRepository.findByCourseEnrollmentUserId(student.getId());
     }
 
     public CourseEnrollment enroll(User student, Course course, boolean paid) {
-        Optional<CourseEnrollment> opt = enrollmentRepository.findByUserAndCourse(student, course);
+        Optional<CourseEnrollment> opt = enrollmentRepository.findByCourseEnrollmentUserIdAndCourseId(student.getId(), course.getId());
         if(opt.isPresent()) return opt.get();
 
         CourseEnrollment enrollment = new CourseEnrollment();
-        enrollment.setUser(student);
-        enrollment.setCourse(course);
+        enrollment.setCourseEnrollmentUserId(student.getId());
+        enrollment.setCourseId(course.getId());
         enrollment.setPaymentStatus("ACTIVE");
         enrollment.setPaymentStatus(paid ? "SUCCESS" : "PENDING");
         enrollment.setProgressPercentage(0.0);
@@ -60,6 +61,6 @@ public class StudentService {
     }
 
     public List<Tutorial> getCourseTutorials(Course course) {
-        return tutorialRepository.findByCourseOrderByOrderIndexAsc(course);
+        return tutorialRepository.findByCourseId(course.getId());
     }
 }

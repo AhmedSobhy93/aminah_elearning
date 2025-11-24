@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.Charset;
+import java.util.Optional;
 
 @Controller
 public class PasswordController {
@@ -28,6 +29,8 @@ public class PasswordController {
     private PasswordResetTokenRepository resetTokenRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/forgot-password")
     public String showForgotPasswordForm() {
@@ -74,8 +77,10 @@ public class PasswordController {
             return "profile/reset-password";
         }
 
-        User user = resetTokenToken.getUser();
-        user.setPassword(String.valueOf(passwordEncoder.encode(password)));
+        Optional<User> optionalUser = userRepository.findById(resetTokenToken.getUserId());
+        User user = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
         resetTokenRepository.delete(resetTokenToken);
 

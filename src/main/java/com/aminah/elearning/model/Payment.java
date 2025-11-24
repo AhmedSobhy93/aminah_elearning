@@ -1,26 +1,30 @@
 package com.aminah.elearning.model;
 
-import jakarta.persistence.*;
+//import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+//@Data
+//@Entity
+//@Table(name = "payments")
+@Document(collection = "payments")
 @Data
-@Entity
-@Table(name = "payments")
 public class Payment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String id;
 
-    /** Linked user */
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+//    /** Linked user */
+//    @ManyToOne
+//    @JoinColumn(name = "user_id", nullable = false)
+    private String userId;
 
-    /** Linked enrollment */
-    @OneToOne
-    @JoinColumn(name = "enrollment_id", nullable = false)
-    private CourseEnrollment courseEnrollment;
+//    /** Linked enrollment */
+//    @OneToOne
+//    @JoinColumn(name = "enrollment_id", nullable = false)
+    private String courseEnrollmentId;
 
     /** Amount paid */
     private Double amount;
@@ -30,4 +34,6 @@ public class Payment {
 
     /** Payment gateway (PAYMOB, STRIPE, etc.) */
     private String gateway;
+
+    private String courseId;
 }

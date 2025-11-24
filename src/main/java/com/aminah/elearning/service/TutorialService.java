@@ -17,11 +17,15 @@ import java.util.NoSuchElementException;
 public class TutorialService {
     private final TutorialRepository tutorialRepository;
 
-    public Page<Tutorial> getTutorialsForCourse(Long courseId, Pageable pageable) {
+    public Page<Tutorial> getTutorialsForCourse(String courseId, Pageable pageable) {
         return tutorialRepository.findByCourseId(courseId, pageable);
     }
 
-    public Tutorial getTutorial(Long id){
+    public List<Tutorial> getTutorialsForCourse(String courseId ) {
+        return tutorialRepository.findByCourseId(courseId);
+    }
+
+    public Tutorial getTutorial(String id){
         return tutorialRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Tutorial not found"));
     }
 
@@ -29,7 +33,7 @@ public class TutorialService {
         return tutorialRepository.save(t);
     }
 
-    public void delete(Long id){
+    public void delete(String id){
         tutorialRepository.deleteById(id);
     }
 //    private final TutorialRepository tutorialRepository;

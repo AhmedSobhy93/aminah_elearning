@@ -209,3 +209,24 @@ aside .nav-link:hover {
 
 .course-card { border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 .progress { height: 6px; }
+
+/* Make modal stable with Bootstrap behavior preserved */
+
+/* Keep modal from shifting when opened */
+.modal {
+    padding-right: 0 !important;
+}
+
+/* Correct centering */
+.modal-dialog {
+    margin: auto !important;                 /* horizontal centering */
+    top: 50% !important;                     /* vertical centering */
+    transform: translateY(-50%) !important;  /* perfect true-center */
+    transition: none !important;
+    position: relative;
+}
+
+/* Remove any possible transform jumps */
+.modal-content {
+    transform: none !important;
+}
