@@ -122,6 +122,27 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- add inside <dependencies> -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>2.20.44</version>
+        </dependency>
+
+        <!-- Optional: Jackson for JSON if not present -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <!-- If you want HTMX (optional) -->
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>htmx.org</artifactId>
+            <version>1.9.10</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

@@ -1,149 +1,336 @@
-<!--<!DOCTYPE html>-->
-<!--<html xmlns:th="http://www.thymeleaf.org">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <title>Manage Courses</title>-->
-<!--    <link rel="stylesheet" href="/css/bootstrap.min.css">-->
-<!--    <style>-->
-<!--        .file-group, .article-group, .quiz-group { display: none; }-->
-<!--        .quiz-question { border: 1px dashed #ccc; padding: 10px; margin-bottom: 10px; }-->
-<!--    </style>-->
-<!--</head>-->
-<!--<body>-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{'layout/base'}">
-<style>
-        .file-group, .article-group, .quiz-group { display: none; }
-        .quiz-question { border: 1px dashed #ccc; padding: 10px; margin-bottom: 10px; }
-    </style>
-<section layout:fragment="content" class="text-gray-600 body-font">
-<div class="container mt-5">
-    <h2>Manage Courses</h2>
+
+<head>
+    <title>Manage Courses</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/fontawesome.min.css}">
+    <link rel="stylesheet" th:href="@{/css/manage-courses.css}">
+</head>
+<section layout:fragment="content" class="container mt-5">
+    <h2 class="mb-4">Courses Management</h2>
 
     <!-- Flash messages -->
     <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
     <!-- Create new course -->
-    <form th:action="@{/dr/courses/create}" method="post" class="mb-4">
-        <div class="input-group">
-            <input type="text" name="title" class="form-control" placeholder="New Course Title" required>
-            <button type="submit" class="btn btn-primary">Create Course</button>
+    <form th:action="@{/dr/courses/create}" method="post" class="mb-4 row g-2">
+        <div class="col-md-3">
+            <input type="text" name="title" class="form-control" placeholder="Course Title" required>
+        </div>
+        <div class="col-md-3">
+            <input type="text" name="courseName" class="form-control" placeholder="Course Name" required>
+        </div>
+        <div class="col-md-3">
+            <input type="text" name="description" class="form-control" placeholder="Description">
+        </div>
+        <div class="col-md-2">
+            <input type="number" name="price" class="form-control" placeholder="Price">
+        </div>
+        <div class="col-md-1 d-grid">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+            </button>
         </div>
     </form>
 
-    <!-- Courses list -->
-    <div th:each="course : ${courses}" class="card mb-3">
-        <div class="card-body">
-            <h5 th:text="${course.title}"></h5>
+    <!-- Courses List -->
+    <div th:each="course : ${courses}" class="card mb-3 shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5 th:text="${course.title}"></h5>
+                <small th:text="'Name: ' + ${course.courseName} + ' | Price: $' + ${course.price}"></small>
+            </div>
+            <div>
+                <a th:href="@{'/dr/courses/edit/' + ${course.id}}" class="btn btn-sm btn-warning me-1">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <form th:action="@{'/dr/courses/delete/' + ${course.id}}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
+                </form>
+            </div>
+        </div>
 
-            <!-- Tutorials list -->
+        <div class="card-body">
+            <!-- Tutorials Section -->
+            <h6>Tutorials</h6>
             <ul class="list-group mb-2">
-                <li class="list-group-item" th:each="tut : ${tutorialsMap[course.id]}">
+                <li th:each="tut : ${tutorialsMap[course.id].content}" class="list-group-item d-flex justify-content-between">
                     <span th:text="${tut.title} + ' (' + tut.type + ')'"></span>
-                    <form th:action="@{'/dr/tutorials/delete/' + ${tut.id}}" method="post" class="d-inline float-end">
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </form>
+                    <div>
+                        <a th:href="@{'/dr/tutorials/edit/' + ${tut.id}}" class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></a>
+                        <form th:action="@{'/dr/tutorials/delete/' + ${tut.id}}" method="post" class="d-inline">
+                            <button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
+                        </form>
+                    </div>
                 </li>
             </ul>
 
-            <!-- Add tutorial -->
-            <form th:action="@{'/dr/courses/' + ${course.id} + '/tutorials/add'}"
-                  method="post" enctype="multipart/form-data" class="tutorial-form">
-                <input type="text" name="title" class="form-control mb-2" placeholder="Tutorial Title" required>
+            <!-- Tutorial Pagination -->
+            <nav th:if="${tutorialsMap[course.id].totalPages > 1}">
+                <ul class="pagination">
+                    <li class="page-item" th:classappend="${tutorialsMap[course.id].number == 0}? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/dr/courses(page=${currentPage}, ${'tutorialPage_'+course.id}=${tutorialsMap[course.id].number-1})}">
+                            Previous
+                        </a>
+                    </li>
+                    <li class="page-item" th:each="i : ${#numbers.sequence(0, tutorialsMap[course.id].totalPages-1)}"
+                        th:classappend="${tutorialsMap[course.id].number == i}? 'active'">
+                        <a class="page-link"
+                           th:href="@{/dr/courses(page=${currentPage}, ${'tutorialPage_'+course.id}=${i})}"
+                           th:text="${i+1}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${tutorialsMap[course.id].number == tutorialsMap[course.id].totalPages-1}? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/dr/courses(page=${currentPage}, ${'tutorialPage_'+course.id}=${tutorialsMap[course.id].number+1})}">
+                            Next
+                        </a>
+                    </li>
+                </ul>
+            </nav>
 
-                <select name="type" class="form-select mb-2 tutorial-type" required>
-                    <option th:each="type : ${tutorialTypes}" th:value="${type}" th:text="${type}"></option>
-                </select>
+            <!-- Students Section -->
+            <h6>Enrolled Students</h6>
+            <ul class="list-group mb-2">
+                <li th:each="stu : ${studentsMap[course.id].content}" class="list-group-item d-flex justify-content-between">
+                    <span th:text="${stu.fullName} + ' (' + stu.email + ')'"></span>
+                    <div>
+                        <a th:href="@{'/dr/students/edit/' + ${stu.id}}" class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></a>
+                        <form th:action="@{'/dr/students/remove/' + ${stu.id}}" method="post" class="d-inline">
+                            <button class="btn btn-sm btn-danger"><i class="fas fa-user-slash"></i></button>
+                        </form>
+                    </div>
+                </li>
+            </ul>
 
-                <!-- File input -->
-                <div class="file-group mb-2">
-                    <input type="file" name="file" class="form-control">
-                </div>
+            <!-- Student Pagination -->
+            <nav th:if="${studentsMap[course.id].totalPages > 1}">
+                <ul class="pagination">
+                    <li class="page-item" th:classappend="${studentsMap[course.id].number == 0}? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/dr/courses(page=${currentPage}, ${'studentPage_'+course.id}=${studentsMap[course.id].number-1})}">
+                            Previous
+                        </a>
+                    </li>
+                    <li class="page-item" th:each="i : ${#numbers.sequence(0, studentsMap[course.id].totalPages-1)}"
+                        th:classappend="${studentsMap[course.id].number == i}? 'active'">
+                        <a class="page-link"
+                           th:href="@{/dr/courses(page=${currentPage}, ${'studentPage_'+course.id}=${i})}"
+                           th:text="${i+1}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${studentsMap[course.id].number == studentsMap[course.id].totalPages-1}? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/dr/courses(page=${currentPage}, ${'studentPage_'+course.id}=${studentsMap[course.id].number+1})}">
+                            Next
+                        </a>
+                    </li>
+                </ul>
+            </nav>
 
-                <!-- Article input -->
-                <div class="article-group mb-2">
-                    <textarea name="articleContent" class="form-control" placeholder="Article content"></textarea>
-                </div>
+<!--            &lt;!&ndash; Tutorials &ndash;&gt;-->
+<!--            <h6>Tutorials</h6>-->
+<!--            <ul class="list-group mb-3">-->
+<!--                <li th:each="tut : ${tutorialsMap[course.id]}" class="list-group-item d-flex justify-content-between align-items-center">-->
+<!--                    <span th:text="${tut.title} + ' (' + tut.type + ')'"></span>-->
+<!--                    <div>-->
+<!--                        <a th:href="@{'/dr/tutorials/edit/' + ${tut.id}}" class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></a>-->
+<!--                        <form th:action="@{'/dr/tutorials/delete/' + ${tut.id}}" method="post" class="d-inline">-->
+<!--                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>-->
+<!--                        </form>-->
+<!--                    </div>-->
+<!--                </li>-->
+<!--            </ul>-->
 
-                <!-- Quiz input -->
-                <div class="quiz-group mb-2">
-                    <div class="quiz-container"></div>
-                    <button class="btn btn-secondary btn-sm add-quiz-question mb-2">Add Question</button>
-                </div>
+<!--            &lt;!&ndash; Add Tutorial &ndash;&gt;-->
+<!--            <form th:action="@{'/dr/courses/' + ${course.id} + '/tutorials/add'}" method="post" enctype="multipart/form-data" class="tutorial-form mb-3">-->
+<!--                <div class="row g-2">-->
+<!--                    <div class="col-md-3"><input type="text" name="title" class="form-control" placeholder="Tutorial Title" required></div>-->
+<!--                    <div class="col-md-3">-->
+<!--                        <select name="type" class="form-select tutorial-type" required>-->
+<!--                            <option th:each="type : ${tutorialTypes}" th:value="${type}" th:text="${type}"></option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-3 file-group"><input type="file" name="file" class="form-control"></div>-->
+<!--                    <div class="col-md-3 article-group"><textarea name="articleContent" class="form-control" placeholder="Article Content"></textarea></div>-->
+<!--                    <div class="col-12 quiz-group">-->
+<!--                        <div class="quiz-container mb-2"></div>-->
+<!--                        <button class="btn btn-secondary btn-sm add-quiz-question mb-2"><i class="fas fa-plus"></i> Add Question</button>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-2">-->
+<!--                        <button type="submit" class="btn btn-success w-100"><i class="fas fa-plus-circle"></i> Add Tutorial</button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </form>-->
 
-                <button type="submit" class="btn btn-success">Add Tutorial</button>
-            </form>
+<!--            &lt;!&ndash; Enrolled Students &ndash;&gt;-->
+<!--            <h6>Enrolled Students</h6>-->
+<!--            <ul class="list-group mb-2">-->
+<!--                <li th:each="stu : ${studentsMap[course.id]} ?: ${#lists.newArrayList()}" class="list-group-item d-flex justify-content-between align-items-center">-->
+<!--                    <span th:text="${stu.fullName} + ' (' + stu.email + ')'"></span>-->
+<!--                    <div>-->
+<!--                        <a th:href="@{'/dr/students/edit/' + ${stu.id}}" class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></a>-->
+<!--                        <form th:action="@{'/dr/students/remove/' + ${stu.id}}" method="post" class="d-inline">-->
+<!--                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-user-slash"></i></button>-->
+<!--                        </form>-->
+<!--                    </div>-->
+<!--                </li>-->
+<!--            </ul>-->
         </div>
     </div>
 
     <!-- Pagination -->
     <nav th:if="${totalPages > 1}">
-        <ul class="pagination">
-            <li class="page-item" th:classappend="${currentPage == 0}? 'disabled'">
-                <a class="page-link" th:href="@{/dr/courses(page=${currentPage-1})}">Previous</a>
-            </li>
-            <li class="page-item" th:each="i : ${#numbers.sequence(0,totalPages-1)}"
-                th:classappend="${currentPage == i}? 'active'">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage == 0}? 'disabled'"><a class="page-link" th:href="@{/dr/courses(page=${currentPage-1})}">Previous</a></li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0,totalPages-1)}" th:classappend="${currentPage == i}? 'active'">
                 <a class="page-link" th:href="@{/dr/courses(page=${i})}" th:text="${i+1}"></a>
             </li>
-            <li class="page-item" th:classappend="${currentPage == totalPages-1}? 'disabled'">
-                <a class="page-link" th:href="@{/dr/courses(page=${currentPage+1})}">Next</a>
-            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages-1}? 'disabled'"><a class="page-link" th:href="@{/dr/courses(page=${currentPage+1})}">Next</a></li>
         </ul>
     </nav>
-</div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        document.querySelectorAll(".tutorial-form").forEach(form => {
-            const typeSelect = form.querySelector(".tutorial-type");
-            const fileGroup = form.querySelector(".file-group");
-            const articleGroup = form.querySelector(".article-group");
-            const quizGroup = form.querySelector(".quiz-group");
-            const quizContainer = form.querySelector(".quiz-container");
-            const addQuizBtn = form.querySelector(".add-quiz-question");
-
-            const updateInputs = () => {
-                const type = typeSelect.value;
-                fileGroup.style.display = (type === "VIDEO" || type === "PDF") ? "block" : "none";
-                articleGroup.style.display = (type === "ARTICLE") ? "block" : "none";
-                quizGroup.style.display = (type === "QUIZ") ? "block" : "none";
-            };
-
-            typeSelect.addEventListener("change", updateInputs);
-            updateInputs();
-
-            addQuizBtn.addEventListener("click", e => {
-                e.preventDefault();
-                const idx = quizContainer.children.length;
-                const questionDiv = document.createElement("div");
-                questionDiv.classList.add("quiz-question");
-                questionDiv.innerHTML = `
-                <input type="text" name="questions" class="form-control mb-1" placeholder="Question ${idx+1}" required>
-                <input type="text" name="options" class="form-control mb-1" placeholder="Options (comma-separated)" required>
-                <input type="text" name="answers" class="form-control mb-1" placeholder="Answer" required>
-            `;
-                quizContainer.appendChild(questionDiv);
-            });
-
-            form.addEventListener("submit", e => {
-                const type = typeSelect.value;
-                if ((type === "VIDEO" || type === "PDF") && !fileGroup.querySelector("input").files.length) {
-                    e.preventDefault(); alert("Please select a file.");
-                }
-                if (type === "ARTICLE" && !articleGroup.querySelector("textarea").value.trim()) {
-                    e.preventDefault(); alert("Please enter article content.");
-                }
-                if (type === "QUIZ" && quizContainer.children.length === 0) {
-                    e.preventDefault(); alert("Please add at least one quiz question.");
-                }
-            });
-        });
-    });
-</script>
-<!--</body>-->
 </section>
+
+<script th:src="@{/js/manage-courses.js}"></script>
+
+<!--<section layout:fragment="content" class="container mt-5">-->
+<!--    <h2 class="mb-4">Courses Management</h2>-->
+
+<!--    &lt;!&ndash; Flash messages &ndash;&gt;-->
+<!--    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>-->
+<!--    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>-->
+
+<!--    &lt;!&ndash; Create new course &ndash;&gt;-->
+<!--    <form th:action="@{/dr/courses/create}" method="post" class="mb-4 d-flex">-->
+<!--        <input type="text" name="title" class="form-control me-2" placeholder="New Course Title" required>-->
+<!--        <button type="submit" class="btn btn-primary">-->
+<!--            <i class="fas fa-plus"></i> Add Course-->
+<!--        </button>-->
+<!--    </form>-->
+
+<!--    &lt;!&ndash; Courses list &ndash;&gt;-->
+<!--    <div th:each="course : ${courses}" class="card mb-3 shadow-sm">-->
+<!--        <div class="card-header d-flex justify-content-between align-items-center">-->
+<!--            <h5 th:text="${course.title}"></h5>-->
+<!--            <div>-->
+<!--                <a th:href="@{'/dr/courses/edit/' + ${course.id}}" class="btn btn-sm btn-warning me-1">-->
+<!--                    <i class="fas fa-edit"></i>-->
+<!--                </a>-->
+<!--                <form th:action="@{'/dr/courses/delete/' + ${course.id}}" method="post" class="d-inline">-->
+<!--                    <button type="submit" class="btn btn-sm btn-danger">-->
+<!--                        <i class="fas fa-trash-alt"></i>-->
+<!--                    </button>-->
+<!--                </form>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div class="card-body">-->
+<!--            &lt;!&ndash; Tutorials &ndash;&gt;-->
+<!--            <h6>Tutorials</h6>-->
+<!--            <ul class="list-group mb-3">-->
+<!--                <li th:each="tut : ${tutorialsMap[course.id]}" class="list-group-item d-flex justify-content-between align-items-center">-->
+<!--                    <span th:text="${tut.title} + ' (' + tut.type + ')'"></span>-->
+<!--                    <div>-->
+<!--                        <a th:href="@{'/dr/tutorials/edit/' + ${tut.id}}" class="btn btn-sm btn-warning me-1">-->
+<!--                            <i class="fas fa-edit"></i>-->
+<!--                        </a>-->
+<!--                        <form th:action="@{'/dr/tutorials/delete/' + ${tut.id}}" method="post" class="d-inline">-->
+<!--                            <button type="submit" class="btn btn-sm btn-danger">-->
+<!--                                <i class="fas fa-trash-alt"></i>-->
+<!--                            </button>-->
+<!--                        </form>-->
+<!--                    </div>-->
+<!--                </li>-->
+<!--            </ul>-->
+
+<!--            &lt;!&ndash; Add Tutorial &ndash;&gt;-->
+<!--            <form th:action="@{'/dr/courses/' + ${course.id} + '/tutorials/add'}"-->
+<!--                  method="post" enctype="multipart/form-data" class="tutorial-form mb-3">-->
+<!--                <div class="row g-2">-->
+<!--                    <div class="col-md-4">-->
+<!--                        <input type="text" name="title" class="form-control" placeholder="Tutorial Title" required>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-3">-->
+<!--                        <select name="type" class="form-select tutorial-type" required>-->
+<!--                            <option th:each="type : ${tutorialTypes}" th:value="${type}" th:text="${type}"></option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-3 file-group">-->
+<!--                        <input type="file" name="file" class="form-control">-->
+<!--                    </div>-->
+<!--                    <div class="col-md-3 article-group">-->
+<!--                        <textarea name="articleContent" class="form-control" placeholder="Article Content"></textarea>-->
+<!--                    </div>-->
+<!--                    <div class="col-12 quiz-group">-->
+<!--                        <div class="quiz-container mb-2"></div>-->
+<!--                        <button class="btn btn-secondary btn-sm add-quiz-question mb-2">-->
+<!--                            <i class="fas fa-plus"></i> Add Question-->
+<!--                        </button>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-2">-->
+<!--                        <button type="submit" class="btn btn-success w-100">-->
+<!--                            <i class="fas fa-plus-circle"></i> Add Tutorial-->
+<!--                        </button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </form>-->
+
+<!--            &lt;!&ndash; Students &ndash;&gt;-->
+<!--            <h6>Enrolled Students</h6>-->
+<!--            <ul class="list-group mb-2">-->
+<!--                <li th:each="stu : ${studentsMap[course.id]} ?: ${#lists.newArrayList()}"-->
+<!--                    class="list-group-item d-flex justify-content-between align-items-center">-->
+<!--                    <span th:text="${stu.fullName} + ' (' + stu.email + ')'"></span>-->
+<!--                    <div>-->
+<!--                        <a th:href="@{'/dr/students/edit/' + ${stu.id}}" class="btn btn-sm btn-warning me-1">-->
+<!--                            <i class="fas fa-edit"></i>-->
+<!--                        </a>-->
+<!--                        <form th:action="@{'/dr/students/remove/' + ${stu.id}}" method="post" class="d-inline">-->
+<!--                            <button type="submit" class="btn btn-sm btn-danger">-->
+<!--                                <i class="fas fa-user-slash"></i>-->
+<!--                            </button>-->
+<!--                        </form>-->
+<!--                    </div>-->
+<!--                </li>-->
+<!--            </ul>-->
+
+<!--            &lt;!&ndash;            <ul class="list-group mb-2">&ndash;&gt;-->
+<!--&lt;!&ndash;                <li th:each="stu : ${studentsMap[course.id]}" class="list-group-item d-flex justify-content-between align-items-center">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <span th:text="${stu.fullName} + ' (' + stu.email + ')'"></span>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <a th:href="@{'/dr/students/edit/' + ${stu.id}}" class="btn btn-sm btn-warning me-1">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <i class="fas fa-edit"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <form th:action="@{'/dr/students/remove/' + ${stu.id}}" method="post" class="d-inline">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <button type="submit" class="btn btn-sm btn-danger">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <i class="fas fa-user-slash"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </button>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </form>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;            </ul>&ndash;&gt;-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Pagination &ndash;&gt;-->
+<!--    <nav th:if="${totalPages > 1}">-->
+<!--        <ul class="pagination justify-content-center">-->
+<!--            <li class="page-item" th:classappend="${currentPage == 0}? 'disabled'">-->
+<!--                <a class="page-link" th:href="@{/dr/courses(page=${currentPage-1})}">Previous</a>-->
+<!--            </li>-->
+<!--            <li class="page-item" th:each="i : ${#numbers.sequence(0,totalPages-1)}"-->
+<!--                th:classappend="${currentPage == i}? 'active'">-->
+<!--                <a class="page-link" th:href="@{/dr/courses(page=${i})}" th:text="${i+1}"></a>-->
+<!--            </li>-->
+<!--            <li class="page-item" th:classappend="${currentPage == totalPages-1}? 'disabled'">-->
+<!--                <a class="page-link" th:href="@{/dr/courses(page=${currentPage+1})}">Next</a>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </nav>-->
+<!--</section>-->
+
+<script th:src="@{/js/manage-courses.js}"></script>
 </html>

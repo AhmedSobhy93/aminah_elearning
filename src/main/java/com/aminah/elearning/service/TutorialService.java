@@ -6,6 +6,7 @@ import com.aminah.elearning.repository.CourseRepository;
 import com.aminah.elearning.repository.TutorialRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,10 @@ public class TutorialService {
 
     public void delete(String id){
         tutorialRepository.deleteById(id);
+    }
+
+    public Page<Tutorial> getTutorialsForCourse(String courseId, int page, int size) {
+        return tutorialRepository.findByCourseId(courseId, PageRequest.of(page, size));
     }
 //    private final TutorialRepository tutorialRepository;
 //    private final CourseRepository courseRepository;

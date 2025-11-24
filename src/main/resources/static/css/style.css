@@ -230,3 +230,13 @@ aside .nav-link:hover {
 .modal-content {
     transform: none !important;
 }
+
+.file-group, .article-group, .quiz-group {
+    display: none;
+}
+
+.quiz-question {
+    border: 1px dashed #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}
