@@ -2,36 +2,33 @@ package com.aminah.elearning.model;
 
 //import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Entity
-//@Table(name="courses")
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
-@Document(collection = "courses")
+import jakarta.persistence.*;
+
+
+@Entity
+@Table(name = "courses")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Course {
-//    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
-//    @Column(nullable=false)
+    @Column(nullable=false)
     private String title;
 
-//    @Column(nullable = false)
+    @Column(nullable = false)
     private String courseName;
 
-//    @Column(length=2000)
+    @Column(columnDefinition="TEXT")
     private String description;
 
-//    @Column(nullable=false)
+    @Column(nullable=false)
     private Double price;
 
     private boolean published = false;
@@ -40,16 +37,18 @@ public class Course {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
-//    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseEnrollment> courseEnrollmentIds= new ArrayList<>();
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "author_id")
-//    private User author; // DR
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
+    private User author; // DR
     private String authorUsername;
 
-//    @OneToMany(mappedBy="course", cascade=CascadeType.ALL, orphanRemoval=true)
-    private List<String> tutorialIds= new ArrayList<>();
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("orderIndex")
+    private List<Tutorial> tutorials = new ArrayList<>();
+
 
 
 

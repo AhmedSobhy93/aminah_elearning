@@ -1,25 +1,28 @@
 package com.aminah.elearning.model;
 //import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.*;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
 
-//@Entity
+@Entity
 //@Getter
 //@Setter
-//@NoArgsConstructor
-//@AllArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 //@Builder
-@Document(collection = "passwordResetTokens")
+//@Document(collection = "passwordResetTokens")
 @Data
 public class PasswordResetToken {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    private @ManyToOne private User student;
+    @ManyToOne private Course course; id;
 
 //    @Column(nullable = false, unique = true)
     private String token;
