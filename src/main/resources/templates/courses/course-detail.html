@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<section layout:fragment="content">
+
+<!-- New Design Starts -->
+<section class="banner courses archive section">
+    <span th:if="${message}">
+    <h1 style="text-align: center; padding-bottom:200px;color: #4B5563;" th:text="${message}"></h1>
+    </span>
+    <span th:if="!${message}">
+<!--    <h1 style="text-align: center;color: #4B5563;" th:text="${title}"></h1>-->
+    </span>
+
+        <div class="container mt-5">
+            <div class="row g-4">
+
+                <!-- Sidebar (Course Outline / Progress) -->
+                <aside class="col-lg-4 col-md-5">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0" th:text="${course.courseName}">Course Title</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted" th:text="${course.description}"></p>
+
+                            <div class="mb-3">
+                                <strong>Instructor:</strong>
+                                <span th:text="${course.author}"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <strong>Created At:</strong>
+                                <span th:text="${course.createdAt}"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <strong>Price:</strong>
+                                <span th:if="${course.price == 0}" class="text-success fw-bold">FREE</span>
+                                <span th:if="${course.price != 0}" class="text-primary fw-bold" th:text="${'EGP' + course.price}"></span>
+                            </div>
+
+<!--                            <div class="mb-3">-->
+<!--                                <strong>Progress:</strong>-->
+<!--                                <div class="progress mt-1" style="height: 8px;">-->
+<!--                                    <div class="progress-bar bg-success" role="progressbar"-->
+<!--                                         th:style="'width:' + ${progress} + '%'" th:text="${progress + '%'}"></div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+                            <div class="d-grid gap-2">
+                                <a th:if="${!enrolled}" th:href="@{/courses/{id}(id=${course.id})/enroll}" class="btn btn-primary rounded-pill">
+                                    <i class="bi bi-play-circle"></i> Enroll Now
+                                </a>
+
+                                <a th:if="${enrolled}" th:href="@{/course/{id}/content(id=${course.id})}" class="btn btn-success rounded-pill">
+                                    <i class="bi bi-journal-text"></i> Continue Learning
+                                </a>
+
+                                <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+                                   th:href="@{/admin/courses/manage/{id}(id=${course.id})}" class="btn btn-warning rounded-pill">
+                                    <i class="bi bi-gear"></i> Manage Course
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Main Content -->
+                <main class="col-lg-8 col-md-7">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+
+<!--                            &lt;!&ndash; Course Media &ndash;&gt;-->
+<!--                            <div th:switch="${content.type}">-->
+<!--                                <div th:case="'VIDEO'">-->
+<!--                                    <div class="ratio ratio-16x9 mb-3">-->
+<!--                                        <iframe th:src="@{${content.url}}" allowfullscreen></iframe>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+
+<!--                                <div th:case="'PDF'">-->
+<!--                                    <iframe th:src="@{${content.url}}" width="100%" height="500px"></iframe>-->
+<!--                                </div>-->
+
+<!--                                <div th:case="'TEXT'">-->
+<!--                                    <p class="lead" th:utext="${content.text}"></p>-->
+<!--                                </div>-->
+
+<!--                                <div th:case="'QUIZ'">-->
+<!--                                    <div class="border rounded p-3">-->
+<!--                                        <h5><i class="bi bi-question-circle"></i> Quiz Section</h5>-->
+<!--                                        <p th:text="${content.quizDescription}"></p>-->
+<!--                                        <a th:href="@{/quiz/{id}(id=${content.id})}" class="btn btn-outline-primary rounded-pill mt-2">-->
+<!--                                            Start Quiz-->
+<!--                                        </a>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+
+<!--                                <div th:case="*">-->
+<!--                                    <p class="text-muted">No content available for this section.</p>-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+                            <!-- Course Navigation -->
+                            <div class="d-flex justify-content-between mt-4">
+                                <a th:href="@{/course/{id}/previous(id=${course.id})}" class="btn btn-outline-secondary rounded-pill">
+                                    <i class="bi bi-arrow-left"></i> Previous
+                                </a>
+                                <a th:href="@{/course/{id}/next(id=${course.id})}" class="btn btn-outline-secondary rounded-pill">
+                                    Next <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+</section>
+<!-- New Design End -->
+</section>

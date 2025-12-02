@@ -1,41 +1,67 @@
 package com.aminah.elearning.model;
 
+import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.*;
+
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-@Table(name="courses")
+@Table(name = "courses")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Course {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
     private String courseName;
 
-    @Column(length=2000)
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private Double price;
 
     private boolean published = false;
 
-    private String thumbnailUrl;
+    private String videoUrl;
 
-    private String videoUrl; // Cloudinary or external URL
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 
-    @OneToMany(mappedBy = "course")
-    private List<CourseEnrollment> enrollments;
+    // Relationships
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CourseEnrollment> enrollments = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id") // assuming 'author' is User
+    private User author;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("orderIndex")
+    private List<Tutorial> tutorials = new ArrayList<>();
+
+    // Helper method
+    public void addTutorial(Tutorial tutorial) {
+        tutorials.add(tutorial);
+        tutorial.setCourse(this);
+    }
 }

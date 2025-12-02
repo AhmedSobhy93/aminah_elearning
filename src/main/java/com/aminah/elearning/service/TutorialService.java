@@ -1,0 +1,49 @@
+package com.aminah.elearning.service;
+
+import com.aminah.elearning.model.Tutorial;
+import com.aminah.elearning.repository.CourseRepository;
+import com.aminah.elearning.repository.TutorialRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.NoSuchElementException;
+
+@Service
+@RequiredArgsConstructor
+public class TutorialService {
+    private final TutorialRepository tutorialRepository;
+    private final CourseRepository courseRepository;
+
+    public Page<Tutorial> getTutorialsForCourse(Long courseId, Pageable pageable) {
+        return tutorialRepository.findByCourseId(courseId, pageable);
+    }
+
+    public List<Tutorial> getTutorialsForCourse(Long courseId) {
+        return tutorialRepository.findByCourseId(courseId);
+    }
+
+    public Tutorial getTutorial(Long id) {
+        return tutorialRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Tutorial not found"));
+    }
+
+    public Tutorial save(Tutorial t) {
+        return tutorialRepository.save(t);
+    }
+
+    public void delete(Long id) {
+        tutorialRepository.deleteById(id);
+    }
+
+    public Page<Tutorial> getTutorialsForCourse(Long courseId, int page, int size) {
+        return tutorialRepository.findByCourseId(courseId, PageRequest.of(page, size));
+    }
+
+}
+
+
+
+

@@ -6,18 +6,19 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "payments")
+
 public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** Linked user */
+//    /** Linked user */
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    /** Linked enrollment */
+//    /** Linked enrollment */
     @OneToOne
     @JoinColumn(name = "enrollment_id", nullable = false)
     private CourseEnrollment courseEnrollment;
@@ -30,4 +31,6 @@ public class Payment {
 
     /** Payment gateway (PAYMOB, STRIPE, etc.) */
     private String gateway;
+
+    private String courseId;
 }

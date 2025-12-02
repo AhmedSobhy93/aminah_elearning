@@ -1,36 +1,134 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base::layout(~{::section})">
-<head>
-    <meta charset="UTF-8"/>
-    <title>This is a home page</title>
-</head>
-<body>
-<section class="text-gray-600 body-font">
-    <div class="container px-5 py-24 mx-auto flex flex-wrap items-center">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{'layout/base'}">
+<section layout:fragment="content" class="text-gray-600 body-font">
+    <div class="container-fluid ">
+        <div class="row mb-4 text-center">
+            <h2 class="fw-bold text-primary">Contact Us</h2>
+            <!-- Feedback messages -->
+            <div th:if="${success}" class="alert alert-success mt-3" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-danger mt-3" th:text="${error}"></div>
 
-        <h1 class="text-3xl font-medium title-font text-gray-900 mb-4 w-full text-center">Contact Us</h1>
+            <p class="text-muted">We’d love to hear from you — reach out anytime!</p>
+        </div>
 
-        <div th:style="'padding-left: 30px;padding-right: 30px;display: flex;width: 100%;margin-top:1rem;margin-bottom:0px;padding: 2rem;margin-left: 80px;margin-right: 80px;--tw-bg-opacity: 1;border-radius: 0.5rem;flex-direction: column;background-color: rgb(243 244 246 / var(--tw-bg-opacity));'" class="lg:w-2/6 md:w-1/2 bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
-            <form th:action="@{/submit-contactus}" method="post" th:object="${contactUs}">
-                <!-- Form fields here -->
-                <div class="relative mb-4">
-                    <label for="name" class="leading-7 text-sm text-gray-600">Name</label>
-                    <input type="text" id="name" name="name"   readonly class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" placeholder="Enter here" required th:field="*{name}">
+        <div class="row g-4">
+            <!-- Contact Information -->
+            <div class="col-md-5">
+                <div class="card shadow-sm p-4 border-0">
+                    <h5 class="mb-3 text-secondary">Hospital Information</h5>
+                    <p><strong>Aminah Hospital</strong></p>
+                    <p><i class="bi bi-geo-alt text-primary me-2"></i> Benha, Qalyubia, Egypt</p>
+                    <p><i class="bi bi-telephone text-primary me-2"></i> +20 10-1234-5678</p>
+                    <p><i class="bi bi-envelope text-primary me-2"></i> contact@aminahhospital.com</p>
+                    <hr>
+                    <h6 class="text-secondary mb-2">Office Hours</h6>
+                    <p>Saturday – Thursday: 9 AM – 6 PM</p>
+                    <p>Friday: Closed</p>
                 </div>
-                <div class="relative mb-4">
-                    <label for="email" class="leading-7 text-sm text-gray-600">Email</label>
-                    <input type="email" id="email" name="email"   readonly class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" placeholder="Enter here" required th:field="*{email}">
+            </div>
+
+            <!-- Contact Form -->
+            <div class="col-md-7">
+                <div class="card shadow-sm border-0 p-4">
+                    <h5 class="text-secondary mb-3">Send Us a Message</h5>
+                    <form th:action="@{/contact}" method="post" th:object="${contact}">
+                        <div class="mb-3">
+                            <label class="form-label">Your Name</label>
+                            <input type="text" th:field="*{name}" class="form-control" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" th:field="*{email}" class="form-control" placeholder="you@example.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Subject</label>
+                            <input type="text" th:field="*{subject}" class="form-control" placeholder="Subject" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Message</label>
+                            <textarea th:field="*{message}" class="form-control" rows="5" placeholder="Type your message here..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Send Message</button>
+                    </form>
+
+                    <!-- Feedback messages -->
+                    <div th:if="${success}" class="alert alert-success mt-3" th:text="${success}"></div>
+                    <div th:if="${error}" class="alert alert-danger mt-3" th:text="${error}"></div>
                 </div>
-                <div class="relative mb-4">
-                    <label for="message" class="leading-7 text-sm text-gray-600">Message</label>
-                    <textarea class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out h-32 resize-none" id="message" name="message" placeholder="Enter your message here" required th:field="*{message}"></textarea>
-                </div>
-                <div class="p-2 w-full">
-                    <button th:style="'border-radius:4rem!important;background-color: #6674CC;padding-left:2rem;padding-right:2rem;padding-top:0.5rem;padding-bottom:0.5rem;font-size:1.125;line-height:2.125;'" class="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Submit</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
+<!--    <div class="container px-5 py-24 mx-auto flex flex-wrap items-center">-->
+
+<!--        <h1 class="text-3xl font-medium title-font text-gray-900 mb-4 w-full text-center">Contact Us</h1>-->
+
+<!--        <div th:style="'padding-left: 30px;padding-right: 30px;display: flex;width: 100%;margin-top:1rem;margin-bottom:0px;padding: 2rem;margin-left: 80px;margin-right: 80px;&#45;&#45;tw-bg-opacity: 1;border-radius: 0.5rem;flex-direction: column;background-color: rgb(243 244 246 / var(&#45;&#45;tw-bg-opacity));'" class="lg:w-2/6 md:w-1/2 bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">-->
+
+<!--            <div th:if="${user != null}">-->
+<!--                <div class="d-flex justify-content-center align-items-center vh-100">-->
+<!--                    <div class="card shadow-lg p-4" style="width: 400px;">-->
+<!--                        <h3 class="text-center mb-3">Contact us</h3>-->
+
+<!--                        <form th:action="@{/update-profile}" method="post" th:object="${user}">-->
+<!--                            <input type="hidden" id="id" th:field="${user.id}" required>-->
+<!--                            <div class="mb-3">-->
+<!--                                <input type="text" name="name" class="form-control" placeholder="Enter your UserName"-->
+<!--                                       th:field="*{username}" required/>-->
+<!--                            </div>-->
+
+<!--                            <div class=" mb-3">-->
+<!--                                <input type="text" name="password" class="form-control" placeholder="Enter your Password"-->
+<!--                                       required/>-->
+<!--                            </div>-->
+<!--                            <div class=" mb-3">-->
+<!--                                <input type="email" name="email" class="form-control" placeholder="Enter your Email"-->
+<!--                                       th:field="${user.email}" required/>-->
+<!--                            </div>-->
+
+<!--                            <div class="d-grid">-->
+<!--                                <button type="submit" class="btn">Update</button>-->
+<!--                            </div>-->
+
+<!--                            &lt;!&ndash;                <div class="container text-center mt-4">&ndash;&gt;-->
+<!--                            &lt;!&ndash;                    <button type="submit"&ndash;&gt;-->
+<!--                            &lt;!&ndash;                            class="btn text-white"&ndash;&gt;-->
+<!--                            &lt;!&ndash;                            style="border-radius:4rem;background-color:#6674CC;">&ndash;&gt;-->
+<!--                            &lt;!&ndash;                        Update&ndash;&gt;-->
+<!--                            &lt;!&ndash;                    </button>&ndash;&gt;-->
+
+
+<!--                        </form>-->
+
+<!--                        &lt;!&ndash;            <div id="register-link" class="text-right mt-4">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                <a th:if="${user?.id > 4}" th:href="@{/delete-profile}" class="delete-link">Delete profile</a>&ndash;&gt;-->
+<!--                        &lt;!&ndash;                <a th:if="${user?.id > 4}" href="#" class="delete-link" style="color:red !important;">&ndash;&gt;-->
+<!--                        &lt;!&ndash;                    Delete Profile (disabled for this user)&ndash;&gt;-->
+<!--                        &lt;!&ndash;                </a>&ndash;&gt;-->
+<!--                    </div>-->
+
+<!--                </div>-->
+<!--&lt;!&ndash;            <form th:action="@{/submit-contactus}" method="post" th:object="${user}">&ndash;&gt;-->
+<!--&lt;!&ndash;                &lt;!&ndash; Form fields here &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                <div class="relative mb-4">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <label for="name" class="leading-7 text-sm text-gray-600">Name</label>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <input type="text" id="name" name="name"   readonly class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" placeholder="Enter here" required th:field="*{user.username}">&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                <div class="relative mb-4">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <label for="email" class="leading-7 text-sm text-gray-600">Email</label>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <input type="email" id="email" name="email"   readonly class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" placeholder="Enter here" required th:field="*{user.email}">&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                <div class="relative mb-4">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <label for="message" class="leading-7 text-sm text-gray-600">Message</label>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <textarea class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out h-32 resize-none" id="message" name="message" placeholder="Enter your message here" required th:field="*{message}"></textarea>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                <div class="p-2 w-full">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <button th:style="'border-radius:4rem!important;background-color: #6674CC;padding-left:2rem;padding-right:2rem;padding-top:0.5rem;padding-bottom:0.5rem;font-size:1.125;line-height:2.125;'" class="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Submit</button>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--&lt;!&ndash;            </form>&ndash;&gt;-->
+<!--        </div>-->
+<!--    </div>-->
 </section>
 </body>
 </html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<section layout:fragment="content">
+    <div class="container my-5">
+        <h1 class="text-center mb-4">My Courses</h1>
+        <div th:each="enrollment : ${enrolledCourses}" class="card mb-3 shadow-sm p-3">
+            <h4 th:text="${enrollment.course.courseName}"></h4>
+            <p th:text="${enrollment.course.description}"></p>
+            <div class="progress mb-2">
+                <div class="progress-bar" role="progressbar" th:style="'width:' + ${enrollment.progressPercentage} + '%'" th:text="${enrollment.progressPercentage + '%'}"></div>
+            </div>
+            <a th:href="@{/student/course/{id}(id=${enrollment.course.id})}" class="btn btn-primary">Open Course</a>
+
+            <span th:if="${enrollment.completed and !enrollment.certificateIssued}" class="badge bg-success ms-2">Complete! Certificate Pending</span>
+            <span th:if="${enrollment.completed and enrollment.certificateIssued}" class="badge bg-success ms-2">Certificate Issued</span>
+        </div>
+    </div>
+</section>

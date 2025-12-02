@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<section layout:fragment="content">
+<body class="bg-light">
+<div class="container mt-4">
+    <h3 class="text-primary">
+        <i class="fa-solid fa-users"></i> Students in <span th:text="${course.title}"></span>
+    </h3>
+
+    <table class="table table-striped mt-3">
+        <thead class="table-primary">
+        <tr>
+            <th>Student</th>
+            <th>Email</th>
+            <th>Payment Status</th>
+            <th>Amount</th>
+            <th>Progress</th>
+            <th>Completed</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="enrollment : ${enrollments}">
+            <td th:text="${enrollment.user.fullName}"></td>
+            <td th:text="${enrollment.user.email}"></td>
+            <td>
+                <span th:text="${enrollment.paymentStatus}" th:classappend="${enrollment.paymentStatus == 'SUCCESS' ? 'badge bg-success' : 'badge bg-warning'}"></span>
+            </td>
+            <td th:text="${enrollment.course.price}"></td>
+            <td>
+                <div class="progress">
+                    <div class="progress-bar" th:style="'width:' + ${enrollment.progressPercentage} + '%'"></div>
+                </div>
+            </td>
+            <td th:text="${enrollment.completed ? 'Yes' : 'No'}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{/dr/courses}" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back</a>
+</div>
+</body>
+</section>
+</html>

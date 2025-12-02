@@ -4,47 +4,35 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.context.annotation.Lazy;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "course_enrollments")
 @Data
 @NoArgsConstructor
-@Entity
-@Lazy(value = false)
-@Table(name = "course_enrollment")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id",
-        scope = CourseEnrollment.class)
+@AllArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = CourseEnrollment.class)
 public class CourseEnrollment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** The user who enrolled in the course */
-    @ManyToOne
+    // Many enrollments belong to one user
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    /** The course being enrolled in */
-    @ManyToOne
-    @JoinColumn(name = "course_id", nullable = false)
+    // Many enrollments belong to one course
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
     private Course course;
 
-    /** Enrollment status: PENDING, ACTIVE, COMPLETED, CANCELLED */
-    private String status;
+    @Column(name = "enrollment_date", nullable = false, updatable = false)
+    private LocalDateTime enrollmentDate;
 
-
-    @Column(name = "user_name", nullable = false)
-    private String userName;
-
-
-    @Column(name = "enrollment_date", updatable = false)
-    private LocalDateTime enrollmentDate = LocalDateTime.now();
-
-    @Column(name = "payment_status")
+    @Column(name = "payment_status", nullable = false)
     private String paymentStatus = "PENDING"; // PENDING, SUCCESS, FAILED
 
     @Column(name = "progress_percentage")
@@ -52,4 +40,12 @@ public class CourseEnrollment {
 
     @Column(name = "completion_status")
     private Boolean completed = false;
+
+    @Column(name = "certificate_issued")
+    private Boolean certificateIssued = false;
+
+    @PrePersist
+    protected void onEnroll() {
+        enrollmentDate = LocalDateTime.now();
+    }
 }
