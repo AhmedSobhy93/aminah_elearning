@@ -16,8 +16,8 @@ public class PaymentService {
 
     public Payment createPayment(User user, CourseEnrollment enrollment, String gateway) {
         Payment payment = new Payment();
-        payment.setUserId(user.getId());
-        payment.setCourseEnrollmentId(enrollment.getId());
+        payment.setUser(user);
+        payment.setCourseEnrollment(enrollment);
 //        payment.setAmount(enrollment.getPaymentStatus());
         payment.setStatus("PENDING");
         payment.setGateway(gateway);
@@ -30,21 +30,21 @@ public class PaymentService {
     }
 
     // <-- Add this method
-    public Payment getPaymentById(String id) {
-        return paymentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
+    public Payment getPaymentById(Long id) {
+        return paymentRepository.findById(id).orElseThrow(() -> new RuntimeException("Payment not found"));
     }
-    public Payment processPayment(User user, CourseEnrollment enrollment, Double amount, String gateway){
+
+    public Payment processPayment(User user, CourseEnrollment enrollment, Double amount, String gateway) {
         Payment payment = new Payment();
-        payment.setUserId(user.getId());
-//        payment.setCourseEnrollmentId(enrollment);
+        payment.setUser(user);
+        payment.setCourseEnrollment(enrollment);
         payment.setAmount(amount);
         payment.setStatus("SUCCESS"); // Simulate success, integrate actual gateway
         payment.setGateway(gateway);
         paymentRepository.save(payment);
 
         // enroll after payment
-//        enrollmentService.enrollUser(user.getId(),user, enrollment.getCourseId());
+        enrollmentService.enrollUser(user, enrollment.getCourse());
         return payment;
     }
 }

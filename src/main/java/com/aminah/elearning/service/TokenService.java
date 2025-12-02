@@ -24,7 +24,7 @@ public class TokenService {
         String tokenValue = UUID.randomUUID().toString();
         VerificationToken token = new VerificationToken();
         token.setToken(tokenValue);
-        token.setUserId(user.getId());
+        token.setUser(user);
         token.setExpiryDate(LocalDateTime.now().plusHours(24)); // 24h validity
         return verificationTokenRepository.save(token);
     }
@@ -33,7 +33,7 @@ public class TokenService {
         String tokenValue = UUID.randomUUID().toString();
         PasswordResetToken token = new PasswordResetToken();
         token.setToken(tokenValue);
-        token.setUserId(user.getId());
+        token.setUser(user);
         token.setExpiryDate(LocalDateTime.now().plusMinutes(15)); // shorter for security
         return resetTokenRepository.save(token);
     }

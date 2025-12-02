@@ -4,7 +4,8 @@ import com.aminah.elearning.model.PasswordResetToken;
 import com.aminah.elearning.model.User;
 import com.aminah.elearning.repository.PasswordResetTokenRepository;
 import com.aminah.elearning.repository.UserRepository;
-import com.aminah.elearning.service.EmailService;
+import com.aminah.elearning.service.EmailServiceGmail;
+import com.aminah.elearning.service.EmailServiceSendGrid;
 import com.aminah.elearning.service.TokenService;
 import com.aminah.elearning.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.Charset;
 import java.util.Optional;
 
 @Controller
@@ -24,7 +24,7 @@ public class PasswordController {
     @Autowired
     private TokenService tokenService;
     @Autowired
-    private EmailService emailService;
+    private EmailServiceSendGrid emailServiceSendGrid;
     @Autowired
     private PasswordResetTokenRepository resetTokenRepository;
     @Autowired
@@ -45,12 +45,11 @@ public class PasswordController {
 //        } catch (Exception e) {
 //            model.addAttribute("error", "Email not found.");
 //        }
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("No user with this email"));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("No user with this email"));
 
         PasswordResetToken token = tokenService.createPasswordResetToken(user);
         String resetLink = "http://localhost:8080/reset-password?token=" + token.getToken();
-        emailService.sendVerificationEmail(user.getEmail(), "Password Reset", "Click: " + resetLink);
+        emailServiceSendGrid.sendEmail(user.getEmail(), "Password Reset", "Click: " + resetLink);
 
         model.addAttribute("message", "Reset link sent to your email.");
         return "profile/forgot-password";
@@ -63,13 +62,10 @@ public class PasswordController {
     }
 
     @PostMapping("/reset-password")
-    public String resetPassword(@RequestParam("token") String token,
-                                @RequestParam("password") String password,
-                                Model model) {
+    public String resetPassword(@RequestParam("token") String token, @RequestParam("password") String password, Model model) {
 //        boolean success = userRepository.resetPassword(token, password);
 //        model.addAttribute("success", success);
-        PasswordResetToken resetTokenToken = resetTokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid token"));
+        PasswordResetToken resetTokenToken = resetTokenRepository.findByToken(token).orElseThrow(() -> new RuntimeException("Invalid token"));
 
         if (resetTokenToken.isExpired()) {
 
@@ -77,7 +73,7 @@ public class PasswordController {
             return "profile/reset-password";
         }
 
-        Optional<User> optionalUser = userRepository.findById(resetTokenToken.getUserId());
+        Optional<User> optionalUser = userRepository.findById(resetTokenToken.getUser().getId());
         User user = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
 
         user.setPassword(passwordEncoder.encode(password));

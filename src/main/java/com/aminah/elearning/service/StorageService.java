@@ -11,18 +11,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-import static com.aminah.elearning.model.TutorialType.*;
-
 @Service
 public class StorageService {
     private final Path storageLocation = null;
 
-   
-
-//    public StorageService(FileStorageProperties  props) throws IOException {
-//        this.storageLocation = Paths.get(props.getUploadDir()).toAbsolutePath().normalize();
-//        Files.createDirectories(this.storageLocation);
-//    }
 
     private final Path rootUpload = Paths.get("uploads");
 
@@ -33,7 +25,7 @@ public class StorageService {
     /**
      * Stores file organized by doctorId/courseId/type
      */
-    public String storeFile(MultipartFile file, String doctorId, String courseId, TutorialType type) throws IOException {
+    public String storeFile(MultipartFile file, Long doctorId, Long courseId, TutorialType type) throws IOException {
         String folder = switch (type) {
             case VIDEO -> "videos";
             case PDF -> "pdfs";
@@ -59,12 +51,5 @@ public class StorageService {
     public Path getFilePath(String relativePath) {
         return rootUpload.resolve(relativePath);
     }
-//    public String store(MultipartFile file) throws IOException {
-//        String filename = System.currentTimeMillis() + "_" + StringUtils.cleanPath(file.getOriginalFilename());
-//        Path target = this.storageLocation.resolve(filename);
-//        Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
-//        return target.toString();
-//    }
 
-//    public Resource loadAsResource(String filepath) { ... }
 }

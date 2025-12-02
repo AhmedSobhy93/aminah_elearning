@@ -1,17 +1,15 @@
 package com.aminah.elearning.repository;
 
 import com.aminah.elearning.model.VerificationToken;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-//import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
 @Repository
-public interface VerificationTokenRepository extends MongoRepository<VerificationToken,String>
+public interface VerificationTokenRepository extends JpaRepository<VerificationToken,Long>
 {
-    @Override
-    Optional<VerificationToken> findById(String aLong);
+    Optional<VerificationToken> findById(Long id);
 
     Optional<VerificationToken> findByToken(String token);
 }

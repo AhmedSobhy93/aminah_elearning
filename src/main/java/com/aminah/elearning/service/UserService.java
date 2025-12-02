@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -22,7 +21,7 @@ public class UserService implements UserDetailsService {
     @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepo;
     @Autowired
-    private EmailService emailService;
+    private EmailServiceSendGrid emailServiceSendGrid;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -43,7 +42,7 @@ public class UserService implements UserDetailsService {
         User existingUser = userRepository.findById(updatedUser.getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-//        existingUser.setFullName(updatedUser.getFullName());
+        existingUser.setFullName(updatedUser.getFullName());
         existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         existingUser.setEmail(updatedUser.getEmail());
         return userRepository.save(existingUser);
@@ -53,7 +52,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    public User getUserById(String id) {
+    public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
@@ -62,19 +61,19 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    public void deleteUser(String id) {
+    public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
 
-    public void enableUser(String id) {
+    public void enableUser(Long id) {
         User user = getUserById(id);
         user.setEnabled(true);
         userRepository.save(user);
     }
 
-    public void updateUser(String id, User updatedUser) {
+    public void updateUser(Long id, User updatedUser) {
         User user = getUserById(id);
-        user.setFullName(updatedUser.getFullName());
+//        user.setFullName(updatedUser.getFullName());
         user.setEmail(updatedUser.getEmail());
         user.setRole(updatedUser.getRole());
         user.setEnabled(updatedUser.isEnabled());

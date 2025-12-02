@@ -1,71 +1,73 @@
 package com.aminah.elearning.service;
 
-import com.aminah.elearning.utils.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 import java.io.IOException;
-import java.net.URI;
-import java.time.Instant;
+import java.time.Duration;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class S3StorageService implements StorageService {
+public class S3StorageService {
 
     private final S3Client s3Client;
+    private final S3Presigner presigner;
 
     @Value("${aws.s3.bucket}")
     private String bucket;
 
-    @Value("${aws.s3.base-url:}") // optional base URL if you use CDN
-    private String baseUrl;
+    @Value("${aws.s3.folder}")
+    private String baseFolder;
 
-    @Override
-    public String storeFile(MultipartFile file, String userId, String courseId, Object type) throws IOException {
-        String ext = "";
-        String original = file.getOriginalFilename();
-        if (original != null && original.contains(".")) ext = original.substring(original.lastIndexOf('.'));
-        String key = String.format("users/%s/courses/%s/%s-%s%s", userId, courseId, Instant.now().getEpochSecond(), UUID.randomUUID(), ext);
 
-        PutObjectRequest por = PutObjectRequest.builder()
+    /* ------------------------------------------------------
+       NORMAL PDF UPLOAD (S3Client.putObject)
+       ------------------------------------------------------ */
+    public String uploadPDF(MultipartFile file, Long courseId, String userId) throws IOException {
+
+        String key = baseFolder + "/courses/" + courseId + "/pdf/"
+                + UUID.randomUUID() + "-" + file.getOriginalFilename();
+
+        PutObjectRequest req = PutObjectRequest.builder()
                 .bucket(bucket)
                 .key(key)
-                .acl(ObjectCannedACL.PUBLIC_READ)
                 .contentType(file.getContentType())
-                .contentLength(file.getSize())
                 .build();
 
-        s3Client.putObject(por, RequestBody.fromBytes(file.getBytes()));
+        s3Client.putObject(req, RequestBody.fromBytes(file.getBytes()));
 
-        if (baseUrl != null && !baseUrl.isBlank()) {
-            return baseUrl + "/" + key;
-        } else {
-            // Construct S3 URL (region-specific may be needed)
-            // If using virtual-hosted-style: https://{bucket}.s3.{region}.amazonaws.com/{key}
-            return String.format("https://%s.s3.amazonaws.com/%s", bucket, key);
-        }
+        return "https://" + bucket + ".s3.amazonaws.com/" + key;
     }
 
-    @Override
-    public void delete(String fileUrl) throws Exception {
-        // naive: try to extract key from URL after bucket/
-        if (fileUrl == null) return;
-        String key;
-        if (fileUrl.contains(bucket + "/")) {
-            key = fileUrl.substring(fileUrl.indexOf(bucket + "/") + (bucket + "/").length());
-        } else {
-            // if URL ends with key
-            URI uri = new URI(fileUrl);
-            key = uri.getPath();
-            if (key.startsWith("/")) key = key.substring(1);
-        }
-        DeleteObjectRequest dor = DeleteObjectRequest.builder().bucket(bucket).key(key).build();
-        s3Client.deleteObject(dor);
+
+    /* ------------------------------------------------------
+       PRESIGNED URL FOR VIDEO UPLOAD (AWS SDK v2)
+       ------------------------------------------------------ */
+    public String generatePresignedVideoUploadUrl(Long courseId, String filename) {
+
+        String key = baseFolder + "/courses/" + courseId + "/videos/" +
+                UUID.randomUUID() + "-" + filename;
+
+        PutObjectRequest objectRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .contentType("video/mp4")
+                .build();
+
+        PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
+                .putObjectRequest(objectRequest)
+                .signatureDuration(Duration.ofMinutes(15))
+                .build();
+
+        return presigner.presignPutObject(presignRequest).url().toExternalForm();
     }
+
 }

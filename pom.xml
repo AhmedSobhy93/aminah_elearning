@@ -137,6 +137,13 @@
             <version>1.9.10</version>
         </dependency>
 
+        <!-- pom.xml -->
+        <dependency>
+            <groupId>com.sendgrid</groupId>
+            <artifactId>sendgrid-java</artifactId>
+            <version>4.10.2</version>
+        </dependency>
+
 
     </dependencies>
 

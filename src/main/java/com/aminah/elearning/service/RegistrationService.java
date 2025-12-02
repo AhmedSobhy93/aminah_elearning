@@ -4,8 +4,6 @@ import com.aminah.elearning.model.User;
 import com.aminah.elearning.model.VerificationToken;
 import com.aminah.elearning.repository.UserRepository;
 import com.aminah.elearning.repository.VerificationTokenRepository;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,16 +16,16 @@ public class RegistrationService {
 
     private final UserRepository userRepository;
     private final VerificationTokenRepository tokenRepository;
-    private EmailService emailService;
+    private EmailServiceSendGrid emailServiceSendGrid;
     private final PasswordEncoder passwordEncoder;
 
     public RegistrationService(UserRepository userRepository,
                                VerificationTokenRepository tokenRepository,
-                               EmailService emailService,
+                               EmailServiceSendGrid emailServiceSendGrid,
                                PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.tokenRepository = tokenRepository;
-        this.emailService = emailService;
+        this.emailServiceSendGrid = emailServiceSendGrid;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -39,24 +37,12 @@ public class RegistrationService {
         String token = UUID.randomUUID().toString();
         VerificationToken verificationToken = new VerificationToken();
         verificationToken.setToken(token);
-        verificationToken.setUserId(user.getId());
+        verificationToken.setUser(user);
         verificationToken.setExpiryDate(LocalDateTime.now().plusHours(24));
         tokenRepository.save(verificationToken);
 
-        emailService.sendVerificationEmail(user.getEmail(), token, appUrl);
+        emailServiceSendGrid.sendEmail(user.getEmail(), token, appUrl);
     }
-
-//    private void sendVerificationEmail(String email, String token, String appUrl) {
-//        String confirmationUrl = appUrl + "/confirm?token=" + token;
-//        String subject = "Confirm your registration - Aminah E-Learning";
-//        String message = "Click the link to activate your account:\n" + confirmationUrl;
-//
-//        SimpleMailMessage mail = new SimpleMailMessage();
-//        mail.setTo(email);
-//        mail.setSubject(subject);
-//        mail.setText(message);
-//        mailSender.send(mail);
-//    }
 
     public boolean confirmToken(String token) {
         VerificationToken vToken = tokenRepository.findByToken(token)
@@ -65,7 +51,7 @@ public class RegistrationService {
             return false;
         }
 
-        Optional<User> optionalUser= userRepository.findById(vToken.getUserId());
+        Optional<User> optionalUser= userRepository.findById(vToken.getUser().getId());
         User user = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
 
         user.setEnabled(true);

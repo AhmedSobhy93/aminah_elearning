@@ -1,6 +1,5 @@
 package com.aminah.elearning.service;
 
-import com.aminah.elearning.model.Course;
 import com.aminah.elearning.model.Tutorial;
 import com.aminah.elearning.repository.CourseRepository;
 import com.aminah.elearning.repository.TutorialRepository;
@@ -17,43 +16,32 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class TutorialService {
     private final TutorialRepository tutorialRepository;
+    private final CourseRepository courseRepository;
 
-    public Page<Tutorial> getTutorialsForCourse(String courseId, Pageable pageable) {
+    public Page<Tutorial> getTutorialsForCourse(Long courseId, Pageable pageable) {
         return tutorialRepository.findByCourseId(courseId, pageable);
     }
 
-    public List<Tutorial> getTutorialsForCourse(String courseId ) {
+    public List<Tutorial> getTutorialsForCourse(Long courseId) {
         return tutorialRepository.findByCourseId(courseId);
     }
 
-    public Tutorial getTutorial(String id){
+    public Tutorial getTutorial(Long id) {
         return tutorialRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Tutorial not found"));
     }
 
-    public Tutorial save(Tutorial t){
+    public Tutorial save(Tutorial t) {
         return tutorialRepository.save(t);
     }
 
-    public void delete(String id){
+    public void delete(Long id) {
         tutorialRepository.deleteById(id);
     }
 
-    public Page<Tutorial> getTutorialsForCourse(String courseId, int page, int size) {
+    public Page<Tutorial> getTutorialsForCourse(Long courseId, int page, int size) {
         return tutorialRepository.findByCourseId(courseId, PageRequest.of(page, size));
     }
-//    private final TutorialRepository tutorialRepository;
-//    private final CourseRepository courseRepository;
-//
-//    public Tutorial addTutorialToCourse(Long courseId, Tutorial tutorial) {
-//        Course course = courseRepository.findById(courseId)
-//                .orElseThrow(() -> new RuntimeException("Course not found"));
-//        course.addTutorial(tutorial);
-//        return tutorialRepository.save(tutorial);
-//    }
-//
-//    public List<Tutorial> getCourseTutorials(Long courseId) {
-//        return tutorialRepository.findByCourseIdOrderByOrderIndex(courseId);
-//    }
+
 }
 
 

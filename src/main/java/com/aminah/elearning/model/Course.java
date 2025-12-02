@@ -1,6 +1,5 @@
 package com.aminah.elearning.model;
 
-//import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -9,6 +8,9 @@ import java.util.List;
 
 import jakarta.persistence.*;
 
+import jakarta.persistence.*;
+import lombok.*;
+
 
 @Entity
 @Table(name = "courses")
@@ -16,44 +18,50 @@ import jakarta.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Course {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
 
-    @Column(nullable=false)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
     private String courseName;
 
-    @Column(columnDefinition="TEXT")
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private Double price;
 
     private boolean published = false;
 
-    private String videoUrl; // Cloudinary or external URL
+    private String videoUrl;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
+    // Relationships
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CourseEnrollment> courseEnrollmentIds= new ArrayList<>();
+    private List<CourseEnrollment> enrollments = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id")
-    private User author; // DR
-    private String authorUsername;
+    @JoinColumn(name = "author_id") // assuming 'author' is User
+    private User author;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("orderIndex")
     private List<Tutorial> tutorials = new ArrayList<>();
 
-
-
-
-//    public void addTutorial(Tutorial tutorial) {
-//        tutorials.add(tutorial);
-//        tutorial.setCourse(this);
-//    }
+    // Helper method
+    public void addTutorial(Tutorial tutorial) {
+        tutorials.add(tutorial);
+        tutorial.setCourse(this);
+    }
 }

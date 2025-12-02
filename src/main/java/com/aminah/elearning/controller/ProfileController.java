@@ -34,6 +34,7 @@ public class ProfileController {
     private final RegistrationService registrationService;
     private final VerificationTokenRepository verificationTokenRepository;
     private final UserService userService;
+
     @Value("${app.url:http://localhost:8081}")
     private String appUrl;
     private final AuthenticationManager authenticationManager;
@@ -41,7 +42,7 @@ public class ProfileController {
     public ProfileController(UserRepository userRepository, PasswordEncoder passwordEncoder, RegistrationService registrationService, VerificationTokenRepository verificationTokenRepository, UserService userService, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.registrationService=registrationService;
+        this.registrationService = registrationService;
         this.verificationTokenRepository = verificationTokenRepository;
         this.userService = userService;
 
@@ -50,7 +51,7 @@ public class ProfileController {
     }
 
     @GetMapping("/profile")
-    private String getProfile( Model model){
+    private String getProfile(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
 
@@ -78,6 +79,7 @@ public class ProfileController {
         model.addAttribute("user", new User());
         return "profile/register";
     }
+
     @PostMapping("/register")
     public String register(@ModelAttribute User user, Model model) {
         registrationService.register(user, appUrl);
@@ -87,7 +89,6 @@ public class ProfileController {
 
     @PostMapping("/update")
     public String update(@ModelAttribute User user, Model model) {
-//        Optional<User> updatedUser=userRepository.findById(user.getId());
 
         userService.userUpdate(user);
         model.addAttribute("message", "Profile Updated Successfully!");
@@ -96,18 +97,15 @@ public class ProfileController {
 
     @GetMapping("/confirm")
     public String confirmAccount(@RequestParam("token") String token, Model model) {
-//        boolean verified = registrationService.confirmToken(token);
-//        model.addAttribute("message", verified ? "Account verified! You can login now." : "Invalid or expired token.");
 
-        VerificationToken verificationToken = verificationTokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid verification token"));
+        VerificationToken verificationToken = verificationTokenRepository.findByToken(token).orElseThrow(() -> new RuntimeException("Invalid verification token"));
 
         if (verificationToken.isExpired()) {
             model.addAttribute("error", "Verification link expired.");
             return "error/expired";
         }
 
-        Optional<User> optionalUser= userRepository.findById(verificationToken.getUserId());
+        Optional<User> optionalUser = userRepository.findById(verificationToken.getUser().getId());
         User user = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
 
         user.setEnabled(true);
@@ -117,27 +115,17 @@ public class ProfileController {
         model.addAttribute("message", "Account verified successfully!");
         return "profile/login";
     }
-//    @PostMapping("/register")
-//    public String processRegistration(@ModelAttribute User user) {
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        user.setRole(Role.STUDENT); // default role
-//        userRepository.save(user);
-//        return "redirect:/";
-//    }
 
-    @GetMapping("/login") public String login(){
+    @GetMapping("/login")
+    public String login() {
         return "profile/login";
     }
 
     // Handle login form POST
     @PostMapping("/login")
-    public String processLogin(@RequestParam String username,
-                               @RequestParam String password, HttpServletRequest request,
-                               Model model) {
+    public String processLogin(@RequestParam String username, @RequestParam String password, HttpServletRequest request, Model model) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password)
-            );
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
             // Set authenticated user in session
             HttpSession session = request.getSession(true);
@@ -152,7 +140,7 @@ public class ProfileController {
         } catch (AuthenticationException e) {
             model.addAttribute("error", "Login failed: " + e.getMessage());
         }
-           return "profile/login";
+        return "profile/login";
 
     }
 

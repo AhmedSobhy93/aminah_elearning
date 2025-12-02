@@ -1,22 +1,19 @@
 package com.aminah.elearning.model;
 
-//import jakarta.persistence.*;
+import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-//@Data
-//@Entity
-//@Table(name = "videos")
-@Document(collection = "videos")
+@Entity
+@Table(name = "videos")
 @Data
 public class Video {
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-//    @Column(name = "course_id")
-    private String courseId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    private Course course;
 
     private String title;
     private String description;
