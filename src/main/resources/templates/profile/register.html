@@ -7,37 +7,56 @@
     <h1 style="text-align: center; padding-bottom:200px;color: #4B5563;" th:text="${message}"></h1>
     </span>
     <div class="d-flex justify-content-center align-items-center vh-50">
-        <div class="card shadow-lg p-4" style="width: 400px;">
-            <h3 class="text-center mb-3">Create Account</h3>
-    <form th:action="@{/profile/register}" method="post">
+<!--        <div class="card shadow-lg p-4" style="width: 400px;">-->
+<!--            <h3 class="text-center mb-3">Create Account</h3>-->
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="profile-icon">📝</div>
+                    <h3>Create Account</h3>
+                    <form th:action="@{/profile/register}" method="post">
+                        <input type="text" name="fullName" placeholder="Full Name" required/>
+                        <input type="text" name="username" placeholder="Username" required/>
+                        <input type="email" name="email" placeholder="Email" required/>
+                        <input type="password" name="password" placeholder="Password" required/>
+                        <select name="role">
+                            <option value="STUDENT">Student</option>
+                            <option value="DR">Instructor</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </form>
+                    <p class="text-danger" th:text="${error}"></p>
+                </div>
+            </div>
+<!--    <form th:action="@{/profile/register}" method="post">-->
 
-        <div class="mb-3">
-            <input type="text" name="fullName" class="form-control" placeholder="Enter your Full Name" required/>
-        </div>
-        <div class="mb-3">
-            <input type="text" name="username" class="form-control" placeholder="Enter your User Name" required/>
-        </div>
-        <div class="mb-3">
-            <input type="email" name="email" class="form-control" placeholder="Enter your Email" required/>
-        </div>
+<!--        <div class="mb-3">-->
+<!--            <input type="text" name="fullName" class="form-control" placeholder="Enter your Full Name" required/>-->
+<!--        </div>-->
+<!--        <div class="mb-3">-->
+<!--            <input type="text" name="username" class="form-control" placeholder="Enter your User Name" required/>-->
+<!--        </div>-->
+<!--        <div class="mb-3">-->
+<!--            <input type="email" name="email" class="form-control" placeholder="Enter your Email" required/>-->
+<!--        </div>-->
 
-        <div class="mb-3">
-            <input type="password" name="password" class="form-control" placeholder="Enter your Password" required/>
+<!--        <div class="mb-3">-->
+<!--            <input type="password" name="password" class="form-control" placeholder="Enter your Password" required/>-->
+<!--        </div>-->
+
+
+<!--        <select name="role" class="mb-3">-->
+<!--            <option value="STUDENT">Student</option>-->
+<!--            <option value="DR">Instructor</option>-->
+
+<!--        </select><br/>-->
+<!--        <div class="d-grid">-->
+<!--            <button type="submit" class="btn">Register</button>-->
+<!--        </div>-->
+
+<!--        <p class="mt-3 text-danger" th:text="${error}"></p>-->
+<!--    </form>-->
         </div>
-
-
-        <select name="role" class="mb-3">
-            <option value="STUDENT">Student</option>
-            <option value="DR">Instructor</option>
-
-        </select><br/>
-        <div class="d-grid">
-            <button type="submit" class="btn">Register</button>
-        </div>
-
-        <p class="mt-3 text-danger" th:text="${error}"></p>
-    </form>
-        </div>
-    </div>
+<!--    </div>-->
 </section>
 </html>
+

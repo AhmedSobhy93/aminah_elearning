@@ -33,7 +33,7 @@ import java.util.*;
 @Controller
 @RequestMapping("/dr")
 @RequiredArgsConstructor
-@PreAuthorize("hasAuthority('DR')")
+@PreAuthorize("hasRole('DR')")
 public class DoctorController {
 
     private final CourseService courseService;
@@ -46,13 +46,13 @@ public class DoctorController {
 //    private final CourseEnrollmentRepository courseEnrollmentRepository;
     private final CourseEnrollmentService courseEnrollmentService;
 
-    private static final int COURSES_PER_PAGE = 5;
+    private static final int COURSES_PER_PAGE = 2;
     private static final int STUDENTS_PER_PAGE = 5;
-    private static final int TUTORIALS_PER_PAGE = 5;
+    private static final int TUTORIALS_PER_PAGE = 2;
 
     @GetMapping("/courses")
     public String listCourses(Model model, Principal principal, @RequestParam(defaultValue = "0") int pageCourses) {
-
+        if (pageCourses < 0) pageCourses = 0;
         var doctor = userRepository.findByUsername(principal.getName()).orElseThrow();
         var coursesPage = courseService.getCoursesByDR(doctor.getUsername(), PageRequest.of(pageCourses, COURSES_PER_PAGE));
 
@@ -81,6 +81,7 @@ public class DoctorController {
     // fragment endpoint: tutorials list for a course + page index
     @GetMapping("/courses/{courseId}/tutorials")
     public String getTutorialsFragment(@PathVariable Long courseId, @RequestParam(defaultValue = "0") int page, Model model) {
+        if (page < 0) page = 0;
         Page<Tutorial> tutPage = tutorialService.getTutorialsForCourse(courseId, page, TUTORIALS_PER_PAGE);
         model.addAttribute("tutorialPage", tutPage);
         model.addAttribute("courseId", courseId);
@@ -89,12 +90,25 @@ public class DoctorController {
 
     // fragment endpoint: students list for a course + page index
     @GetMapping("/courses/{courseId}/students-fragment")
-    public String getStudentsFragment(@PathVariable Long courseId, @RequestParam(defaultValue = "0") int page, Model model) {
-        Page<CourseEnrollment> students = courseEnrollmentService.getEnrollmentsForCourse(courseId, page, STUDENTS_PER_PAGE);
-        model.addAttribute("studentsPage", students);
-        model.addAttribute("courseId", courseId);
-        return "dr/fragments/students :: students-list";
+    public String getStudentsFragment(@PathVariable Long courseId,
+                                      @RequestParam(defaultValue = "0") int page,
+                                      Model model) {
+        try {
+            if (page < 0) page = 0;   // 🔥 Fix the 500 error
+
+            Page<CourseEnrollment> students =
+                    courseEnrollmentService.getEnrollmentsForCourse(courseId, page, STUDENTS_PER_PAGE);
+
+            model.addAttribute("studentsPage", students);
+            model.addAttribute("courseId", courseId);
+
+            return "dr/fragments/students :: students-list";
+        } catch (Exception ex) {
+            ex.printStackTrace(); // <-- print full 500 reason
+            throw ex;              // rethrow so Spring shows the error
+        }
     }
+
 
     @PostMapping("/courses/create")
     public String createCourse(@Valid @ModelAttribute Course course, Principal principal, RedirectAttributes ra) {
@@ -234,5 +248,6 @@ public class DoctorController {
         courseService.saveCourse(c);
         return "redirect:/dr/courses";
     }
+
 
 }

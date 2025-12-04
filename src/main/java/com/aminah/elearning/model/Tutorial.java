@@ -28,7 +28,7 @@ public class Tutorial {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User userId;
+    private User user;
 
     private String status;
 

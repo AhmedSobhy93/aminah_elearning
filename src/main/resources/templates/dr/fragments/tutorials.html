@@ -1,0 +1,41 @@
+<div th:fragment="tutorials-list">
+    <table class="table table-bordered">
+        <tr th:each="t : ${tutorialPage.content}">
+            <td>
+                <strong th:text="${t.title}"></strong>
+
+                <span class="badge bg-secondary ms-2" th:text="${t.type}"></span>
+
+                <button class="btn btn-sm btn-outline-info ms-3"
+                        th:onclick="'viewTutorial(' + ${t.id} + ')'">
+                    View
+                </button>
+            </td>
+        </tr>
+    </table>
+
+    <!-- pagination -->
+    <nav class="mt-2">
+        <ul class="pagination pagination-sm">
+            <li class="page-item" th:classappend="${tutorialPage.number == 0} ? 'disabled'">
+                <a class="page-link"
+                   th:onclick="'loadTutorials(' + ${courseId} + ',' + (${tutorialPage.number}-1) + ')'">Prev</a>
+            </li>
+
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, tutorialPage.totalPages-1)}"
+                th:classappend="${i == tutorialPage.number} ? 'active'">
+                <a class="page-link"
+                   th:onclick="'loadTutorials(' + ${courseId} + ',' + ${i} + ')'">
+                    <span th:text="${i+1}"></span>
+                </a>
+            </li>
+
+            <li class="page-item"
+                th:classappend="${tutorialPage.number == tutorialPage.totalPages-1} ? 'disabled'">
+                <a class="page-link"
+                   th:onclick="'loadTutorials(' + ${courseId} + ',' + (${tutorialPage.number}+1) + ')'">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>

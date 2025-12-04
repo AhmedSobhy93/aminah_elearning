@@ -9,20 +9,99 @@
     <link th:href="@{/images/logo.png}" rel="icon" type="image/png">
 </head>
 
-<body>
 <nav th:fragment="navbar" class="navbar navbar-expand-lg shadow-sm">
-    <div class="container py-2">
+<!--    <div class="container py-2">-->
+
+
+<!--        <div class="collapse navbar-collapse" id="navbarNav">-->
+<!--            <ul class="navbar-nav ms-auto align-items-center">-->
+<!--                &lt;!&ndash; Admin Only &ndash;&gt;-->
+<!--                <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link" th:href="@{/admin/users}">Manage Users</a></li>-->
+<!--                <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link" th:href="@{/admin/courses}">Manage Courses</a></li>-->
+
+<!--                &lt;!&ndash; Doctor &ndash;&gt;-->
+<!--                <li class="nav-item" sec:authorize="hasRole('DR')"><a class="nav-link" th:href="@{/dr/courses}">My Courses</a></li>-->
+<!--&lt;!&ndash;                <li class="nav-item" sec:authorize="hasRole('DR')"><a class="nav-link" th:href="@{/dr/create-course}">Create Course</a></li>&ndash;&gt;-->
+
+<!--                &lt;!&ndash; Student &ndash;&gt;-->
+<!--                <li class="nav-item" sec:authorize="hasRole('STUDENT')"><a class="nav-link" th:href="@{/student/courses}">Available Courses</a></li>-->
+<!--                <li class="nav-item" sec:authorize="hasRole('STUDENT')"><a class="nav-link" th:href="@{/student/my-courses}">My Learning</a></li>-->
+
+<!--                &lt;!&ndash; Non Admin &ndash;&gt;-->
+<!--                <li class="nav-item" sec:authorize="!hasRole('ADMIN')" ><a class="nav-link" th:href="@{/about}">About Us</a></li>-->
+<!--                <li class="nav-item" sec:authorize="!hasRole('ADMIN')"><a class="nav-link" th:href="@{/contact}">Contact</a></li>-->
+
+
+<!--                <li class="nav-item dropdown ms-2">-->
+<!--                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">-->
+<!--                        Account-->
+<!--                    </a>-->
+<!--                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">-->
+<!--                        <li sec:authorize="isAuthenticated()">-->
+<!--                            <a class="dropdown-item" th:href="@{/profile/profile}">-->
+<!--                                👋 Hello, <strong sec:authentication="name"></strong>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        <li sec:authorize="isAuthenticated()">-->
+<!--                            <form th:action="@{/profile/logout}" method="post" class="m-0">-->
+<!--                                <button type="submit" class="dropdown-item text-danger">Logout</button>-->
+<!--                            </form>-->
+<!--                        </li>-->
+<!--                        <li sec:authorize="isAnonymous() and !hasRole('ADMIN')">-->
+<!--                            <a class="dropdown-item" th:href="@{/profile/login}">Login</a>-->
+<!--                        </li>-->
+<!--                        <li sec:authorize="isAnonymous() and !hasRole('ADMIN')">-->
+<!--                            <a class="dropdown-item" th:href="@{/profile/register}">Register</a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</nav>-->
+<!--<nav class="navbar navbar-expand-lg shadow-sm">-->
+    <div class="container">
         <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
-            <img th:src="@{/images/logo.png}" alt="Aminah Hospital Logo" height="40" class="me-2">
-            <span>Aminah Hospital eLearning</span>
+            <img th:src="@{/images/logo.png}" height="40" class="me-2 rounded-circle">
+            Aminah Hospital eLearning
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav" aria-controls="navbarNav"
-                aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+<!--            <ul class="navbar-nav ms-auto align-items-center">-->
+<!--                <li class="nav-item" sec:authorize="hasRole('ADMIN')">-->
+<!--                    <a class="nav-link" th:href="@{/admin/users}"><i class="bi bi-people-fill me-1"></i> Manage Users</a>-->
+<!--                </li>-->
+<!--                <li class="nav-item" sec:authorize="hasRole('DR')">-->
+<!--                    <a class="nav-link" th:href="@{/dr/courses}"><i class="bi bi-journal-bookmark-fill me-1"></i> My Courses</a>-->
+<!--                </li>-->
+<!--                <li class="nav-item" sec:authorize="hasRole('STUDENT')">-->
+<!--                    <a class="nav-link" th:href="@{/student/courses}"><i class="bi bi-book-half me-1"></i> Courses</a>-->
+<!--                </li>-->
+<!--                <li class="nav-item dropdown ms-2">-->
+<!--                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">-->
+<!--                        <i class="bi bi-person-circle me-1"></i> Account-->
+<!--                    </a>-->
+<!--                    <ul class="dropdown-menu dropdown-menu-end shadow">-->
+<!--                        <li sec:authorize="isAuthenticated()">-->
+<!--                            <a class="dropdown-item" th:href="@{/profile/profile}">👋 Hello, <strong sec:authentication="name"></strong></a>-->
+<!--                        </li>-->
+<!--                        <li sec:authorize="isAuthenticated()">-->
+<!--                            <form th:action="@{/profile/logout}" method="post" class="m-0">-->
+<!--                                <button type="submit" class="dropdown-item text-danger">Logout</button>-->
+<!--                            </form>-->
+<!--                        </li>-->
+<!--                        <li sec:authorize="isAnonymous()">-->
+<!--                            <a class="dropdown-item" th:href="@{/profile/login}">Login</a>-->
+<!--                        </li>-->
+<!--                        <li sec:authorize="isAnonymous()">-->
+<!--                            <a class="dropdown-item" th:href="@{/profile/register}">Register</a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </li>-->
+<!--            </ul>-->
 
-        <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
                 <!-- Admin Only -->
                 <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link" th:href="@{/admin/users}">Manage Users</a></li>
@@ -30,7 +109,7 @@
 
                 <!-- Doctor -->
                 <li class="nav-item" sec:authorize="hasRole('DR')"><a class="nav-link" th:href="@{/dr/courses}">My Courses</a></li>
-<!--                <li class="nav-item" sec:authorize="hasRole('DR')"><a class="nav-link" th:href="@{/dr/create-course}">Create Course</a></li>-->
+                <!--                <li class="nav-item" sec:authorize="hasRole('DR')"><a class="nav-link" th:href="@{/dr/create-course}">Create Course</a></li>-->
 
                 <!-- Student -->
                 <li class="nav-item" sec:authorize="hasRole('STUDENT')"><a class="nav-link" th:href="@{/student/courses}">Available Courses</a></li>
@@ -69,81 +148,4 @@
     </div>
 </nav>
 
-<!--<nav th:fragment="navbar"  class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">-->
-
-<!--    <div class="container">-->
-<!--    <a class="navbar-brand" th:href="@{/}">🏥 Aminah Hospital eLearning</a>-->
-<!--                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"-->
-<!--                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">-->
-<!--                    <span class="navbar-toggler-icon"></span>-->
-<!--                </button>-->
-
-<!--        <div class="collapse navbar-collapse" id="navbarNav">-->
-<!--        <ul class="navbar-nav ms-auto">-->
-<!--            <li class="nav-item"><a class="nav-link" th:href="@{/courses}">Courses</a></li>-->
-<!--            <li class="nav-item"><a class="nav-link" th:href="@{/about}">About Us</a></li>-->
-<!--            <li class="nav-item"><a class="nav-link" th:href="@{/contact}">Contact Us</a></li>-->
-
-
-<!--            <li class="nav-item dropdown">-->
-<!--                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">-->
-<!--                   Account</a>-->
-<!--                <ul class="dropdown-menu dropdown-menu-end">-->
-<!--                    <li class="dropdown-item" sec:authorize="isAuthenticated()">-->
-<!--                    <a class="nav-link" th:href="@{/profile/profile}"></a><span>Hello, <strong sec:authentication="name"></strong>!</span></a>-->
-<!--                    </li>-->
-
-<!--            &lt;!&ndash; If logged in &ndash;&gt;-->
-<!--                    <li class="dropdown-item" sec:authorize="isAuthenticated()">-->
-<!--&lt;!&ndash;                        <a class="nav-link link-primary link-offset-2 " th:href="@{/profile/logout}">Logout</a>&ndash;&gt;-->
-<!--                        <form th:action="@{/profile/logout}" method="post">-->
-<!--                            <button type="submit" class="nav-link text-danger link-primary link-offset-2">-->
-<!--                                Logout-->
-<!--                            </button>-->
-<!--                        </form>-->
-<!--                     </li>-->
-
-<!--            &lt;!&ndash; If not logged in &ndash;&gt;-->
-<!--                 <li class="dropdown-item" sec:authorize="isAnonymous()">-->
-<!--                    <a class="nav-link link-primary link-offset-2 " th:href="@{/profile/login}">Login</a>-->
-<!--                 </li>-->
-<!--                <li class="dropdown-item" sec:authorize="isAnonymous()">-->
-<!--                    <a class="nav-link link-primary link-offset-2 " th:href="@{/profile/register}">Register</a>-->
-<!--                </li>-->
-<!--                </ul>-->
-<!--             </li>-->
-<!--        </ul>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</nav>-->
-
-
-<!--<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">-->
-<!--    <div class="container">-->
-<!--        <a class="navbar-brand fw-bold" th:href="@{/}">Aminah E-Learning</a>-->
-<!--        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"-->
-<!--                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">-->
-<!--            <span class="navbar-toggler-icon"></span>-->
-<!--        </button>-->
-<!--        <div class="collapse navbar-collapse" id="navbarNav">-->
-<!--            <ul class="navbar-nav ms-auto">-->
-<!--                <li class="nav-item"><a class="nav-link" th:href="@{/courses}">Courses</a></li>-->
-<!--                <li class="nav-item"><a class="nav-link" th:href="@{/about}">About</a></li>-->
-<!--                <li class="nav-item"><a class="nav-link" th:href="@{/contactus}">Contact Us</a></li>-->
-<!--                <li class="nav-item dropdown">-->
-<!--                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">-->
-<!--                        Account-->
-<!--                    </a>-->
-<!--                    <ul class="dropdown-menu dropdown-menu-end">-->
-<!--                        <li><a class="dropdown-item" th:href="@{/profile/login}">Login</a></li>-->
-<!--                        <li><a class="dropdown-item" th:href="@{/profile/register}">Register</a></li>-->
-<!--                        <li><hr class="dropdown-divider"></li>-->
-<!--                        <li><a class="dropdown-item" th:href="@{/profile/logout}">Logout</a></li>-->
-<!--                    </ul>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</nav>-->
-</body>
 </html>

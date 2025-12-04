@@ -1,31 +1,29 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<body>
-<!--<footer th:fragment="footer" class="bg-light text-center text-muted mt-auto py-4 border-top">-->
-<!--    <div class="container">-->
-<!--        <p class="mb-1">&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}"></span>-->
-<!--            Aminah E-Learning Medical Platform</p>-->
-<!--        <p class="small">-->
-<!--            <a th:href="@{/privacy}" class="text-muted">Privacy Policy</a> ·-->
-<!--            <a th:href="@{/terms}" class="text-muted">Terms</a>-->
-<!--        </p>-->
+
+<footer th:fragment="footer">
+<!--    <div class="container text-center">-->
+<!--        <img th:src="@{/images/logo.png}" height="40" alt="Aminah Hospital Logo" class="mb-2">-->
+<!--        <p>Aminah Hospital – Benha | Excellence in Medical Education</p>-->
+<!--        <small>&copy; 2025 Aminah Hospital. All rights reserved.</small>-->
+<!--        <div class="mt-2">-->
+<!--            <a href="#" class="me-3"><i class="bi bi-facebook"></i></a>-->
+<!--            <a href="#" class="me-3"><i class="bi bi-twitter"></i></a>-->
+<!--            <a href="#"><i class="bi bi-instagram"></i></a>-->
+<!--        </div>-->
 <!--    </div>-->
 
-
-<!--</footer>-->
-<footer th:fragment="footer">
     <div class="container text-center">
-        <img th:src="@{/images/logo.png}" height="40" alt="Aminah Hospital Logo" class="mb-2">
-        <p>Aminah Hospital – Benha | Excellence in Medical Education</p>
+        <img th:src="@{/images/logo.png}" height="40" class="mb-2 rounded-circle shadow-sm">
+        <p class="mb-1">Aminah Hospital – Benha | Excellence in Medical Education</p>
         <small>&copy; 2025 Aminah Hospital. All rights reserved.</small>
         <div class="mt-2">
-            <a href="#" class="me-3"><i class="bi bi-facebook"></i></a>
-            <a href="#" class="me-3"><i class="bi bi-twitter"></i></a>
+            <a href="#"><i class="bi bi-facebook"></i></a>
+            <a href="#"><i class="bi bi-twitter"></i></a>
             <a href="#"><i class="bi bi-instagram"></i></a>
         </div>
     </div>
 </footer>
 
-</body>
 </html>
