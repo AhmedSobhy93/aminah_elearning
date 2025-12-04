@@ -1,0 +1,70 @@
+<!--&lt;!&ndash; View Tutorial Modal &ndash;&gt;-->
+<!--<div th:fragment="modal">-->
+<!--<div class="modal fade" id="modalViewTutorial" tabindex="-1" aria-hidden="true">-->
+<!--    <div class="modal-dialog modal-lg">-->
+<!--        <div class="modal-content">-->
+<!--            <div class="modal-header">-->
+<!--                <h5 id="viewerTitle" class="modal-title">Tutorial Title</h5>-->
+<!--                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>-->
+<!--            </div>-->
+<!--            <div class="modal-body">-->
+
+<!--                &lt;!&ndash; Video &ndash;&gt;-->
+<!--                <video id="viewerVideo" class="w-100 d-none" controls></video>-->
+
+<!--                &lt;!&ndash; PDF &ndash;&gt;-->
+<!--                <iframe id="viewerPdf" class="w-100 d-none" height="500px"></iframe>-->
+
+<!--                &lt;!&ndash; Article &ndash;&gt;-->
+<!--                <div id="viewerArticle" class="d-none"></div>-->
+
+<!--                &lt;!&ndash; Quiz &ndash;&gt;-->
+<!--                <pre id="viewerQuiz" class="d-none bg-light p-2"></pre>-->
+
+<!--            </div>-->
+<!--            <div class="modal-footer">-->
+<!--                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<!--</div>-->
+
+<div th:fragment="modal">
+    <div class="modal fade" id="modalViewTutorial" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-3">
+
+                <div class="modal-header bg-primary text-white">
+                    <h5 id="viewerTitle" class="modal-title">
+                        <i class="fas fa-chalkboard-teacher me-2"></i>Tutorial Title
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body p-4">
+
+                    <!-- Video -->
+                    <video id="viewerVideo" class="w-100 d-none rounded-2 shadow-sm" controls></video>
+
+                    <!-- PDF -->
+                    <iframe id="viewerPdf" class="w-100 d-none rounded-2 shadow-sm" height="500px"></iframe>
+
+                    <!-- Article -->
+                    <div id="viewerArticle" class="d-none p-3 bg-light rounded-2 shadow-sm"></div>
+
+                    <!-- Quiz -->
+                    <pre id="viewerQuiz" class="d-none bg-light p-3 rounded-2 shadow-sm"></pre>
+
+                </div>
+
+                <div class="modal-footer border-0 p-4">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Close
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

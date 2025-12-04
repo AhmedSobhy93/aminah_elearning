@@ -1,5 +1,6 @@
 package com.aminah.elearning.controller;
 
+import com.aminah.elearning.exception.DuplicateUserException;
 import com.aminah.elearning.model.Role;
 import com.aminah.elearning.model.User;
 import com.aminah.elearning.model.VerificationToken;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Optional;
 
 
@@ -49,30 +51,36 @@ public class ProfileController {
 
         this.authenticationManager = authenticationManager;
     }
-
     @GetMapping("/profile")
-    private String getProfile(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-
-        if (auth == null) {
-            // no user logged in
-            model.addAttribute("error", "Please Login in first");
-            return "redirect:/";
-        }
-
-        String username = auth.getName(); // or ((UserDetails)auth.getPrincipal()).getUsername()
-
-        // Fetch your app's User entity
-        Optional<User> user = userRepository.findByUsername(username);
-        if (user == null) {
-            // This means the logged-in user isn’t in DB
-            model.addAttribute("error", "User not found in the database");
-            return "/profile/login";
-        }
-        model.addAttribute("user", user != null ? user : new User());
-        return "/profile/profile";
+    public String profile(Model model, Principal principal) {
+        User user = userService.findByUsername(principal.getName());
+        model.addAttribute("user", user);
+        return "profile/profile";
     }
+
+//    @GetMapping("/profile")
+//    private String getProfile(Model model) {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//
+//
+//        if (auth == null) {
+//            // no user logged in
+//            model.addAttribute("error", "Please Login in first");
+//            return "redirect:/";
+//        }
+//
+//        String username = auth.getName(); // or ((UserDetails)auth.getPrincipal()).getUsername()
+//
+//        // Fetch your app's User entity
+//        Optional<User> user = userRepository.findByUsername(username);
+//        if (user == null) {
+//            // This means the logged-in user isn’t in DB
+//            model.addAttribute("error", "User not found in the database");
+//            return "/profile/login";
+//        }
+//        model.addAttribute("user", user != null ? user : new User());
+//        return "/profile/profile";
+//    }
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
@@ -82,9 +90,18 @@ public class ProfileController {
 
     @PostMapping("/register")
     public String register(@ModelAttribute User user, Model model) {
-        registrationService.register(user, appUrl);
-        model.addAttribute("message", "Check your email for confirmation link!");
-        return "profile/login";
+        try{
+            registrationService.register(user, appUrl);
+            model.addAttribute("message", "Check your email for confirmation link!");
+            return "profile/login";
+        }catch (DuplicateUserException e){
+            model.addAttribute("error", e.getMessage());
+            return "profile/register";
+        }catch (Exception e){
+            model.addAttribute("error", "General Error");
+            return "profile/register";
+        }
+
     }
 
     @PostMapping("/update")

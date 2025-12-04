@@ -1,508 +1,285 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>-->
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
       layout:decorate="~{layout/base}">
-<section layout:fragment="content">
-<div class="container my-4">
-
-    <h2>Manage Courses</h2>
-
-    <!-- Flash messages -->
-    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-
-    <!-- Create Course -->
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalCreateCourse">+ Add Course</button>
-
-    <!-- List of Courses -->
-    <div th:each="course : ${courses}" class="card mb-3">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <div>
-                <strong th:text="${course.title}"></strong>
-                <small class="text-muted" th:text="'Price: $' + ${course.price}"></small>
-                <small class="text-muted" th:text="${course.published} ? 'Published' : 'Draft'"></small>
-            </div>
-            <div>
-                <button class="btn btn-sm btn-success" th:onclick="'openTutorialModal(' + ${course.id} + ')'">Add Tutorial</button>
-                <button class="btn btn-sm btn-danger" th:onclick="'deleteCourse(' + ${course.id} + ')'">Delete</button>
-                <!-- Course Edit -->
-                <button class="btn btn-sm btn-warning" onclick="editCourse([[${course.id}]])">
-                    <i class="bi bi-pencil"></i>
-                </button>
-
-                <!-- Tutorial Edit -->
-                <button class="btn btn-sm btn-warning" onclick="editTutorial([[${tutorial.id}]])">
-                    <i class="bi bi-pencil"></i>
-                </button>
-            </div>
-        </div>
-
-        <div class="card-body">
-            <p th:text="${course.description}"></p>
-            <p th:if="${course.videoUrl}">
-                <strong>Course Video:</strong>
-                <a th:href="${course.videoUrl}" target="_blank">View</a>
-            </p>
-            <p>
-                <strong>Created At:</strong> <span th:text="${#temporals.format(course.createdAt, 'dd MMM yyyy HH:mm')}"></span>
-
-            </p>
-
-            <!-- Tutorials -->
-            <h6>Tutorials:</h6>
-            <div th:id="'tutorials-container-' + ${course.id}"></div>
-
-            <!-- Students -->
-            <h6 class="mt-3">Enrolled Students:</h6>
-            <div th:id="'students-container-' + ${course.id}"></div>
-        </div>
-    </div>
-
-    <!-- Pagination for courses -->
-    <nav th:if="${totalPages > 1}">
-        <ul class="pagination">
-            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages-1)}"
-                th:classappend="${i} == ${currentPage} ? 'active'">
-                <a class="page-link" th:href="'?pageCourses=' + ${i}" th:text="${i+1}"></a>
-            </li>
-        </ul>
-    </nav>
-</div>
-
-<!-- ================= CREATE COURSE MODAL ================= -->
-<div class="modal fade" id="modalCreateCourse" tabindex="-1">
-    <div class="modal-dialog">
-        <form id="formCreateCourse" class="modal-content" th:action="@{/dr/courses/create}" method="post">
-            <div class="modal-header">
-                <h5 class="modal-title">Create Course</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <input class="form-control mb-2" type="text" name="title" placeholder="Title" required>
-                <input class="form-control mb-2" type="text" name="courseName" placeholder="Course Name" required>
-                <textarea class="form-control mb-2" name="description" placeholder="Description"></textarea>
-                <input class="form-control mb-2" type="number" step="0.01" name="price" placeholder="Price" required>
-                <div class="form-check mb-2">
-                    <input class="form-check-input" type="checkbox" name="published" id="publishedCheck">
-                    <label class="form-check-label" for="publishedCheck">Published</label>
-                </div>
-                <input class="form-control mb-2" type="text" name="videoUrl" placeholder="Optional Video URL">
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button class="btn btn-primary">Create</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-    <!-- Modal modalViewContent -->
-    <div class="modal fade" id="modalViewContent" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalViewTitle"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="modalViewBody"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ================= ADD TUTORIAL MODAL ================= -->
-<div class="modal fade" id="modalAddTutorial" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <form id="formAddTutorial" class="modal-content" th:action="@{/dr/courses/0/tutorials/add}" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="courseId">
-            <div class="modal-header">
-                <h5 class="modal-title">Add Tutorial</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <input class="form-control mb-2" type="text" name="title" placeholder="Tutorial Title" required>
-
-                <select id="tutorialType" name="type" class="form-select mb-2" required>
-                    <option value="">Select Type</option>
-                    <option th:each="type : ${tutorialTypes}" th:value="${type}" th:text="${type}"></option>
-                </select>
-
-                <!-- File Upload -->
-                <div id="fileUploadSection" class="d-none">
-                    <input type="file" name="file" class="form-control">
-                </div>
-
-                <!-- Article -->
-                <div id="articleSection" class="d-none">
-                    <textarea name="articleContent" class="form-control" placeholder="Article content"></textarea>
-                </div>
-
-                <!-- Quiz -->
-                <div id="quizSection" class="d-none">
-                    <div id="quizQuestions"></div>
-                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addQuizQuestion()">+ Add Question</button>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button class="btn btn-primary">Add Tutorial</button>
-            </div>
-        </form>
-    </div>
-</div>
-</section>
-<script src="/manage-courses.js"></script>
-<!-- Button -->
-<button class="btn btn-sm btn-success" onclick="openTutorialModal([[${course.id}]])">
-    <i class="bi bi-plus-circle"></i> Add Tutorial
-</button>
-
-<!-- Script -->
-<script>
-    function openTutorialModal(courseId) {
-        const form = document.getElementById("formAddTutorial");
-        form.courseId.value = courseId;
-        form.action = `/dr/courses/${courseId}/tutorials/add`;
-        new bootstrap.Modal(document.getElementById("modalAddTutorial")).show();
-    }
-</script>
-
-</body>
-</html>
-
-
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{'layout/base'}">
-
 <head>
-    <title>Manage Courses</title>
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-    <link rel="stylesheet" th:href="@{/css/fontawesome.min.css}">
-    <link rel="stylesheet" th:href="@{/css/manage-courses.css}">
+    <title>Your Courses</title>
 </head>
-<section layout:fragment="content" class="container mt-5">
-    <h2 class="mb-4">Courses Management</h2>
+<body>
+<!--<section layout:fragment="content">-->
 
-    <!-- Flash messages -->
-    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+<!--    <div class="container mt-4">-->
 
-    <!-- Create new course -->
-    <form th:action="@{/dr/courses/create}" method="post" class="mb-4 row g-2">
-        <div class="col-md-3">
-            <input type="text" name="title" class="form-control" placeholder="Course Title" required>
-        </div>
-        <div class="col-md-3">
-            <input type="text" name="courseName" class="form-control" placeholder="Course Name" required>
-        </div>
-        <div class="col-md-3">
-            <input type="text" name="description" class="form-control" placeholder="Description">
-        </div>
-        <div class="col-md-2">
-            <input type="number" name="price" class="form-control" placeholder="Price">
-        </div>
-        <div class="col-md-1 d-grid">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-plus"></i>
-            </button>
-        </div>
-    </form>
+<!--        <div class="d-flex justify-content-between align-items-center mb-3">-->
+<!--            <h2 class="fw-bold">Your Courses</h2>-->
 
-    <!-- Courses List -->
-    <div th:each="course : ${courses}" class="card mb-3 shadow-sm">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <div>
-                <h5 th:text="${course.title}"></h5>
-                <small th:text="'Name: ' + ${course.courseName} + ' | Price: $' + ${course.price}"></small>
-            </div>
-            <div>
-                <a th:href="@{'/dr/courses/edit/' + ${course.id}}" class="btn btn-sm btn-warning me-1">
-                    <i class="fas fa-edit"></i>
-                </a>
-                <form th:action="@{'/dr/courses/delete/' + ${course.id}}" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
-                </form>
-            </div>
-        </div>
-
-        <div class="card-body">
-            <!-- Tutorials Section -->
-            <h6>Tutorials</h6>
-            <ul class="list-group mb-2">
-                <li th:each="tut : ${tutorialsMap[course.id].content}" class="list-group-item d-flex justify-content-between">
-                    <span th:text="${tut.title} + ' (' + tut.type + ')'"></span>
-                    <div>
-                        <a th:href="@{'/dr/tutorials/edit/' + ${tut.id}}" class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></a>
-                        <form th:action="@{'/dr/tutorials/delete/' + ${tut.id}}" method="post" class="d-inline">
-                            <button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
-                        </form>
-                    </div>
-                </li>
-            </ul>
-
-            <!-- Tutorial Pagination -->
-            <nav th:if="${tutorialsMap[course.id].totalPages > 1}">
-                <ul class="pagination">
-                    <li class="page-item" th:classappend="${tutorialsMap[course.id].number == 0}? 'disabled'">
-                        <a class="page-link"
-                           th:href="@{/dr/courses(page=${currentPage}, ${'tutorialPage_'+course.id}=${tutorialsMap[course.id].number-1})}">
-                            Previous
-                        </a>
-                    </li>
-                    <li class="page-item" th:each="i : ${#numbers.sequence(0, tutorialsMap[course.id].totalPages-1)}"
-                        th:classappend="${tutorialsMap[course.id].number == i}? 'active'">
-                        <a class="page-link"
-                           th:href="@{/dr/courses(page=${currentPage}, ${'tutorialPage_'+course.id}=${i})}"
-                           th:text="${i+1}"></a>
-                    </li>
-                    <li class="page-item" th:classappend="${tutorialsMap[course.id].number == tutorialsMap[course.id].totalPages-1}? 'disabled'">
-                        <a class="page-link"
-                           th:href="@{/dr/courses(page=${currentPage}, ${'tutorialPage_'+course.id}=${tutorialsMap[course.id].number+1})}">
-                            Next
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-
-            <!-- Students Section -->
-            <h6>Enrolled Students</h6>
-            <ul class="list-group mb-2">
-                <li th:each="stu : ${studentsMap[course.id].content}" class="list-group-item d-flex justify-content-between">
-                    <span th:text="${stu.fullName} + ' (' + stu.email + ')'"></span>
-                    <div>
-                        <a th:href="@{'/dr/students/edit/' + ${stu.id}}" class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></a>
-                        <form th:action="@{'/dr/students/remove/' + ${stu.id}}" method="post" class="d-inline">
-                            <button class="btn btn-sm btn-danger"><i class="fas fa-user-slash"></i></button>
-                        </form>
-                    </div>
-                </li>
-            </ul>
-
-            <!-- Student Pagination -->
-            <nav th:if="${studentsMap[course.id].totalPages > 1}">
-                <ul class="pagination">
-                    <li class="page-item" th:classappend="${studentsMap[course.id].number == 0}? 'disabled'">
-                        <a class="page-link"
-                           th:href="@{/dr/courses(page=${currentPage}, ${'studentPage_'+course.id}=${studentsMap[course.id].number-1})}">
-                            Previous
-                        </a>
-                    </li>
-                    <li class="page-item" th:each="i : ${#numbers.sequence(0, studentsMap[course.id].totalPages-1)}"
-                        th:classappend="${studentsMap[course.id].number == i}? 'active'">
-                        <a class="page-link"
-                           th:href="@{/dr/courses(page=${currentPage}, ${'studentPage_'+course.id}=${i})}"
-                           th:text="${i+1}"></a>
-                    </li>
-                    <li class="page-item" th:classappend="${studentsMap[course.id].number == studentsMap[course.id].totalPages-1}? 'disabled'">
-                        <a class="page-link"
-                           th:href="@{/dr/courses(page=${currentPage}, ${'studentPage_'+course.id}=${studentsMap[course.id].number+1})}">
-                            Next
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-
-<!--            &lt;!&ndash; Tutorials &ndash;&gt;-->
-<!--            <h6>Tutorials</h6>-->
-<!--            <ul class="list-group mb-3">-->
-<!--                <li th:each="tut : ${tutorialsMap[course.id]}" class="list-group-item d-flex justify-content-between align-items-center">-->
-<!--                    <span th:text="${tut.title} + ' (' + tut.type + ')'"></span>-->
-<!--                    <div>-->
-<!--                        <a th:href="@{'/dr/tutorials/edit/' + ${tut.id}}" class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></a>-->
-<!--                        <form th:action="@{'/dr/tutorials/delete/' + ${tut.id}}" method="post" class="d-inline">-->
-<!--                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>-->
-<!--                        </form>-->
-<!--                    </div>-->
-<!--                </li>-->
-<!--            </ul>-->
-
-<!--            &lt;!&ndash; Add Tutorial &ndash;&gt;-->
-<!--            <form th:action="@{'/dr/courses/' + ${course.id} + '/tutorials/add'}" method="post" enctype="multipart/form-data" class="tutorial-form mb-3">-->
-<!--                <div class="row g-2">-->
-<!--                    <div class="col-md-3"><input type="text" name="title" class="form-control" placeholder="Tutorial Title" required></div>-->
-<!--                    <div class="col-md-3">-->
-<!--                        <select name="type" class="form-select tutorial-type" required>-->
-<!--                            <option th:each="type : ${tutorialTypes}" th:value="${type}" th:text="${type}"></option>-->
-<!--                        </select>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-3 file-group"><input type="file" name="file" class="form-control"></div>-->
-<!--                    <div class="col-md-3 article-group"><textarea name="articleContent" class="form-control" placeholder="Article Content"></textarea></div>-->
-<!--                    <div class="col-12 quiz-group">-->
-<!--                        <div class="quiz-container mb-2"></div>-->
-<!--                        <button class="btn btn-secondary btn-sm add-quiz-question mb-2"><i class="fas fa-plus"></i> Add Question</button>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-2">-->
-<!--                        <button type="submit" class="btn btn-success w-100"><i class="fas fa-plus-circle"></i> Add Tutorial</button>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </form>-->
-
-<!--            &lt;!&ndash; Enrolled Students &ndash;&gt;-->
-<!--            <h6>Enrolled Students</h6>-->
-<!--            <ul class="list-group mb-2">-->
-<!--                <li th:each="stu : ${studentsMap[course.id]} ?: ${#lists.newArrayList()}" class="list-group-item d-flex justify-content-between align-items-center">-->
-<!--                    <span th:text="${stu.fullName} + ' (' + stu.email + ')'"></span>-->
-<!--                    <div>-->
-<!--                        <a th:href="@{'/dr/students/edit/' + ${stu.id}}" class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></a>-->
-<!--                        <form th:action="@{'/dr/students/remove/' + ${stu.id}}" method="post" class="d-inline">-->
-<!--                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-user-slash"></i></button>-->
-<!--                        </form>-->
-<!--                    </div>-->
-<!--                </li>-->
-<!--            </ul>-->
-        </div>
-    </div>
-
-    <!-- Pagination -->
-    <nav th:if="${totalPages > 1}">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${currentPage == 0}? 'disabled'"><a class="page-link" th:href="@{/dr/courses(page=${currentPage-1})}">Previous</a></li>
-            <li class="page-item" th:each="i : ${#numbers.sequence(0,totalPages-1)}" th:classappend="${currentPage == i}? 'active'">
-                <a class="page-link" th:href="@{/dr/courses(page=${i})}" th:text="${i+1}"></a>
-            </li>
-            <li class="page-item" th:classappend="${currentPage == totalPages-1}? 'disabled'"><a class="page-link" th:href="@{/dr/courses(page=${currentPage+1})}">Next</a></li>
-        </ul>
-    </nav>
-</section>
-
-<script th:src="@{/js/manage-courses.js}"></script>
-
-<!--<section layout:fragment="content" class="container mt-5">-->
-<!--    <h2 class="mb-4">Courses Management</h2>-->
-
-<!--    &lt;!&ndash; Flash messages &ndash;&gt;-->
-<!--    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>-->
-<!--    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>-->
-
-<!--    &lt;!&ndash; Create new course &ndash;&gt;-->
-<!--    <form th:action="@{/dr/courses/create}" method="post" class="mb-4 d-flex">-->
-<!--        <input type="text" name="title" class="form-control me-2" placeholder="New Course Title" required>-->
-<!--        <button type="submit" class="btn btn-primary">-->
-<!--            <i class="fas fa-plus"></i> Add Course-->
-<!--        </button>-->
-<!--    </form>-->
-
-<!--    &lt;!&ndash; Courses list &ndash;&gt;-->
-<!--    <div th:each="course : ${courses}" class="card mb-3 shadow-sm">-->
-<!--        <div class="card-header d-flex justify-content-between align-items-center">-->
-<!--            <h5 th:text="${course.title}"></h5>-->
-<!--            <div>-->
-<!--                <a th:href="@{'/dr/courses/edit/' + ${course.id}}" class="btn btn-sm btn-warning me-1">-->
-<!--                    <i class="fas fa-edit"></i>-->
-<!--                </a>-->
-<!--                <form th:action="@{'/dr/courses/delete/' + ${course.id}}" method="post" class="d-inline">-->
-<!--                    <button type="submit" class="btn btn-sm btn-danger">-->
-<!--                        <i class="fas fa-trash-alt"></i>-->
-<!--                    </button>-->
-<!--                </form>-->
-<!--            </div>-->
+<!--            <button class="btn btn-primary" id="btnCreateCourse">-->
+<!--                <i class="bi bi-plus-circle"></i> New Course-->
+<!--            </button>-->
 <!--        </div>-->
 
-<!--        <div class="card-body">-->
-<!--            &lt;!&ndash; Tutorials &ndash;&gt;-->
-<!--            <h6>Tutorials</h6>-->
-<!--            <ul class="list-group mb-3">-->
-<!--                <li th:each="tut : ${tutorialsMap[course.id]}" class="list-group-item d-flex justify-content-between align-items-center">-->
-<!--                    <span th:text="${tut.title} + ' (' + tut.type + ')'"></span>-->
-<!--                    <div>-->
-<!--                        <a th:href="@{'/dr/tutorials/edit/' + ${tut.id}}" class="btn btn-sm btn-warning me-1">-->
-<!--                            <i class="fas fa-edit"></i>-->
-<!--                        </a>-->
-<!--                        <form th:action="@{'/dr/tutorials/delete/' + ${tut.id}}" method="post" class="d-inline">-->
-<!--                            <button type="submit" class="btn btn-sm btn-danger">-->
-<!--                                <i class="fas fa-trash-alt"></i>-->
-<!--                            </button>-->
-<!--                        </form>-->
-<!--                    </div>-->
-<!--                </li>-->
-<!--            </ul>-->
+<!--        &lt;!&ndash; COURSES WRAPPER &ndash;&gt;-->
+<!--        <div class="card shadow-sm">-->
+<!--            <div class="card-body">-->
 
-<!--            &lt;!&ndash; Add Tutorial &ndash;&gt;-->
-<!--            <form th:action="@{'/dr/courses/' + ${course.id} + '/tutorials/add'}"-->
-<!--                  method="post" enctype="multipart/form-data" class="tutorial-form mb-3">-->
-<!--                <div class="row g-2">-->
-<!--                    <div class="col-md-4">-->
-<!--                        <input type="text" name="title" class="form-control" placeholder="Tutorial Title" required>-->
+<!--                <div th:each="course : ${courses}" class="border rounded p-3 mb-4">-->
+
+<!--                    <div class="d-flex justify-content-between">-->
+<!--                        <div>-->
+<!--                            <h4 th:text="${course.title}"></h4>-->
+<!--                            <p th:text="${course.description}" class="text-muted"></p>-->
+
+<!--                            <span class="badge bg-secondary">Price: $<span th:text="${course.price}"></span></span>-->
+<!--                            <span class="badge bg-info">Status: <span th:text="${course.published}"></span></span>-->
+<!--                        </div>-->
+
+<!--                        <div class="d-flex gap-2">-->
+<!--                            <button class="btn btn-success btn-sm btn-add-tutorial"-->
+<!--                                    th:data-course-id="${course.id}">-->
+<!--                                Add Tutorial-->
+<!--                            </button>-->
+
+<!--                            <button class="btn btn-info btn-sm btn-view-enrollments"-->
+<!--                                    th:data-course-id="${course.id}">-->
+<!--                                Students-->
+<!--                            </button>-->
+
+<!--                            <button class="btn btn-warning btn-sm btn-edit-course"-->
+<!--                                    th:data-course-id="${course.id}">-->
+<!--                                Edit-->
+<!--                            </button>-->
+
+<!--                            <button class="btn btn-danger btn-sm btn-delete-course"-->
+<!--                                    th:data-course-id="${course.id}">-->
+<!--                                Delete-->
+<!--                            </button>-->
+<!--                        </div>-->
 <!--                    </div>-->
-<!--                    <div class="col-md-3">-->
-<!--                        <select name="type" class="form-select tutorial-type" required>-->
-<!--                            <option th:each="type : ${tutorialTypes}" th:value="${type}" th:text="${type}"></option>-->
-<!--                        </select>-->
+
+<!--                    &lt;!&ndash; Tutorials &ndash;&gt;-->
+<!--                    <h6 class="mt-3">Tutorials</h6>-->
+<!--                    <div th:id="'tutorials-container-' + ${course.id}">-->
+<!--                        <div class="text-center text-muted">Loading tutorials...</div>-->
 <!--                    </div>-->
-<!--                    <div class="col-md-3 file-group">-->
-<!--                        <input type="file" name="file" class="form-control">-->
+
+<!--                    &lt;!&ndash; Students &ndash;&gt;-->
+<!--                    <h6 class="mt-3">Enrolled Students</h6>-->
+<!--                    <div th:id="'students-container-' + ${course.id}">-->
+<!--                        <div class="text-center text-muted">Loading students...</div>-->
 <!--                    </div>-->
-<!--                    <div class="col-md-3 article-group">-->
-<!--                        <textarea name="articleContent" class="form-control" placeholder="Article Content"></textarea>-->
-<!--                    </div>-->
-<!--                    <div class="col-12 quiz-group">-->
-<!--                        <div class="quiz-container mb-2"></div>-->
-<!--                        <button class="btn btn-secondary btn-sm add-quiz-question mb-2">-->
-<!--                            <i class="fas fa-plus"></i> Add Question-->
-<!--                        </button>-->
-<!--                    </div>-->
-<!--                    <div class="col-md-2">-->
-<!--                        <button type="submit" class="btn btn-success w-100">-->
-<!--                            <i class="fas fa-plus-circle"></i> Add Tutorial-->
-<!--                        </button>-->
-<!--                    </div>-->
+
 <!--                </div>-->
-<!--            </form>-->
 
-<!--            &lt;!&ndash; Students &ndash;&gt;-->
-<!--            <h6>Enrolled Students</h6>-->
-<!--            <ul class="list-group mb-2">-->
-<!--                <li th:each="stu : ${studentsMap[course.id]} ?: ${#lists.newArrayList()}"-->
-<!--                    class="list-group-item d-flex justify-content-between align-items-center">-->
-<!--                    <span th:text="${stu.fullName} + ' (' + stu.email + ')'"></span>-->
-<!--                    <div>-->
-<!--                        <a th:href="@{'/dr/students/edit/' + ${stu.id}}" class="btn btn-sm btn-warning me-1">-->
-<!--                            <i class="fas fa-edit"></i>-->
-<!--                        </a>-->
-<!--                        <form th:action="@{'/dr/students/remove/' + ${stu.id}}" method="post" class="d-inline">-->
-<!--                            <button type="submit" class="btn btn-sm btn-danger">-->
-<!--                                <i class="fas fa-user-slash"></i>-->
-<!--                            </button>-->
-<!--                        </form>-->
-<!--                    </div>-->
-<!--                </li>-->
-<!--            </ul>-->
+<!--                &lt;!&ndash; Pagination &ndash;&gt;-->
+<!--                <nav aria-label="Courses pagination">-->
+<!--                    <ul class="pagination justify-content-center mt-3">-->
+<!--                        <li class="page-item" th:classappend="${currentPage == 0}? 'disabled'">-->
+<!--                            <a class="page-link"-->
+<!--                               th:href="@{/dr/courses(pageCourses=${currentPage - 1})}">-->
+<!--                                Previous-->
+<!--                            </a>-->
+<!--                        </li>-->
 
-<!--            &lt;!&ndash;            <ul class="list-group mb-2">&ndash;&gt;-->
-<!--&lt;!&ndash;                <li th:each="stu : ${studentsMap[course.id]}" class="list-group-item d-flex justify-content-between align-items-center">&ndash;&gt;-->
-<!--&lt;!&ndash;                    <span th:text="${stu.fullName} + ' (' + stu.email + ')'"></span>&ndash;&gt;-->
-<!--&lt;!&ndash;                    <div>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <a th:href="@{'/dr/students/edit/' + ${stu.id}}" class="btn btn-sm btn-warning me-1">&ndash;&gt;-->
-<!--&lt;!&ndash;                            <i class="fas fa-edit"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                        </a>&ndash;&gt;-->
-<!--&lt;!&ndash;                        <form th:action="@{'/dr/students/remove/' + ${stu.id}}" method="post" class="d-inline">&ndash;&gt;-->
-<!--&lt;!&ndash;                            <button type="submit" class="btn btn-sm btn-danger">&ndash;&gt;-->
-<!--&lt;!&ndash;                                <i class="fas fa-user-slash"></i>&ndash;&gt;-->
-<!--&lt;!&ndash;                            </button>&ndash;&gt;-->
-<!--&lt;!&ndash;                        </form>&ndash;&gt;-->
-<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
-<!--&lt;!&ndash;                </li>&ndash;&gt;-->
-<!--&lt;!&ndash;            </ul>&ndash;&gt;-->
+<!--                        <li class="page-item disabled">-->
+<!--                            <span class="page-link">-->
+<!--                                Page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span>-->
+<!--                            </span>-->
+<!--                        </li>-->
+
+<!--                        <li class="page-item" th:classappend="${currentPage +1 >= totalPages}? 'disabled'">-->
+<!--                            <a class="page-link"-->
+<!--                               th:href="@{/dr/courses(pageCourses=${currentPage + 1})}">-->
+<!--                                Next-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </nav>-->
+
+<!--            </div>-->
 <!--        </div>-->
 <!--    </div>-->
 
-<!--    &lt;!&ndash; Pagination &ndash;&gt;-->
-<!--    <nav th:if="${totalPages > 1}">-->
-<!--        <ul class="pagination justify-content-center">-->
-<!--            <li class="page-item" th:classappend="${currentPage == 0}? 'disabled'">-->
-<!--                <a class="page-link" th:href="@{/dr/courses(page=${currentPage-1})}">Previous</a>-->
-<!--            </li>-->
-<!--            <li class="page-item" th:each="i : ${#numbers.sequence(0,totalPages-1)}"-->
-<!--                th:classappend="${currentPage == i}? 'active'">-->
-<!--                <a class="page-link" th:href="@{/dr/courses(page=${i})}" th:text="${i+1}"></a>-->
-<!--            </li>-->
-<!--            <li class="page-item" th:classappend="${currentPage == totalPages-1}? 'disabled'">-->
-<!--                <a class="page-link" th:href="@{/dr/courses(page=${currentPage+1})}">Next</a>-->
-<!--            </li>-->
-<!--        </ul>-->
-<!--    </nav>-->
-<!--</section>-->
 
-<script th:src="@{/js/manage-courses.js}"></script>
+
+<!--    <div th:replace="dr/modals/modalCreateCourse :: modal"></div>-->
+<!--    <div th:replace="dr/modals/modalAddTutorial :: modal"></div>-->
+<!--&lt;!&ndash;    <div th:replace="dr/modals/modalViewTutorial :: modal"></div>&ndash;&gt;-->
+<!--    <div th:replace="dr/modals/modalViewEnrollments :: modal"></div>-->
+
+<!--</section>-->
+<section layout:fragment="content">
+
+    <div class="container mt-4">
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="fw-bold"><i class="fas fa-graduation-cap me-2"></i>Your Courses</h2>
+
+            <button class="btn btn-primary" id="btnCreateCourse" data-bs-toggle="tooltip" title="Create a new course">
+                <i class="fas fa-plus-circle me-1"></i> New Course
+            </button>
+        </div>
+
+        <!-- Courses List -->
+        <div th:each="course : ${courses}" class="course-card">
+
+            <div class="d-flex justify-content-between align-items-start course-header">
+                <div>
+                    <h4>
+                        <i class="fas fa-book-medical text-secondary me-2"></i>
+                        <span th:text="${course.title}"></span>
+                    </h4>
+                    <p th:text="${course.description}"></p>
+
+                    <div class="course-badges mt-1">
+                        <span class="badge bg-secondary">
+                            <i class="fas fa-dollar-sign me-1"></i>
+                            <span th:text="${course.price}"></span>
+                        </span>
+                        <span class="badge bg-info">
+                            <i class="fas fa-circle-notch me-1"></i>
+                            <span th:text="${course.published}"></span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 course-actions">
+                    <button class="btn btn-success btn-sm btn-add-tutorial" th:data-course-id="${course.id}" data-bs-toggle="tooltip" title="Add Tutorial">
+                        <i class="fas fa-file-medical"></i>
+                    </button>
+
+                    <button class="btn btn-info btn-sm btn-view-enrollments" th:data-course-id="${course.id}" data-bs-toggle="tooltip" title="View Enrolled Students">
+                        <i class="fas fa-users"></i>
+                    </button>
+
+                    <button class="btn btn-warning btn-sm btn-edit-course" th:data-course-id="${course.id}" data-bs-toggle="tooltip" title="Edit Course">
+                        <i class="fas fa-edit"></i>
+                    </button>
+
+                    <button class="btn btn-danger btn-sm btn-delete-course" th:data-course-id="${course.id}" title="Delete Course">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tutorials -->
+            <div class="tutorials-container" th:id="'tutorials-container-' + ${course.id}">
+                <div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-1"></i>Loading tutorials...</div>
+            </div>
+
+            <!-- Students
+            <div class="students-container" th:id="'students-container-' + ${course.id}">
+                <div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-1"></i>Loading students...</div>
+            </div>
+-->
+        </div>
+
+        <!-- Pagination -->
+<!--        <nav aria-label="Courses pagination">-->
+<!--            <ul class="pagination justify-content-center mt-3">-->
+<!--                <li class="page-item" th:classappend="${currentPage == 0}? 'disabled'">-->
+<!--                    <a class="page-link" th:href="@{/dr/courses(pageCourses=${currentPage - 1})}">Previous</a>-->
+<!--                </li>-->
+<!--                <li class="page-item disabled">-->
+<!--                    <span class="page-link">Page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span></span>-->
+<!--                </li>-->
+<!--                <li class="page-item" th:classappend="${currentPage +1 >= totalPages}? 'disabled'">-->
+<!--                    <a class="page-link" th:href="@{/dr/courses(pageCourses=${currentPage + 1})}">Next</a>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--        </nav>-->
+
+        <!-- Pagination -->
+<!--        <nav aria-label="Courses pagination" class="mt-4">-->
+<!--            <ul class="pagination justify-content-center">-->
+<!--                &lt;!&ndash; Previous &ndash;&gt;-->
+<!--                <li class="page-item" th:classappend="${currentPage == 0}? 'disabled'">-->
+<!--                    <a class="page-link" th:href="@{/dr/courses(pageCourses=${currentPage - 1})}">-->
+<!--                        <i class="fas fa-chevron-left me-1"></i> Previous-->
+<!--                    </a>-->
+<!--                </li>-->
+
+<!--                &lt;!&ndash; Page Numbers &ndash;&gt;-->
+<!--                <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"-->
+<!--                    class="page-item" th:classappend="${i == currentPage}? 'active'">-->
+<!--                    <a class="page-link" th:href="@{/dr/courses(pageCourses=${i})}" th:text="${i + 1}">1</a>-->
+<!--                </li>-->
+
+<!--                &lt;!&ndash; Next &ndash;&gt;-->
+<!--                <li class="page-item" th:classappend="${currentPage + 1 >= totalPages}? 'disabled'">-->
+<!--                    <a class="page-link" th:href="@{/dr/courses(pageCourses=${currentPage + 1})}">-->
+<!--                        Next <i class="fas fa-chevron-right ms-1"></i>-->
+<!--                    </a>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--        </nav>-->
+        <nav aria-label="Course navigation" class="mt-3">
+            <ul class="pagination pagination-aminah justify-content-center">
+
+                <!-- previous -->
+                <li class="page-item" th:classappend="${coursesPage.hasPrevious()} ?: 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/dr/courses(pageCourses=${coursesPage.number - 1})}">
+                        Previous
+                    </a>
+                </li>
+
+                <!-- numbers -->
+                <li class="page-item"
+                    th:each="i : ${#numbers.sequence(0, coursesPage.totalPages - 1)}"
+                    th:classappend="${i == coursesPage.number} ? 'active'">
+                    <a class="page-link"
+                       th:text="${i + 1}"
+                       th:href="@{/dr/courses(pageCourses=${i})}">
+                    </a>
+                </li>
+
+                <!-- next -->
+                <li class="page-item" th:classappend="${coursesPage.hasNext()} ?: 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/dr/courses(pageCourses=${coursesPage.number + 1})}">
+                        Next
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteCourseModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fas fa-book-medical fa-3x text-danger mb-3"></i>
+                    <p class="mb-3 fw-semibold">Are you sure you want to delete this course?</p>
+                    <p class="text-muted small">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                        <i class="fas fa-trash-alt me-1"></i> Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div th:replace="dr/modals/modalCreateCourse :: modal"></div>
+    <div th:replace="dr/modals/modalAddTutorial :: modal"></div>
+    <div th:replace="dr/modals/modalViewEnrollments :: modal"></div>
+
+</section>
+
+<script>
+    // Enable Bootstrap tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el))
+</script>
+
+</body>
 </html>
