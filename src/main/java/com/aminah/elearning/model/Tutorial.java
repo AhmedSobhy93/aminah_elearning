@@ -22,9 +22,12 @@ public class Tutorial {
     private int orderIndex = 0;
 
     private LocalDateTime uploadedAt = LocalDateTime.now();
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @ManyToOne
+    private Section section;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "course_id")
+//    private Course course;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -33,6 +36,7 @@ public class Tutorial {
     private String status;
 
     @Lob
+    @Basic(fetch = FetchType.EAGER)
     private String articleContent; // ARTICLE content
 
     @OneToMany(mappedBy = "tutorial", cascade = CascadeType.ALL, orphanRemoval = true)

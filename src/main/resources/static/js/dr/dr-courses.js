@@ -157,21 +157,21 @@ document.getElementById("formCreateCourse")?.addEventListener("submit", async e 
 /* ============================================================
    DELETE COURSE
    ============================================================ */
-// document.querySelectorAll(".btn-delete-course").forEach(btn => {
-//     btn.addEventListener("click", async () => {
-//         if (!confirm("Delete this course?")) return;
-//
-//         const id = btn.dataset.courseId;
-//
-//         const res = await fetch(`/dr/courses/delete/${id}`, { method: "POST" });
-//         if (res.redirected) {
-//             showToast("Course deleted");
-//             window.location = res.url;
-//         } else {
-//             showToast("Delete failed", "danger");
-//         }
-//     });
-// });
+document.querySelectorAll(".btn-delete-course").forEach(btn => {
+    btn.addEventListener("click", async () => {
+        if (!confirm("Delete this course?")) return;
+
+        const id = btn.dataset.courseId;
+
+        const res = await fetch(`/dr/courses/delete/${id}`, { method: "POST" });
+        if (res.redirected) {
+            showToast("Course deleted");
+            window.location = res.url;
+        } else {
+            showToast("Delete failed", "danger");
+        }
+    });
+});
 
 /* ============================================================
    ADD TUTORIAL
@@ -225,6 +225,34 @@ function addQuizQuestion() {
         </div>
     `);
 }
+
+document.getElementById("formAddTutorial")?.addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const form = new FormData(e.target);
+    const courseId = document.getElementById("tutorialCourseId").value;
+
+    try {
+        const res = await fetch(`/dr/courses/${courseId}/tutorials/add`, {
+            method: "POST",
+            body: form,
+            headers: {
+                [csrfHeader]: csrfToken
+            }
+        });
+
+        if (res.redirected) {
+            showToast("Tutorial added successfully!");
+            window.location = res.url;
+        } else {
+            showToast("Failed to add tutorial", "danger");
+        }
+
+    } catch (err) {
+        console.error(err);
+        showToast("Server error while adding tutorial", "danger");
+    }
+});
 
 /* ============================================================
    VIEW STUDENT ENROLLMENTS MODAL

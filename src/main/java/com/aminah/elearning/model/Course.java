@@ -47,6 +47,9 @@ public class Course {
         createdAt = LocalDateTime.now();
     }
 
+    @Transient
+    private int progress; // dynamically calculated
+
     // Relationships
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseEnrollment> enrollments = new ArrayList<>();
@@ -59,9 +62,14 @@ public class Course {
     @OrderBy("orderIndex")
     private List<Tutorial> tutorials = new ArrayList<>();
 
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("orderIndex ASC")
+    private List<Section> sections = new ArrayList<>();
+
     // Helper method
-    public void addTutorial(Tutorial tutorial) {
-        tutorials.add(tutorial);
-        tutorial.setCourse(this);
-    }
+//    public void addTutorial(Tutorial tutorial) {
+//        tutorials.add(tutorial);
+//        tutorial.setCourse(this);
+//    }
 }

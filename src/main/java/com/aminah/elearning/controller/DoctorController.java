@@ -197,15 +197,16 @@ public class DoctorController {
 
         return "redirect:/dr/courses";
     }
+//
+//    @GetMapping("/tutorial/{id}/view")
+//    @ResponseBody
+//    public ResponseEntity<?> viewTutorial(@PathVariable Long id) {
+//
+//        Tutorial t = tutorialService.getTutorial(id);
+//
+//        return ResponseEntity.ok(t);
+//    }
 
-    @GetMapping("/tutorial/{id}/view")
-    @ResponseBody
-    public ResponseEntity<?> viewTutorial(@PathVariable Long id) {
-
-        Tutorial t = tutorialService.getTutorial(id);
-
-        return ResponseEntity.ok(t);
-    }
 
     @PostMapping("/tutorial/{id}/delete")
     public String deleteTutorial(@PathVariable Long id, Principal principal, RedirectAttributes ra) {

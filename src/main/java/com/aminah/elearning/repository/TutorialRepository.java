@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface TutorialRepository extends JpaRepository<Tutorial, Long> {
-    Page<Tutorial> findByCourseId(Long courseId, Pageable pageable);
+    Page<Tutorial> findBySectionId(Long sectionId, Pageable pageable);
 
-    List<Tutorial> findByCourseId(Long courseId);
+    List<Tutorial> findBySectionId(Long sectionId);
 }
