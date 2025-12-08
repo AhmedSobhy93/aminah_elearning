@@ -61,4 +61,7 @@ public class CourseEnrollmentService {
     public Boolean existsByCourseIdAndUserId(Long courseId, Long userId) {
         return enrollmentRepository.existsByCourseIdAndUserId(courseId, userId);
     }
+    public int countStudentsInCourse(Long courseId) {
+        return enrollmentRepository.countByCourseId(courseId);
+    }
 }

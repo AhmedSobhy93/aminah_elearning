@@ -1,0 +1,73 @@
+<div th:fragment="sections-list">
+    <div th:if="${#lists.isEmpty(sections)}" class="text-center py-3 text-muted">
+        <i class="fas fa-layer-group me-1"></i>No sections added yet.
+    </div>
+
+    <ul class="list-group section-list" th:data-course-id="${courseId}" id="sectionList">
+        <li th:each="section : ${sections}" class="list-group-item py-3 mb-2 rounded shadow-sm"
+            th:data-section-id="${section.id}">
+
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h5 class="mb-1">
+                        <i class="fas fa-angle-right text-info me-2"></i>
+                        <span th:text="${section.title}"></span>
+                    </h5>
+                    <small th:text="${section.description}" class="text-muted"></small>
+
+                    <!-- Collapsible tutorials -->
+                    <div class="mt-2 collapse" th:id="'tutorials-collapse-' + ${section.id}">
+                        <div class="tutorial-wrapper" th:id="'tutorials-container-' + ${section.id}">
+                            <div class="small text-muted text-center py-2">
+                                <i class="fas fa-spinner fa-spin me-1"></i> Loading tutorials...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-1 flex-column flex-md-row mt-2 mt-md-0">
+                    <button class="btn btn-sm btn-primary btn-toggle-tutorials" th:data-section-id="${section.id}">
+                        <i class="fas fa-eye me-1"></i> Tutorials
+                    </button>
+
+                    <button class="btn btn-sm btn-success btn-add-tutorial" th:data-section-id="${section.id}">
+                        <i class="fas fa-plus me-1"></i> Add
+                    </button>
+
+                    <button class="btn btn-sm btn-warning btn-edit-section" th:data-section-id="${section.id}"
+                            th:data-section-title="${section.title}" th:data-section-description="${section.description}">
+                        <i class="fas fa-edit"></i>
+                    </button>
+
+                    <button class="btn btn-sm btn-danger btn-delete-section" th:data-section-id="${section.id}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </li>
+    </ul>
+
+        <!-- Pagination -->
+        <nav th:if="${totalPages > 1}" class="mt-2">
+            <ul class="pagination pagination-sm justify-content-center">
+                <li class="page-item" th:classappend="${page == 1} ? 'disabled'">
+                    <a class="page-link" href="javascript:void(0)"
+                       th:onclick="'loadSections(' + ${courseId} + ',' + (${page}-1) + ')'">&laquo;</a>
+                </li>
+
+                <li th:each="i : ${#numbers.sequence(1, totalPages)}" class="page-item"
+                    th:classappend="${i == page} ? 'active'">
+                    <a class="page-link" href="javascript:void(0)"
+                       th:onclick="'loadSections(' + ${courseId} + ',' + ${i} + ')'"
+                       th:text="${i}"></a>
+                </li>
+
+                <li class="page-item" th:classappend="${page == totalPages} ? 'disabled'">
+                    <a class="page-link" href="javascript:void(0)"
+                       th:onclick="'loadSections(' + ${courseId} + ',' + (${page}+1) + ')'">&raquo;</a>
+                </li>
+            </ul>
+        </nav>
+
+
+</div>

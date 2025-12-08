@@ -569,3 +569,31 @@ body {
     color: #fff;
     border-color: #2CA6A4;
 }
+
+.aminah-animate {
+    animation: fadeInUp 0.6s ease;
+}
+.section-card {
+    transition: 0.3s;
+}
+.section-card:hover {
+    background: #eef5ff;
+    transform: translateX(5px);
+}
+.tutorial-card {
+    border-left: 5px solid #0d6efd;
+}
+
+.bg-aminah {
+    background: #B4161B !important;
+}
+.text-aminah {
+    color: #B4161B;
+}
+.btn-aminah {
+    background: #B4161B;
+    color: white;
+}
+.btn-aminah:hover {
+    background: #8d1116;
+}

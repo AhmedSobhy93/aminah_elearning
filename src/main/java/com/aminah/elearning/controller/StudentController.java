@@ -100,7 +100,7 @@ public class StudentController {
     public String courseDetails(@PathVariable Long id, Model model, Principal principal, @RequestParam(defaultValue = "0") int page) {
         Course course = courseService.getCourse(id);
         model.addAttribute("course", course);
-        model.addAttribute("tutorials", courseService.getTutorials(course));
+//        model.addAttribute("tutorials", courseService.getTutorials(course));
 
 //        if (principal != null) {
 //            // check enrollment

@@ -13,6 +13,16 @@ public class Section {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    private int durationMinutes;   // auto-summed later
+
+    private boolean locked = false;
+
+    private boolean unlockOnFinishPrevious = false;
+
     private int orderIndex;
 
     @ManyToOne
@@ -21,4 +31,10 @@ public class Section {
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("orderIndex ASC")
     private List<Tutorial> tutorials = new ArrayList<>();
+
+    public void addTutorial(Tutorial tutorial){
+        tutorial.setSection(this);
+        tutorial.setOrderIndex(tutorials.size() + 1);
+        tutorials.add(tutorial);
+    }
 }

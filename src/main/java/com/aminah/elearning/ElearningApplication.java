@@ -1,10 +1,7 @@
 package com.aminah.elearning;
 
 import com.aminah.elearning.model.*;
-import com.aminah.elearning.repository.CourseEnrollmentRepository;
-import com.aminah.elearning.repository.CourseRepository;
-import com.aminah.elearning.repository.TutorialRepository;
-import com.aminah.elearning.repository.UserRepository;
+import com.aminah.elearning.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +23,7 @@ public class ElearningApplication {
     }
 
     @Bean
-    public CommandLineRunner seed(UserRepository userRepository, CourseRepository courseRepository, TutorialRepository tutorialRepository, CourseEnrollmentRepository courseEnrollmentRepository,PasswordEncoder encoder) {
+    public CommandLineRunner seed(UserRepository userRepository, CourseRepository courseRepository, TutorialRepository tutorialRepository, CourseEnrollmentRepository courseEnrollmentRepository, PasswordEncoder encoder, SectionRepository sectionRepository) {
         return args -> {
             if (userRepository.count() == 0) {
 
@@ -56,21 +54,38 @@ public class ElearningApplication {
                 course.setPrice(Double.valueOf(234));
 
                 courseRepository.save(course);
-
+                Section section = new Section();
+                section.setCourse(course);
+                section.setTitle("Section 1");
+                section.setOrderIndex(1);
+                sectionRepository.save(section);
+                List<Section> sectionList = new ArrayList<>();
+                sectionList.add(section);
+                course.setSections(sectionList);
                 Tutorial tutorial = new Tutorial();
-                tutorial.setCourse(course);
+                tutorial.setSection(section);
                 tutorial.setTitle("Tutorial title");
                 tutorial.setType(TutorialType.PDF);
                 tutorial.setFilePath("Tutorial file path");
-                tutorial.setOrderIndex(0);
+                tutorial.setOrderIndex(2);
+                Tutorial tutorial2 = new Tutorial();
+                tutorial2.setSection(section);
+                tutorial2.setTitle("Tutorial title");
+                tutorial2.setType(TutorialType.PDF);
+                tutorial2.setFilePath("Tutorial file path");
+                tutorial2.setOrderIndex(1);
                 List<Tutorial> tutorialList = new ArrayList<>();
                 tutorialList.add(tutorial);
-                course.setTutorials(tutorialList);
+                tutorialList.add(tutorial2);
+
+                section.setTutorials(tutorialList);
+
                 tutorialRepository.save(tutorial);
+                tutorialRepository.save(tutorial2);
                 CourseEnrollment courseEnrollment = new CourseEnrollment();
                 courseEnrollment.setCourse(course);
                 courseEnrollment.setUser(student);
-
+                courseEnrollment.setEnrollmentDate(LocalDateTime.MAX);
                 courseEnrollmentRepository.save(courseEnrollment);
 
             }
