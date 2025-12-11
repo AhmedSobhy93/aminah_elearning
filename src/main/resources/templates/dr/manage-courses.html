@@ -1,285 +1,133 @@
-<!--<!DOCTYPE html>-->
-<html xmlns:th="http://www.thymeleaf.org"
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
       layout:decorate="~{layout/base}">
 <head>
-    <title>Your Courses</title>
+
+    <title>Manage Courses</title>
+
 </head>
 <body>
-<!--<section layout:fragment="content">-->
 
-<!--    <div class="container mt-4">-->
-
-<!--        <div class="d-flex justify-content-between align-items-center mb-3">-->
-<!--            <h2 class="fw-bold">Your Courses</h2>-->
-
-<!--            <button class="btn btn-primary" id="btnCreateCourse">-->
-<!--                <i class="bi bi-plus-circle"></i> New Course-->
-<!--            </button>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; COURSES WRAPPER &ndash;&gt;-->
-<!--        <div class="card shadow-sm">-->
-<!--            <div class="card-body">-->
-
-<!--                <div th:each="course : ${courses}" class="border rounded p-3 mb-4">-->
-
-<!--                    <div class="d-flex justify-content-between">-->
-<!--                        <div>-->
-<!--                            <h4 th:text="${course.title}"></h4>-->
-<!--                            <p th:text="${course.description}" class="text-muted"></p>-->
-
-<!--                            <span class="badge bg-secondary">Price: $<span th:text="${course.price}"></span></span>-->
-<!--                            <span class="badge bg-info">Status: <span th:text="${course.published}"></span></span>-->
-<!--                        </div>-->
-
-<!--                        <div class="d-flex gap-2">-->
-<!--                            <button class="btn btn-success btn-sm btn-add-tutorial"-->
-<!--                                    th:data-course-id="${course.id}">-->
-<!--                                Add Tutorial-->
-<!--                            </button>-->
-
-<!--                            <button class="btn btn-info btn-sm btn-view-enrollments"-->
-<!--                                    th:data-course-id="${course.id}">-->
-<!--                                Students-->
-<!--                            </button>-->
-
-<!--                            <button class="btn btn-warning btn-sm btn-edit-course"-->
-<!--                                    th:data-course-id="${course.id}">-->
-<!--                                Edit-->
-<!--                            </button>-->
-
-<!--                            <button class="btn btn-danger btn-sm btn-delete-course"-->
-<!--                                    th:data-course-id="${course.id}">-->
-<!--                                Delete-->
-<!--                            </button>-->
-<!--                        </div>-->
-<!--                    </div>-->
-
-<!--                    &lt;!&ndash; Tutorials &ndash;&gt;-->
-<!--                    <h6 class="mt-3">Tutorials</h6>-->
-<!--                    <div th:id="'tutorials-container-' + ${course.id}">-->
-<!--                        <div class="text-center text-muted">Loading tutorials...</div>-->
-<!--                    </div>-->
-
-<!--                    &lt;!&ndash; Students &ndash;&gt;-->
-<!--                    <h6 class="mt-3">Enrolled Students</h6>-->
-<!--                    <div th:id="'students-container-' + ${course.id}">-->
-<!--                        <div class="text-center text-muted">Loading students...</div>-->
-<!--                    </div>-->
-
-<!--                </div>-->
-
-<!--                &lt;!&ndash; Pagination &ndash;&gt;-->
-<!--                <nav aria-label="Courses pagination">-->
-<!--                    <ul class="pagination justify-content-center mt-3">-->
-<!--                        <li class="page-item" th:classappend="${currentPage == 0}? 'disabled'">-->
-<!--                            <a class="page-link"-->
-<!--                               th:href="@{/dr/courses(pageCourses=${currentPage - 1})}">-->
-<!--                                Previous-->
-<!--                            </a>-->
-<!--                        </li>-->
-
-<!--                        <li class="page-item disabled">-->
-<!--                            <span class="page-link">-->
-<!--                                Page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span>-->
-<!--                            </span>-->
-<!--                        </li>-->
-
-<!--                        <li class="page-item" th:classappend="${currentPage +1 >= totalPages}? 'disabled'">-->
-<!--                            <a class="page-link"-->
-<!--                               th:href="@{/dr/courses(pageCourses=${currentPage + 1})}">-->
-<!--                                Next-->
-<!--                            </a>-->
-<!--                        </li>-->
-<!--                    </ul>-->
-<!--                </nav>-->
-
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-
-
-
-<!--    <div th:replace="dr/modals/modalCreateCourse :: modal"></div>-->
-<!--    <div th:replace="dr/modals/modalAddTutorial :: modal"></div>-->
-<!--&lt;!&ndash;    <div th:replace="dr/modals/modalViewTutorial :: modal"></div>&ndash;&gt;-->
-<!--    <div th:replace="dr/modals/modalViewEnrollments :: modal"></div>-->
-
-<!--</section>-->
 <section layout:fragment="content">
 
-    <div class="container mt-4">
-
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="fw-bold"><i class="fas fa-graduation-cap me-2"></i>Your Courses</h2>
-
-            <button class="btn btn-primary" id="btnCreateCourse" data-bs-toggle="tooltip" title="Create a new course">
-                <i class="fas fa-plus-circle me-1"></i> New Course
-            </button>
-        </div>
-
-        <!-- Courses List -->
-        <div th:each="course : ${courses}" class="course-card">
-
-            <div class="d-flex justify-content-between align-items-start course-header">
-                <div>
-                    <h4>
-                        <i class="fas fa-book-medical text-secondary me-2"></i>
-                        <span th:text="${course.title}"></span>
-                    </h4>
-                    <p th:text="${course.description}"></p>
-
-                    <div class="course-badges mt-1">
-                        <span class="badge bg-secondary">
-                            <i class="fas fa-dollar-sign me-1"></i>
-                            <span th:text="${course.price}"></span>
-                        </span>
-                        <span class="badge bg-info">
-                            <i class="fas fa-circle-notch me-1"></i>
-                            <span th:text="${course.published}"></span>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="d-flex gap-2 course-actions">
-                    <button class="btn btn-success btn-sm btn-add-tutorial" th:data-course-id="${course.id}" data-bs-toggle="tooltip" title="Add Tutorial">
-                        <i class="fas fa-file-medical"></i>
-                    </button>
-
-                    <button class="btn btn-info btn-sm btn-view-enrollments" th:data-course-id="${course.id}" data-bs-toggle="tooltip" title="View Enrolled Students">
-                        <i class="fas fa-users"></i>
-                    </button>
-
-                    <button class="btn btn-warning btn-sm btn-edit-course" th:data-course-id="${course.id}" data-bs-toggle="tooltip" title="Edit Course">
-                        <i class="fas fa-edit"></i>
-                    </button>
-
-                    <button class="btn btn-danger btn-sm btn-delete-course" th:data-course-id="${course.id}" title="Delete Course">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Tutorials -->
-            <div class="tutorials-container" th:id="'tutorials-container-' + ${course.id}">
-                <div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-1"></i>Loading tutorials...</div>
-            </div>
-
-            <!-- Students
-            <div class="students-container" th:id="'students-container-' + ${course.id}">
-                <div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-1"></i>Loading students...</div>
-            </div>
--->
-        </div>
-
-        <!-- Pagination -->
-<!--        <nav aria-label="Courses pagination">-->
-<!--            <ul class="pagination justify-content-center mt-3">-->
-<!--                <li class="page-item" th:classappend="${currentPage == 0}? 'disabled'">-->
-<!--                    <a class="page-link" th:href="@{/dr/courses(pageCourses=${currentPage - 1})}">Previous</a>-->
-<!--                </li>-->
-<!--                <li class="page-item disabled">-->
-<!--                    <span class="page-link">Page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span></span>-->
-<!--                </li>-->
-<!--                <li class="page-item" th:classappend="${currentPage +1 >= totalPages}? 'disabled'">-->
-<!--                    <a class="page-link" th:href="@{/dr/courses(pageCourses=${currentPage + 1})}">Next</a>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </nav>-->
-
-        <!-- Pagination -->
-<!--        <nav aria-label="Courses pagination" class="mt-4">-->
-<!--            <ul class="pagination justify-content-center">-->
-<!--                &lt;!&ndash; Previous &ndash;&gt;-->
-<!--                <li class="page-item" th:classappend="${currentPage == 0}? 'disabled'">-->
-<!--                    <a class="page-link" th:href="@{/dr/courses(pageCourses=${currentPage - 1})}">-->
-<!--                        <i class="fas fa-chevron-left me-1"></i> Previous-->
-<!--                    </a>-->
-<!--                </li>-->
-
-<!--                &lt;!&ndash; Page Numbers &ndash;&gt;-->
-<!--                <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"-->
-<!--                    class="page-item" th:classappend="${i == currentPage}? 'active'">-->
-<!--                    <a class="page-link" th:href="@{/dr/courses(pageCourses=${i})}" th:text="${i + 1}">1</a>-->
-<!--                </li>-->
-
-<!--                &lt;!&ndash; Next &ndash;&gt;-->
-<!--                <li class="page-item" th:classappend="${currentPage + 1 >= totalPages}? 'disabled'">-->
-<!--                    <a class="page-link" th:href="@{/dr/courses(pageCourses=${currentPage + 1})}">-->
-<!--                        Next <i class="fas fa-chevron-right ms-1"></i>-->
-<!--                    </a>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </nav>-->
-        <nav aria-label="Course navigation" class="mt-3">
-            <ul class="pagination pagination-aminah justify-content-center">
-
-                <!-- previous -->
-                <li class="page-item" th:classappend="${coursesPage.hasPrevious()} ?: 'disabled'">
-                    <a class="page-link"
-                       th:href="@{/dr/courses(pageCourses=${coursesPage.number - 1})}">
-                        Previous
-                    </a>
-                </li>
-
-                <!-- numbers -->
-                <li class="page-item"
-                    th:each="i : ${#numbers.sequence(0, coursesPage.totalPages - 1)}"
-                    th:classappend="${i == coursesPage.number} ? 'active'">
-                    <a class="page-link"
-                       th:text="${i + 1}"
-                       th:href="@{/dr/courses(pageCourses=${i})}">
-                    </a>
-                </li>
-
-                <!-- next -->
-                <li class="page-item" th:classappend="${coursesPage.hasNext()} ?: 'disabled'">
-                    <a class="page-link"
-                       th:href="@{/dr/courses(pageCourses=${coursesPage.number + 1})}">
-                        Next
-                    </a>
-                </li>
-            </ul>
-        </nav>
-
-    </div>
-    <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteCourseModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <i class="fas fa-book-medical fa-3x text-danger mb-3"></i>
-                    <p class="mb-3 fw-semibold">Are you sure you want to delete this course?</p>
-                    <p class="text-muted small">This action cannot be undone.</p>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
-                        <i class="fas fa-trash-alt me-1"></i> Delete
-                    </button>
-                </div>
-            </div>
-        </div>
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold"><i class="fas fa-graduation-cap me-2"></i>Your Courses</h2>
+        <button class="btn btn-primary" id="btnCreateCourse">
+            <i class="fas fa-plus-circle me-1"></i> New Course
+        </button>
     </div>
 
-    <!-- Modals -->
-    <div th:replace="dr/modals/modalCreateCourse :: modal"></div>
-    <div th:replace="dr/modals/modalAddTutorial :: modal"></div>
-    <div th:replace="dr/modals/modalViewEnrollments :: modal"></div>
+    <!-- Courses List -->
+    <div th:each="course : ${courses}" class="course-card mb-4 p-3 border rounded">
+
+        <!-- Course Header -->
+        <div class="d-flex justify-content-between align-items-start course-header">
+            <div>
+                <h4>
+                    <i class="fas fa-book-medical text-secondary me-2"></i>
+                    <span th:text="${course.title}"></span>
+                </h4>
+                <p th:text="${course.description}"></p>
+                <div class="course-badges mt-1">
+                    <span class="badge bg-secondary">
+                        <i class="fas fa-dollar-sign me-1"></i>
+                        <span th:text="${course.price}"></span>
+                    </span>
+                    <span class="badge bg-info">
+                        <i class="fas fa-circle-notch me-1"></i>
+                        <span th:text="${course.published}"></span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 course-actions">
+                <button class="btn btn-success btn-sm btn-add-section" th:data-course-id="${course.id}"
+                        title="Add Section">
+                    <i class="fas fa-layer-group"></i>
+                </button>
+
+                <button class="btn btn-info btn-sm"
+                        title="Shoe EnrolledIn Students"
+                        th:onclick="'showEnrollments(' + ${course.id} + ')'">
+                    <i class="fas fa-users me-1"></i>
+                </button>
+
+
+                <button class="btn btn-warning btn-sm btnEditCourse" th:data-course-id="${course.id}"
+                        title="Edit Course">
+                    <i class="fas fa-edit"></i>
+                </button>
+
+                <button class="btn btn-danger btn-sm btn-delete-course"
+                        th:data-course-id="${course.id}"
+                        title="Delete Course">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- Sections -->
+        <div class="sections-container mt-3" th:id="'sections-container-' + ${course.id}">
+            <div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-1"></i>Loading sections...</div>
+        </div>
+
+        <!-- Students fragment-->
+<!--        <div class="students-container mt-3" th:id="'students-container-' + ${course.id}">-->
+<!--            <div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-1"></i>Loading students...</div>-->
+<!--        </div>-->
+
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Course navigation" class="mt-3">
+        <ul class="pagination pagination-aminah justify-content-center">
+
+            <!-- Previous -->
+            <li class="page-item"
+                th:classappend="${coursesPage.hasPrevious()} ? '' : 'disabled'">
+                <a class="page-link"
+                   th:href="${coursesPage.hasPrevious()} ?
+                        @{/dr/courses(page=${coursesPage.number - 1})} : '#'">
+                    Previous
+                </a>
+            </li>
+
+            <!-- Page numbers -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, coursesPage.totalPages - 1)}"
+                th:classappend="${i == coursesPage.number} ? 'active'">
+                <a class="page-link"
+                   th:text="${i + 1}"
+                   th:href="@{/dr/courses(page=${i})}">
+                </a>
+            </li>
+
+            <!-- Next -->
+            <li class="page-item"
+                th:classappend="${coursesPage.hasNext()} ? '' : 'disabled'">
+                <a class="page-link"
+                   th:href="${coursesPage.hasNext()} ?
+                        @{/dr/courses(page=${coursesPage.number + 1})} : '#'">
+                    Next
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+
+    <div th:replace="~{dr/modals/modalCreateCourse :: modal}"></div>
+    <div th:replace="~{dr/modals/modalAddTutorial :: modal}"></div>
+    <div th:replace="~{dr/modals/modalSection :: modal}"></div>
+    <div th:replace="~{dr/modals/modalDeleteCourse :: modal}"></div>
+    <div th:replace="~{dr/modals/modalViewEnrollments :: modal}"></div>
+    <div th:replace="~{dr/modals/modalViewTutorial :: modal}"></div>
+    <div th:replace="~{dr/modals/modalDeleteSection :: modal}"></div>
+    <div th:replace="~{dr/modals/modalDeleteTutorial :: modal}"></div>
+
 
 </section>
-
-<script>
-    // Enable Bootstrap tooltips
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    const tooltipList = [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el))
-</script>
-
 </body>
 </html>

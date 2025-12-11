@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,6 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class Tutorial {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,6 +25,11 @@ public class Tutorial {
     private int orderIndex = 0;
 
     private LocalDateTime uploadedAt = LocalDateTime.now();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "section_id")
+    private Section section;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private Course course;
@@ -33,8 +41,19 @@ public class Tutorial {
     private String status;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
     private String articleContent; // ARTICLE content
 
     @OneToMany(mappedBy = "tutorial", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuizQuestion> quizQuestions;
+    private List<QuizQuestion> quizQuestions = new ArrayList<>();
+
+    public Tutorial(Long tutorialId) {
+        this.id = tutorialId;
+    }
+
+    public void addQuizQuestion(QuizQuestion question) {
+        quizQuestions.add(question);
+        question.setTutorial(this);
+    }
+
 }

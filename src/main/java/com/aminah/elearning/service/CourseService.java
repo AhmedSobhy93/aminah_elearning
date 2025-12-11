@@ -1,6 +1,7 @@
 package com.aminah.elearning.service;
 
 import com.aminah.elearning.model.Course;
+import com.aminah.elearning.model.Section;
 import com.aminah.elearning.model.Tutorial;
 import com.aminah.elearning.model.User;
 import com.aminah.elearning.repository.CourseRepository;
@@ -51,17 +52,21 @@ public class CourseService {
         return courseRepository.save(course);
     }
 
-    public Tutorial addTutorial(Long courseId, Tutorial tutorial, MultipartFile file) throws IOException {
-        Course course = getCourse(courseId);
-        String path = FileUploadUtil.saveFile("uploads/tutorials", file);
-        tutorial.setFilePath(path);
-        tutorial.setCourse(course);
-        return tutorialRepository.save(tutorial);
-    }
 
-    public List<Tutorial> getTutorials(Course course) {
-        return tutorialRepository.findByCourseId(course.getId());
-    }
+//    public List<Course> getPublishedCourses() {
+//        return courseRepository.findByPublishedTrue();
+//    }
+//    public Tutorial addTutorial(Long sectionId, Tutorial tutorial, MultipartFile file) throws IOException {
+//        Section course = getCourse(courseId);
+//        String path = FileUploadUtil.saveFile("uploads/tutorials", file);
+//        tutorial.setFilePath(path);
+//        tutorial.setCourse(course);
+//        return tutorialRepository.save(tutorial);
+//    }
+
+//    public List<Tutorial> getTutorials(Course course) {
+//        return tutorialRepository.getTutorialsByCourse(course.getId());
+//    }
 
     public Page<Course> getCoursesByDR(String drUsername, Pageable pageable) {
         return courseRepository.findByAuthorUsername(drUsername, pageable);

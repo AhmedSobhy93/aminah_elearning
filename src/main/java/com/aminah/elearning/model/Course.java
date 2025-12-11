@@ -19,6 +19,10 @@ import lombok.*;
 @AllArgsConstructor
 public class Course {
 
+    public Course(Long id) {
+        this.id = id;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -47,6 +51,9 @@ public class Course {
         createdAt = LocalDateTime.now();
     }
 
+    @Transient
+    private int progress; // dynamically calculated
+
     // Relationships
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseEnrollment> enrollments = new ArrayList<>();
@@ -55,13 +62,22 @@ public class Course {
     @JoinColumn(name = "author_id") // assuming 'author' is User
     private User author;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("orderIndex")
-    private List<Tutorial> tutorials = new ArrayList<>();
+//    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @OrderBy("orderIndex")
+//    private List<Tutorial> tutorials = new ArrayList<>();
 
-    // Helper method
-    public void addTutorial(Tutorial tutorial) {
-        tutorials.add(tutorial);
-        tutorial.setCourse(this);
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("orderIndex ASC")
+    private List<Section> sections = new ArrayList<>();
+    public void addSection(Section section){
+        section.setCourse(this);
+        section.setOrderIndex(sections.size() + 1);
+        sections.add(section);
     }
+    // Helper method
+//    public void addTutorial(Tutorial tutorial) {
+//        tutorials.add(tutorial);
+//        tutorial.setCourse(this);
+//    }
 }
