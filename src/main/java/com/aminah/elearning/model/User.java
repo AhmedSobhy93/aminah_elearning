@@ -88,6 +88,8 @@ public class User {
 
     private String fullName;
 
+    private String phoneNumber;
+
     @Column(nullable = false)
     private String password;
 
@@ -104,4 +106,8 @@ public class User {
     private List<CourseEnrollment> enrollments = new ArrayList<>();
 
     private boolean enabled = false;
+
+    public User(Long userId) {
+        this.id = userId;
+    }
 }

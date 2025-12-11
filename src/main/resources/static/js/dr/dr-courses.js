@@ -1,153 +1,17 @@
 //
-//     function handleTypeDisplay(type) {
-//         document.getElementById('fileUploadSection').classList.toggle('d-none', type === 'ARTICLE' || type === 'QUIZ');
-//         document.getElementById('articleSection').classList.toggle('d-none', type !== 'ARTICLE');
-//         document.getElementById('quizSection').classList.toggle('d-none', type !== 'QUIZ');
-//     }
-//     // document.getElementById('tutorialTypeSelect').addEventListener('change', e => handleTypeDisplay(e.target.value));
-// //
-// //
-// //     function renderViewModal(data) {
-// //         document.getElementById('viewTutorialTitle').innerText = data.title;
-// //
-// //         document.getElementById('viewFileSection').classList.add('d-none');
-// //         document.getElementById('viewArticleSection').classList.add('d-none');
-// //         document.getElementById('viewQuizSection').classList.add('d-none');
-// //
-// //         if (data.type === 'VIDEO' || data.type === 'PDF') {
-// //             const container = document.getElementById('viewFileContainer');
-// //             container.innerHTML = '';
-// //             if (data.filePath) {
-// //                 if (data.type === 'VIDEO') {
-// //                     const video = document.createElement('video');
-// //                     video.src = data.filePath;
-// //                     video.controls = true;
-// //                     video.classList.add('w-100');
-// //                     container.appendChild(video);
-// //                 } else {
-// //                     const link = document.createElement('a');
-// //                     link.href = data.filePath;
-// //                     link.target = '_blank';
-// //                     link.innerText = 'Open PDF';
-// //                     container.appendChild(link);
-// //                 }
-// //             }
-// //             document.getElementById('viewFileSection').classList.remove('d-none');
-// //         }
-// //
-// //         if (data.type === 'ARTICLE') {
-// //             document.getElementById('viewArticleContent').innerHTML = data.articleContent || '<em>No content</em>';
-// //             document.getElementById('viewArticleSection').classList.remove('d-none');
-// //         }
-// //
-// //         if (data.type === 'QUIZ') {
-// //             const container = document.getElementById('viewQuizQuestionsContainer');
-// //             container.innerHTML = '';
-// //             (data.quizQuestions || []).forEach((q, i) => {
-// //                 const div = document.createElement('div');
-// //                 div.classList.add('border', 'p-2', 'mb-2', 'rounded');
-// //                 div.innerHTML = `<strong>Q${i+1}: ${q.question}</strong>
-// //                              <ul>${q.options.map((opt, j) => `<li>${opt} ${q.correctOptionIndex === j ? '(Correct)' : ''}</li>`).join('')}</ul>`;
-// //                 container.appendChild(div);
-// //             });
-// //             document.getElementById('viewQuizSection').classList.remove('d-none');
-// //         }
-// //     }
-//
-// //
-// //     document.getElementById('tutorialForm').addEventListener('submit', (e) => {
-// //         const hiddenInput = document.createElement('input');
-// //         hiddenInput.type = 'hidden';
-// //         hiddenInput.name = 'quizQuestionsJson';
-// //         hiddenInput.value = JSON.stringify(quizQuestions);
-// //         e.target.appendChild(hiddenInput);
-// //     });
-// //     async function loadTutorials(sectionId, page = 1) {
-// //         const container = document.getElementById(`tutorials-container-${sectionId}`);
-// //         if (!container) return;
-// //
-// //         container.innerHTML = `<div class="text-center text-muted">
-// //         <i class="fas fa-spinner fa-spin me-1"></i> Loading tutorials...
-// //     </div>`;
-// //
-// //         const res = await fetch(`/sections/${sectionId}/tutorials-fragment?page=${page}`);
-// //         container.innerHTML = await res.text();
-// //
-// //         attachTutorialButtons(sectionId); // ✅ Attach buttons after content load
-// //     }
-// //
-// //
-// //     /* ====================================================
-// //      *                       STUDENTS
-// //      * ==================================================== */
-// //     async function loadStudents(courseId, page = 0) {
-// //         const container = document.getElementById(`students-container-${courseId}`);
-// //         if (!container) return;
-// //         container.innerHTML = `<div class="text-center text-muted">
-// //             <i class="fas fa-spinner fa-spin me-1"></i> Loading students...
-// //         </div>`;
-// //         const res = await fetch(`/dr/courses/${courseId}/students-fragment?page=${page}`);
-// //         container.innerHTML = await res.text();
-// //         attachStudentPagination(courseId);
-// //     }
-// //
-// //     function attachStudentPagination(courseId) {
-// //         document.querySelectorAll(`#students-container-${courseId} .pagination a`).forEach(link => {
-// //             link.addEventListener('click', (e) => {
-// //                 e.preventDefault();
-// //                 const page = new URL(link.href).searchParams.get('page') || 0;
-// //                 loadStudents(courseId, page);
-// //             });
-// //         });
-// //     }
-// //
-// //
-// //     document.querySelectorAll(".btn-view-enrollments").forEach(btn => {
-// //         btn.addEventListener("click", async () => {
-// //             const courseId = btn.dataset.courseId;
-// //
-// //             const modalBody = document.getElementById("enrollmentsContainer");
-// //             modalBody.innerHTML = "Loading...";
-// //
-// //             const res = await fetch(`/dr/courses/${courseId}/students-fragment`);
-// //             const html = await res.text();
-// //             modalBody.innerHTML = html;
-// //
-// //             // attachPaginationListeners();
-// //
-// //             new bootstrap.Modal(document.getElementById("modalViewEnrollments")).show();
-// //         });
-// //     });
-// //
-// //
-// //     /* ====================================================
-// //      *               INITIAL LOAD FOR ALL COURSES
-// //      * ==================================================== */
-// //     document.querySelectorAll('.course-card').forEach(card => {
-// //         const courseId = card.querySelector('.btn-add-section')?.dataset.courseId;
-// //         if (courseId) {
-// //             loadSections(courseId);
-// //             loadStudents(courseId);
-// //         }
-// //     });
-// //
-// // });
-//
 //
 // document.addEventListener("DOMContentLoaded", () => {
-//
-//     /* ====================================================
-//      *                     CSRF SETUP
-//      * ==================================================== */
+//     // =======================
+//     // CSRF SETUP
+//     // =======================
 //     const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
 //     const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 //
-//     /* ====================================================
-//      *                     COURSES
-//      * ==================================================== */
+//     // =======================
+//     // COURSES
+//     // =======================
 //     const createCourseModal = new bootstrap.Modal(document.getElementById('modalCreateCourse'));
 //
-//     // Create / Edit course
 //     document.getElementById('btnCreateCourse')?.addEventListener('click', () => {
 //         resetCourseForm();
 //         createCourseModal.show();
@@ -169,15 +33,14 @@
 //         const formData = new FormData(form);
 //         formData.append("_csrf", csrfToken);
 //
-//         await fetch(url, { method: 'POST', body: formData });
+//         await fetch(url, {method: 'POST', body: formData});
 //         createCourseModal.hide();
-//         loadAllCourses(); // reload courses dynamically
+//         loadAllCourses();
 //     });
 //
 //     async function loadCourseIntoForm(courseId) {
 //         const res = await fetch(`/dr/courses/${courseId}/json`);
 //         const course = await res.json();
-//
 //         const form = document.getElementById('formCreateCourse');
 //         form.querySelector('input[name="title"]').value = course.title;
 //         form.querySelector('input[name="courseName"]').value = course.courseName;
@@ -194,43 +57,28 @@
 //         delete form.dataset.courseId;
 //     }
 //
-//     // Delete course
+//     const deleteCourseModal = new bootstrap.Modal(document.getElementById("deleteCourseModal"));
+//     let selectedCourseId = null;
 //
-//     document.addEventListener("DOMContentLoaded", () => {
-//
-//         const deleteCourseModalEl = document.getElementById("deleteCourseModal");
-//         const deleteCourseModal = new bootstrap.Modal(deleteCourseModalEl);
-//
-//         let selectedCourseId = null;
-//
-//         document.querySelectorAll(".btn-delete-course").forEach(btn => {
-//             btn.addEventListener("click", () => {
-//                 selectedCourseId = btn.dataset.courseId;
-//                 deleteCourseModal.show();
-//             });
+//     document.querySelectorAll(".btn-delete-course").forEach(btn => {
+//         btn.addEventListener("click", () => {
+//             selectedCourseId = btn.dataset.courseId;
+//             deleteCourseModal.show();
 //         });
-//
-//         document.getElementById("confirmDeleteBtn").addEventListener("click", async () => {
-//             if (!selectedCourseId) return;
-//
-//             await fetch(`/dr/courses/delete/${selectedCourseId}`, {
-//                 method: "POST",
-//                 headers: {
-//                     "Content-Type": "application/x-www-form-urlencoded"
-//                 },
-//                 body: "_csrf=" + document.querySelector('meta[name="_csrf"]').content
-//             });
-//
-//             deleteCourseModal.hide();
-//             window.location.reload();
-//         });
-//
 //     });
 //
+//     document.getElementById("confirmDeleteBtn")?.addEventListener("click", async () => {
+//         if (!selectedCourseId) return;
+//         await fetch(`/dr/courses/delete/${selectedCourseId}`, {
+//             method: "POST", headers: {"Content-Type": "application/x-www-form-urlencoded"}, body: `_csrf=${csrfToken}`
+//         });
+//         deleteCourseModal.hide();
+//         window.location.reload();
+//     });
 //
-//     /* ====================================================
-//      *                   SECTIONS
-//      * ==================================================== */
+//     // =======================
+//     // SECTIONS
+//     // =======================
 //     const sectionModal = new bootstrap.Modal(document.getElementById('modalSection'));
 //
 //     function attachSectionButtons() {
@@ -241,18 +89,6 @@
 //                 document.getElementById('sectionId').value = '';
 //                 sectionModal.show();
 //             };
-//             document.querySelectorAll('.btn-add-tutorial').forEach(btn => {
-//                 btn.onclick = () => {
-//                     document.getElementById('tutorialForm').reset();
-//                     const sectionId = btn.dataset.sectionId;
-//                     document.getElementById('tutorialSectionId').value = sectionId;
-//                     document.getElementById('fileUploadSection').classList.add('d-none');
-//                     document.getElementById('articleSection').classList.add('d-none');
-//                     document.getElementById('quizSection').classList.add('d-none');
-//                     new bootstrap.Modal(document.getElementById('modalAddTutorial')).show();
-//                 };
-//             });
-//
 //         });
 //
 //         document.querySelectorAll('.btn-edit-section').forEach(btn => {
@@ -263,66 +99,28 @@
 //                 sectionModal.show();
 //             };
 //         });
-//
-//         // document.querySelectorAll('.btn-delete-section').forEach(btn => {
-//         //     btn.onclick = async () => {
-//         //         if (!confirm('Are you sure?')) return;
-//         //         const sectionId = btn.dataset.sectionId;
-//         //         await fetch(`/dr/sections/delete/${sectionId}`, { method: 'POST', headers: { [csrfHeader]: csrfToken } });
-//         //         const courseId = btn.closest('.course-card').querySelector('.btn-add-section').dataset.courseId;
-//         //         loadSections(courseId);
-//         //     };
-//         // });
-//
 //     }
 //
+//     const deleteSectionModal = new bootstrap.Modal(document.getElementById("deleteSectionModal"));
+//     let selectedSectionId = null;
 //
-//     document.addEventListener("DOMContentLoaded", () => {
-//
-//         const deleteSectionModalEl = document.getElementById("deleteSectionModal");
-//         const deleteSectionModal = new bootstrap.Modal(deleteSectionModalEl);
-//
-//         let selectedSectionId = null;
-//
-//         // Event delegation for dynamically loaded elements
-//         document.body.addEventListener("click", (e) => {
-//
-//             // DELETE section btn
-//             if (e.target.closest(".btn-delete-section")) {
-//                 const btn = e.target.closest(".btn-delete-section");
-//                 selectedSectionId = btn.dataset.sectionId;
-//                 deleteSectionModal.show();
-//             }
-//         });
-//
-//         // Confirm delete
-//         document.getElementById("confirmSectionDeleteBtn").addEventListener("click", async () => {
-//
-//             if (!selectedSectionId) return;
-//
-//             const csrf = document.querySelector('meta[name="_csrf"]').content;
-//
-//             await fetch(`/dr/sections/delete/${selectedSectionId}`, {
-//                 method: "POST",
-//                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
-//                 body: `_csrf=${csrf}`
-//             });
-//
-//             deleteSectionModal.hide();
-//
-//             // Reload sections only instead of whole page
-//             if (typeof loadSections === "function") {
-//                 // assume you keep current course/page in DOM
-//                 const currentCourseId = document.getElementById("sectionList")?.dataset.courseId;
-//                 if (currentCourseId) loadSections(currentCourseId, 1);
-//             } else {
-//                 window.location.reload();
-//             }
-//         });
-//
+//     document.body.addEventListener("click", (e) => {
+//         if (e.target.closest(".btn-delete-section")) {
+//             const btn = e.target.closest(".btn-delete-section");
+//             selectedSectionId = btn.dataset.sectionId;
+//             deleteSectionModal.show();
+//         }
 //     });
 //
-//
+//     document.getElementById("confirmSectionDeleteBtn")?.addEventListener("click", async () => {
+//         if (!selectedSectionId) return;
+//         await fetch(`/dr/sections/delete/${selectedSectionId}`, {
+//             method: "POST", headers: {"Content-Type": "application/x-www-form-urlencoded"}, body: `_csrf=${csrfToken}`
+//         });
+//         deleteSectionModal.hide();
+//         const currentCourseId = document.getElementById("sectionList")?.dataset.courseId;
+//         if (currentCourseId) loadSections(currentCourseId, 1); else window.location.reload();
+//     });
 //
 //     document.getElementById('btnSaveSection')?.addEventListener('click', () => {
 //         document.getElementById('sectionForm').requestSubmit();
@@ -336,7 +134,6 @@
 //         const description = document.getElementById('sectionDescription').value;
 //
 //         const url = sectionId ? `/dr/sections/edit/${sectionId}` : `/dr/courses/${courseId}/sections/add`;
-//
 //         const formData = new URLSearchParams();
 //         formData.append('title', title);
 //         formData.append('description', description);
@@ -344,593 +141,560 @@
 //         await fetch(url, {
 //             method: 'POST',
 //             body: formData,
-//             headers: { 'Content-Type': 'application/x-www-form-urlencoded', [csrfHeader]: csrfToken }
+//             headers: {'Content-Type': 'application/x-www-form-urlencoded', [csrfHeader]: csrfToken}
 //         });
-//
 //         sectionModal.hide();
 //         loadSections(courseId);
 //     });
 //
-//     async function loadSections(courseId) {
+//     window.loadSections=async function (courseId, page = 1) {
 //         const container = document.getElementById(`sections-container-${courseId}`);
 //         if (!container) return;
-//
 //         container.innerHTML = `<div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-1"></i> Loading sections...</div>`;
-//         const res = await fetch(`/dr/courses/${courseId}/sections-fragment`);
+//         const res = await fetch(`/dr/courses/${courseId}/sections-fragment?page=${page}`);
 //         container.innerHTML = await res.text();
 //
 //         attachSectionButtons();
+//         attachSectionPagination(courseId);
 //
-//         // Load tutorials for each section
 //         container.querySelectorAll('.tutorial-wrapper').forEach(wrapper => {
 //             const sectionId = wrapper.id.replace('tutorials-container-', '');
-//             loadTutorials(sectionId,1);
+//             loadTutorials(sectionId, 1);
 //         });
-//
-//
 //     }
 //
-//     /* ====================================================
-//      *                   TUTORIALS
-//      * ==================================================== */
+//     function attachSectionPagination(courseId) {
+//         document.querySelectorAll(`#sections-container-${courseId} .pagination a`).forEach(link => {
+//             link.addEventListener('click', e => {
+//                 e.preventDefault();
+//                 const page = link.getAttribute("data-page");
 //
-//
-//     async function loadTutorials(sectionId, page = 1) {
-//         const container = document.getElementById(`tutorials-container-${sectionId}`);
-//         if (!container) return;
-//
-//         container.innerHTML = `<div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-1"></i> Loading tutorials...</div>`;
-//         const res = await fetch(`/dr/sections/${sectionId}/tutorials-fragment?page=${page}`);
-//
-//         container.innerHTML = await res.text();
-//
-//         attachTutorialButtons(sectionId);
+//                 loadSections(courseId, page);
+//             });
+//         });
 //     }
 //
 //
+//     // =======================
+//     // TUTORIALS
+//     // =======================
+// // ==========================
+// // Global state
+// // ==========================
+//     const quizQuestions = [];
+//     const modalAddTutorial = document.getElementById('modalAddTutorial');
 //
-//     // function handleTypeDisplay(type) {
-//     //     document.getElementById('fileUploadSection').classList.toggle('d-none', type === 'ARTICLE' || type === 'QUIZ');
-//     //     document.getElementById('articleSection').classList.toggle('d-none', type !== 'ARTICLE');
-//     //     document.getElementById('quizSection').classList.toggle('d-none', type !== 'QUIZ');
-//     // }
-//     // document.getElementById('tutorialTypeSelect')?.addEventListener('change', e => handleTypeDisplay(e.target.value));
+// // ==========================
+// // Delegated click listener
+// // ==========================
+//     document.addEventListener('click', async (e) => {
+//         const btn = e.target.closest('button');
+//         if (!btn) return;
+//
+//         const sectionId = btn.dataset.sectionId;
+//         const tutorialId = btn.dataset.id;
+//
+//         // 1️⃣ Toggle Tutorials Collapse
+//         if (btn.classList.contains('btn-toggle-tutorials')) {
+//             const collapse = document.getElementById(`tutorials-collapse-${sectionId}`);
+//             if (!collapse.classList.contains('show')) {
+//                 const html = await fetch(`/dr/sections/${sectionId}/tutorials-fragment`).then(res => res.text());
+//                 document.getElementById(`tutorials-container-${sectionId}`).innerHTML = html;
+//                 new bootstrap.Collapse(collapse, {toggle: true});
+//             } else {
+//                 new bootstrap.Collapse(collapse, {toggle: true});
+//             }
+//         }
+//
+//         // 2️⃣ Add Tutorial
+//         else if (btn.classList.contains('btn-add-tutorial')) {
+//             document.getElementById('tutorialForm').reset();
+//             document.getElementById('tutorialSectionId').value = sectionId;
+//             showTutorialType('');
+//             quizQuestions.length = 0;
+//             renderQuizQuestions();
+//             new bootstrap.Modal(modalAddTutorial).show();
+//         }
+//
+//         // 3️⃣ Edit Tutorial
+//         else if (btn.classList.contains('btn-edit-tutorial')) {
+//             if (!tutorialId) return;
+//             await loadTutorialIntoForm(tutorialId);
+//             new bootstrap.Modal(modalAddTutorial).show();
+//         }
+//
+//         // 4️⃣ Delete Tutorial
+//         else if (btn.classList.contains('btn-delete-tutorial')) {
+//             if (!tutorialId) return;
+//             openDeleteTutorialModal(tutorialId);
+//         }
+//
+//
+//
+//         // 5️⃣ Remove Quiz Question
+//         else if (btn.classList.contains('btnRemoveQuestion')) {
+//             const idx = parseInt(btn.dataset.index);
+//             quizQuestions.splice(idx, 1);
+//             renderQuizQuestions();
+//         }
+//         //  View Tutorial
+//         else if (btn.classList.contains('btn-view-tutorial')) {
+//             if (!tutorialId) return;
+//             await openViewTutorialModal(tutorialId);
+//         }
+//     });
+//
+// // ==========================
+// // Tutorial type change
+// // ==========================
+//     document.getElementById('tutorialTypeSelect')?.addEventListener('change', e => {
+//         showTutorialType(e.target.value);
+//     });
+//
+// // ==========================
+// // Functions
+// // ==========================
+//     function showTutorialType(type) {
+//         const fileInput = document.getElementById("tutorialFile");
+//
+//         const showFile = (type === "VIDEO" || type === "PDF");
+//         document.getElementById("fileUploadSection").classList.toggle("d-none", !showFile);
+//
+//         if (!showFile) {
+//             fileInput.value = ""; // 🔥 ensure file is removed
+//         }
+//
+//         document.getElementById("articleSection").classList.toggle("d-none", type !== "ARTICLE");
+//         document.getElementById("quizSection").classList.toggle("d-none", type !== "QUIZ");
+//     }
 //
 //     function renderQuizQuestions() {
 //         const container = document.getElementById('quizQuestionsContainer');
 //         container.innerHTML = '';
+//
 //         quizQuestions.forEach((q, i) => {
 //             const div = document.createElement('div');
 //             div.classList.add('border', 'p-2', 'mb-2', 'rounded');
-//             div.innerHTML = `
-//                 <div class="d-flex justify-content-between align-items-center mb-1">
-//                     <strong>Question ${i + 1}</strong>
-//                     <button type="button" class="btn btn-sm btn-danger btnRemoveQuestion" data-index="${i}">Remove</button>
+//
+//             let optionInputs = q.options
+//                 .map((opt, j) => `
+//                 <div class="input-group mb-1">
+//                     <input type="text" class="form-control optionInput"
+//                            value="${opt}" placeholder="Option ${j + 1}"
+//                            data-q="${i}" data-opt="${j}">
+//                     <button class="btn btn-outline-danger btnRemoveOption"
+//                             data-q="${i}" data-opt="${j}">
+//                         ✕
+//                     </button>
 //                 </div>
-//                 <input type="text" class="form-control mb-1" placeholder="Question text" value="${q.question}" data-index="${i}" data-field="question">
-//                 ${q.options.map((opt, j) => `<input type="text" class="form-control mb-1" placeholder="Option ${j+1}" value="${opt}" data-index="${i}" data-option="${j}">`).join('')}
-//                 <label>Correct Option:
-//                     <select class="form-select mb-1" data-index="${i}" data-field="correctOptionIndex">
-//                         ${q.options.map((_, j) => `<option value="${j}" ${q.correctOptionIndex === j ? 'selected' : ''}>Option ${j+1}</option>`).join('')}
-//                     </select>
-//                 </label>
-//             `;
+//             `)
+//                 .join("");
+//
+//             let correctOptions = q.options
+//                 .map((_, j) => `
+//                 <option value="${j}" ${q.correctOptionIndex === j ? "selected" : ""}>
+//                     Option ${j + 1}
+//                 </option>
+//             `)
+//                 .join("");
+//
+//             div.innerHTML = `
+//             <div class="d-flex justify-content-between align-items-center mb-2">
+//                 <strong>Question ${i + 1}</strong>
+//                 <button type="button" class="btn btn-sm btn-danger btnRemoveQuestion" data-index="${i}">
+//                     Remove Question
+//                 </button>
+//             </div>
+//
+//             <input type="text" class="form-control mb-2 questionInput"
+//                    placeholder="Question text"
+//                    value="${q.question}" data-q="${i}">
+//
+//             <div class="mt-2"><strong>Options</strong></div>
+//             ${optionInputs}
+//
+//             <button class="btn btn-sm btn-secondary mb-2 btnAddOption" data-q="${i}">
+//                 + Add Option
+//             </button>
+//
+//             <label><strong>Correct Answer:</strong></label>
+//             <select class="form-select correctSelect" data-q="${i}">
+//                 ${correctOptions}
+//             </select>
+//         `;
+//
 //             container.appendChild(div);
 //         });
 //
-//         container.querySelectorAll('.btnRemoveQuestion').forEach(btn => {
-//             btn.onclick = () => {
-//                 const idx = btn.dataset.index;
-//                 quizQuestions.splice(idx, 1);
+//         attachQuizHandlers();
+//     }
+//
+//     function attachQuizHandlers() {
+//         const container = document.getElementById('quizQuestionsContainer');
+//
+//         // Edit question text
+//         container.querySelectorAll(".questionInput").forEach(input => {
+//             input.oninput = e => {
+//                 const q = e.target.dataset.q;
+//                 quizQuestions[q].question = e.target.value;
+//             };
+//         });
+//
+//         // Edit option text
+//         container.querySelectorAll(".optionInput").forEach(input => {
+//             input.oninput = e => {
+//                 const q = e.target.dataset.q;
+//                 const opt = e.target.dataset.opt;
+//                 quizQuestions[q].options[opt] = e.target.value;
+//             };
+//         });
+//
+//         // Correct answer selector
+//         container.querySelectorAll(".correctSelect").forEach(sel => {
+//             sel.onchange = e => {
+//                 const q = e.target.dataset.q;
+//                 quizQuestions[q].correctOptionIndex = parseInt(e.target.value);
+//             };
+//         });
+//
+//         // Remove option
+//         container.querySelectorAll(".btnRemoveOption").forEach(btn => {
+//             btn.onclick = e => {
+//                 const q = btn.dataset.q;
+//                 const opt = btn.dataset.opt;
+//
+//                 quizQuestions[q].options.splice(opt, 1);
+//
+//                 // fix correct index if needed
+//                 if (quizQuestions[q].correctOptionIndex >= quizQuestions[q].options.length) {
+//                     quizQuestions[q].correctOptionIndex = 0;
+//                 }
+//
 //                 renderQuizQuestions();
 //             };
 //         });
 //
-//         container.querySelectorAll('input, select').forEach(input => {
-//             input.oninput = e => {
-//                 const idx = e.target.dataset.index;
-//                 if (e.target.dataset.field === 'question') quizQuestions[idx].question = e.target.value;
-//                 else if (e.target.dataset.field === 'correctOptionIndex') quizQuestions[idx].correctOptionIndex = parseInt(e.target.value);
-//                 else if (e.target.dataset.option !== undefined) quizQuestions[idx].options[e.target.dataset.option] = e.target.value;
+//         // Add option
+//         container.querySelectorAll(".btnAddOption").forEach(btn => {
+//             btn.onclick = e => {
+//                 const q = btn.dataset.q;
+//                 quizQuestions[q].options.push("");
+//                 renderQuizQuestions();
+//             };
+//         });
+//
+//         // Remove whole question
+//         container.querySelectorAll(".btnRemoveQuestion").forEach(btn => {
+//             btn.onclick = e => {
+//                 const index = btn.dataset.index;
+//                 quizQuestions.splice(index, 1);
+//                 renderQuizQuestions();
 //             };
 //         });
 //     }
-//
 //     document.getElementById('btnAddQuizQuestion')?.addEventListener('click', () => {
-//         quizQuestions.push({ question: '', options: ['', '', '', ''], correctOptionIndex: 0 });
+//         quizQuestions.push({
+//             question: "",
+//             options: ["", ""],  // start with 2 options
+//             correctOptionIndex: 0
+//         });
 //         renderQuizQuestions();
 //     });
-//     //
-//     document.getElementById('tutorialForm')?.addEventListener('submit', e => {
-//         const hiddenInput = document.createElement('input');
-//         hiddenInput.type = 'hidden';
-//         hiddenInput.name = 'quizQuestionsJson';
-//         hiddenInput.value = JSON.stringify(quizQuestions);
-//         e.target.appendChild(hiddenInput);
-//     });
-//     //
-//     // function renderViewModal(data) {
-//     //     document.getElementById('viewTutorialTitle').innerText = data.title;
-//     //     document.getElementById('viewFileSection').classList.add('d-none');
-//     //     document.getElementById('viewArticleSection').classList.add('d-none');
-//     //     document.getElementById('viewQuizSection').classList.add('d-none');
-//     //
-//     //     if (data.type === 'VIDEO' || data.type === 'PDF') {
-//     //         const container = document.getElementById('viewFileContainer');
-//     //         container.innerHTML = '';
-//     //         if (data.filePath) {
-//     //             if (data.type === 'VIDEO') {
-//     //                 const video = document.createElement('video');
-//     //                 video.src = data.filePath;
-//     //                 video.controls = true;
-//     //                 video.classList.add('w-100');
-//     //                 container.appendChild(video);
-//     //             } else {
-//     //                 const link = document.createElement('a');
-//     //                 link.href = data.filePath;
-//     //                 link.target = '_blank';
-//     //                 link.innerText = 'Open PDF';
-//     //                 container.appendChild(link);
-//     //             }
-//     //         }
-//     //         document.getElementById('viewFileSection').classList.remove('d-none');
-//     //     }
-//     //
-//     //     if (data.type === 'ARTICLE') {
-//     //         document.getElementById('viewArticleContent').innerHTML = data.articleContent || '<em>No content</em>';
-//     //         document.getElementById('viewArticleSection').classList.remove('d-none');
-//     //     }
-//     //
-//     //     if (data.type === 'QUIZ') {
-//     //         const container = document.getElementById('viewQuizQuestionsContainer');
-//     //         container.innerHTML = '';
-//     //         (data.quizQuestions || []).forEach((q, i) => {
-//     //             const div = document.createElement('div');
-//     //             div.classList.add('border', 'p-2', 'mb-2', 'rounded');
-//     //             div.innerHTML = `<strong>Q${i+1}: ${q.question}</strong>
-//     //                              <ul>${q.options.map((opt, j) => `<li>${opt} ${q.correctOptionIndex === j ? '(Correct)' : ''}</li>`).join('')}</ul>`;
-//     //             container.appendChild(div);
-//     //         });
-//     //         document.getElementById('viewQuizSection').classList.remove('d-none');
-//     //     }
-//     // }
 //
 //
-//
-//     /*----------------------------------------------------
-//       VIEW TUTORIAL
-//   ----------------------------------------------------*/
-//     // function openViewTutorialModal(id) {
-//     //     fetch(`/dr/tutorial/${id}/json`)
-//     //         .then(res => res.json())
-//     //         .then(t => {
-//     //             document.getElementById("viewTutorialTitle").innerText = t.title;
-//     //
-//     //             // Hide all sections
-//     //             document.getElementById("viewFileSection").classList.add("d-none");
-//     //             document.getElementById("viewArticleSection").classList.add("d-none");
-//     //             document.getElementById("viewQuizSection").classList.add("d-none");
-//     //
-//     //             if (t.type === "VIDEO" || t.type === "PDF") {
-//     //                 let container = document.getElementById("viewFileContainer");
-//     //                 container.innerHTML = "";
-//     //
-//     //                 if (t.type === "VIDEO") {
-//     //                     container.innerHTML = `
-//     //                     <video controls class="w-100 rounded">
-//     //                         <source src="${t.filePath}" type="video/mp4">
-//     //                     </video>`;
-//     //                 } else {
-//     //                     container.innerHTML =
-//     //                         `<iframe src="${t.filePath}" class="w-100" style="height: 500px;"></iframe>`;
-//     //                 }
-//     //
-//     //                 document.getElementById("viewFileSection").classList.remove("d-none");
-//     //             }
-//     //
-//     //             if (t.type === "ARTICLE") {
-//     //                 document.getElementById("viewArticleContent").innerHTML = t.articleContent;
-//     //                 document.getElementById("viewArticleSection").classList.remove("d-none");
-//     //             }
-//     //
-//     //             if (t.type === "QUIZ") {
-//     //                 let wrapper = document.getElementById("viewQuizQuestionsContainer");
-//     //                 wrapper.innerHTML = "";
-//     //
-//     //                 t.quizQuestions.forEach((q, i) => {
-//     //                     wrapper.innerHTML += `
-//     //                     <div class="p-2 border rounded mb-2">
-//     //                         <b>Q${i + 1}:</b> ${q.question}
-//     //                     </div>`;
-//     //                 });
-//     //
-//     //                 document.getElementById("viewQuizSection").classList.remove("d-none");
-//     //             }
-//     //
-//     //             new bootstrap.Modal(document.getElementById("modalViewTutorial")).show();
-//     //         });
-//     // }
-//
-//     // /*----------------------------------------------------
-//     //     EDIT TUTORIAL (uses same Add modal)
-//     // ----------------------------------------------------*/
-//     function openEditTutorialModal(id) {
-//         fetch(`/dr/tutorial/${id}/json`)
-//             .then(res => res.json())
-//             .then(t => {
-//
-//                 // Fill fields
-//                 document.getElementById("tutorialId").value = t.id;
-//                 document.getElementById("tutorialTitle").value = t.title;
-//                 document.getElementById("tutorialTypeSelect").value = t.type;
-//
-//                 // Show correct section based on type
-//                 showTutorialType(t.type);
-//
-//                 if (t.type === "ARTICLE")
-//                     document.getElementById("tutorialArticle").value = t.articleContent;
-//
-//                 if (t.type === "QUIZ") {
-//                     let container = document.getElementById("quizQuestionsContainer");
-//                     container.innerHTML = "";
-//                     t.quizQuestions.forEach(q => {
-//                         container.innerHTML += `
-//                         <div class="border p-2 rounded mb-2">
-//                             <input class="form-control mb-2" value="${q.question}">
-//                         </div>`;
-//                     });
-//                 }
-//
-//                 // Set form to EDIT mode
-//                 tutorialForm.action = `/dr/tutorial/${id}/edit`;
-//
-//                 new bootstrap.Modal(document.getElementById("modalAddTutorial")).show();
-//             });
-//     }
-//
-//     /*----------------------------------------------------
-//         ADD TUTORIAL BUTTON
-//     ----------------------------------------------------*/
-//     function openAddTutorialModal(sectionId) {
-//         document.getElementById("tutorialForm").reset();
-//         document.getElementById("tutorialSectionId").value = sectionId;
-//         document.getElementById("tutorialId").value = "";
-//
-//         // Set URL to ADD mode
-//         tutorialForm.action = `/dr/sections/${sectionId}/tutorials/add`;
-//
-//         showTutorialType(null);
-//
-//         new bootstrap.Modal(modalAddTutorial).show();
-//     }
-//
-//     /*----------------------------------------------------
-//         DELETE TUTORIAL
-//     ----------------------------------------------------*/
-//
-//
-//     // /*----------------------------------------------------
-//     //     Helper: Show correct fields based on type
-//     // ----------------------------------------------------*/
-//     function showTutorialType(type) {
-//
-//         document.getElementById("fileUploadSection").classList.add("d-none");
-//         document.getElementById("articleSection").classList.add("d-none");
-//         document.getElementById("quizSection").classList.add("d-none");
-//
-//         if (type === "VIDEO" || type === "PDF")
-//             document.getElementById("fileUploadSection").classList.remove("d-none");
-//
-//         if (type === "ARTICLE")
-//             document.getElementById("articleSection").classList.remove("d-none");
-//
-//         if (type === "QUIZ")
-//             document.getElementById("quizSection").classList.remove("d-none");
-//     }
-//
-//
-//
-//     async function loadTutorialIntoForm(sectionId) {
-//         const res = await fetch(`/dr/tutorials/${courseId}/json`);
-//         const tutorial = await res.json();
-//
-//         const form = document.getElementById('tutorialForm');
-//         form.querySelector('input[name="title"]').value = tutorial.title;
-//         form.querySelector('input[name="courseName"]').value = tutorial.courseName;
-//         form.querySelector('input[name="status"]').value = tutorial.status;
-//         form.querySelector('select[name="type"]').value = tutorial.type;
-//         form.querySelector('input[name="videoUrl"]').value = tutorial.videoUrl || "";
-//         form.dataset.tutorialId = tutorial.id;
-//     }
-//
-//
-//
-//
-// // =======================
-// // LOAD TUTORIALS
-// // =======================
-// //     async function loadTutorials(sectionId, page = 1) {
-// //         const container = document.getElementById(`tutorials-container-${sectionId}`);
-// //         if (!container) return;
-// //
-// //         container.innerHTML = `<div class="text-center text-muted py-3">
-// //         <i class="fas fa-spinner fa-spin me-1"></i> Loading tutorials...
-// //     </div>`;
-// //
-// //         try {
-// //             const res = await fetch(`/dr/sections/${sectionId}/tutorials-fragment?page=${page}`);
-// //             if (!res.ok) throw new Error(`Failed to load tutorials: ${res.status}`);
-// //             container.innerHTML = await res.text();
-// //             attachTutorialButtons(sectionId);
-// //         } catch (err) {
-// //             container.innerHTML = `<div class="alert alert-danger text-center py-3">${err.message}</div>`;
-// //             console.error(err);
-// //         }
-// //     }
-//
-// // =======================
-// // ATTACH BUTTON HANDLERS
-// // =======================
-//     function attachTutorialButtons(sectionId) {
+// // ==========================
+// // Load Tutorials
+// // ==========================
+//     window.loadTutorials = async function (sectionId, page = 1) {
 //         const container = document.getElementById(`tutorials-container-${sectionId}`);
-//         if (!container) return;
 //
-//         // VIEW
-//         container.querySelectorAll('.btn-view-tutorial').forEach(btn => {
-//             btn.addEventListener('click', async () => {
-//                 const id = btn.dataset.id;
-//                 if (!id) return;
-//                 await openViewTutorialModal(id);
+//         if (!container) {
+//             console.warn(`Container #tutorials-container-${sectionId} not found`);
+//             return; // avoid crash
+//         }
+//
+//         container.innerHTML = `
+//         <div class="text-center text-muted">
+//             <i class="fas fa-spinner fa-spin me-1"></i> Loading tutorials...
+//         </div>`;
+//
+//         const html = await fetch(`/dr/sections/${sectionId}/tutorials-fragment?page=${page}`)
+//             .then(res => res.text());
+//
+//         container.innerHTML = html;
+//
+//         container.querySelectorAll(".pagination a").forEach(a => {
+//             a.addEventListener("click", e => {
+//                 e.preventDefault();
+//                 const p = parseInt(a.dataset.page);
+//                 loadTutorials(sectionId, p);
 //             });
 //         });
+//     };
 //
-//         // EDIT
-//         container.querySelectorAll('.btn-edit-tutorial').forEach(btn => {
-//             btn.addEventListener('click', async () => {
-//                 const id = btn.dataset.id;
-//                 if (!id) return;
-//                 await  loadTutorialIntoForm(id)
-//                 await openAddTutorialModal(id);
-//             });
-//         });
 //
-//         // DELETE
-//         container.querySelectorAll('.btn-delete-tutorial').forEach(btn => {
-//             btn.addEventListener('click', () => {
-//                 const id = btn.dataset.id;
-//                 if (!id) return;
-//                 openDeleteTutorialModal(id);
-//             });
-//         });
-//     }
+// // ==========================
+// // Load Tutorial Into Form
+// // ==========================
+//     async function loadTutorialIntoForm(tutorialId) {
+//         const t = await fetch(`/dr/tutorial/${tutorialId}/json`).then(res => res.json());
+//         const form = document.getElementById('tutorialForm');
+//         form.querySelector('input[name="title"]').value = t.title || '';
+//         form.querySelector('input[name="tutorialId"]').value = t.id;
+//         form.querySelector('input[name="sectionId"]').value = t.sectionId || '';
+//         form.querySelector('select[name="type"]').value = t.type || '';
+//         showTutorialType(t.type);
 //
-// // =======================
-// // VIEW MODAL
-// // =======================
-//     async function openViewTutorialModal(id) {
-//         try {
-//             const res = await fetch(`/dr/tutorial/${id}/json`);
-//             if (!res.ok) throw new Error('Failed to fetch tutorial');
-//             const t = await res.json();
-//
-//             document.getElementById('viewTutorialTitle').textContent = t.title || 'Untitled';
-//
-//             document.getElementById('viewFileSection').classList.toggle('d-none', !t.filePath);
-//             document.getElementById('viewArticleSection').classList.toggle('d-none', !t.articleContent);
-//             document.getElementById('viewQuizSection').classList.toggle('d-none', !t.quizQuestions || t.quizQuestions.length === 0);
-//
-//             if (t.filePath) {
-//                 document.getElementById('viewFileContainer').innerHTML = `<a href="${t.filePath}" target="_blank">Download File</a>`;
-//             }
-//             if (t.articleContent) {
-//                 document.getElementById('viewArticleContent').textContent = t.articleContent;
-//             }
-//             if (t.quizQuestions) {
-//                 const container = document.getElementById('viewQuizQuestionsContainer');
-//                 container.innerHTML = '';
-//                 t.quizQuestions.forEach((q, i) => {
-//                     const div = document.createElement('div');
-//                     div.textContent = `${i+1}. ${q.question}`;
-//                     container.appendChild(div);
-//                 });
-//             }
-//
-//             new bootstrap.Modal(document.getElementById('modalViewTutorial')).show();
-//         } catch (err) {
-//             console.error(err);
-//             alert('Error loading tutorial.');
+//         if (t.type === 'QUIZ') {
+//             quizQuestions.length = 0;
+//             t.quizQuestions.forEach(q => quizQuestions.push(q));
+//             renderQuizQuestions();
 //         }
 //     }
 //
-// // =======================
-// // EDIT MODAL
-// // =======================
-// //     async function openEditTutorialModal(id) {
-// //         try {
-// //             const res = await fetch(`/dr/tutorial/${id}/json`);
-// //             if (!res.ok) throw new Error('Failed to fetch tutorial');
-// //             const t = await res.json();
-// //
-// //             document.getElementById('tutorialId').value = t.id || '';
-// //             document.getElementById('tutorialTitle').value = t.title || '';
-// //             document.getElementById('tutorialTypeSelect').value = t.type || '';
-// //             document.getElementById('tutorialArticle').value = t.articleContent || '';
-// //             document.getElementById('tutorialFile').value = '';
-// //
-// //             document.getElementById('fileUploadSection').classList.toggle('d-none', t.type === 'ARTICLE' || t.type === 'QUIZ');
-// //             document.getElementById('articleSection').classList.toggle('d-none', t.type !== 'ARTICLE');
-// //             document.getElementById('quizSection').classList.toggle('d-none', t.type !== 'QUIZ');
-// //
-// //             new bootstrap.Modal(document.getElementById('modalAddTutorial')).show();
-// //         } catch (err) {
-// //             console.error(err);
-// //             alert('Error opening edit modal.');
-// //         }
-// //     }
+// // ==========================
+// // Delete Tutorial Modal
+// // ==========================
+//     function openDeleteTutorialModal(id) {
+//         document.getElementById("deleteTutorialId").value = id;
+//         new bootstrap.Modal(document.getElementById("modalDeleteTutorial")).show();
+//     }
 //
-// // =======================
-// // DELETE MODAL
-// // =======================
-// //     function openDeleteTutorialModal(id) {
-// //         const deleteInput = document.getElementById('deleteTutorialId');
-// //         if (!deleteInput) return;
-// //         deleteInput.value = id;
-// //         new bootstrap.Modal(document.getElementById('modalDeleteTutorial')).show();
-// //     }
+// // ==========================
+// // Submit Tutorial Form
+// // ==========================
 //
-// // =======================
-// // ADD TUTORIAL BUTTON
-// // =======================
-// //     document.querySelectorAll('.btn-add-tutorial').forEach(btn => {
-// //         btn.onclick = () => {
-// //             document.getElementById('tutorialForm').reset();
-// //             const sectionId = btn.dataset.sectionId;
-// //             document.getElementById('tutorialSectionId').value = sectionId;
-// //             document.getElementById('fileUploadSection').classList.add('d-none');
-// //             document.getElementById('articleSection').classList.add('d-none');
-// //             document.getElementById('quizSection').classList.add('d-none');
-// //             new bootstrap.Modal(document.getElementById('modalAddTutorial')).show();
-// //         };
-// //     });
-//
-//
-// // =======================
-// // HANDLE ADD/EDIT FORM SUBMIT
-// // =======================
 //     document.getElementById('tutorialForm')?.addEventListener('submit', async e => {
 //         e.preventDefault();
 //         const form = e.target;
 //         const formData = new FormData(form);
 //
-//         // Add CSRF token if not in form
-//         if (!formData.has('_csrf')) {
-//             formData.append('_csrf', csrfToken);
+//         if (!formData.has('_csrf')) formData.append('_csrf', csrfToken);
+//
+//         // ✅ Add quizQuestions if type is QUIZ
+//         if (formData.get('type') === 'QUIZ' && quizQuestions.length > 0) {
+//             document.getElementById('quizQuestionsJson').value = JSON.stringify(quizQuestions);
 //         }
+//
 //
 //         const tutorialId = formData.get('tutorialId');
 //         const sectionId = formData.get('sectionId');
+//         const url = `/dr/sections/${sectionId}/tutorials/add`;
 //
-//         const url = tutorialId ? `/dr/tutorial/${tutorialId}/edit` : `/dr/sections/${sectionId}/tutorials/add`;
-//
-//         const res = await fetch(url, {
-//             method: 'POST',
-//             body: formData
-//         });
-//
+//         const res = await fetch(url, {method: 'POST', body: formData});
 //         if (res.ok) {
-//             loadTutorials(sectionId);
-//             bootstrap.Modal.getInstance(document.getElementById('modalAddTutorial')).hide();
+//             await loadTutorials(sectionId);
+//             bootstrap.Modal.getInstance(modalAddTutorial).hide();
+//             quizQuestions.length = 0;      // Clear questions after submit
+//             renderQuizQuestions();          // Reset the quiz container
 //         } else {
 //             const data = await res.json();
-//             alert(data.message || "Error adding tutorial");
+//             alert(data.message || "Error");
 //         }
 //     });
 //
 //
-// // =======================
-// // HANDLE DELETE FORM SUBMIT
-// // =======================
-//     document.addEventListener('DOMContentLoaded', () => {
-//         const deleteForm = document.getElementById('deleteTutorialForm');
-//         if (deleteForm) {
-//             deleteForm.addEventListener('submit', async e => {
-//                 e.preventDefault();
-//                 const id = document.getElementById('deleteTutorialId').value;
-//                 try {
-//                     const res = await fetch(`/dr/tutorial/delete`, {
-//                         method: 'POST',
-//                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-//                         body: `id=${id}`
-//                     });
-//                     const data = await res.json();
-//                     if (data.success) {
-//                         const sectionId = document.getElementById('tutorialSectionId')?.value || 1;
-//                         loadTutorials(sectionId);
-//                         bootstrap.Modal.getInstance(document.getElementById('modalDeleteTutorial')).hide();
-//                     } else {
-//                         alert(data.message);
-//                     }
-//                 } catch (err) {
-//                     console.error(err);
-//                     alert('Error deleting tutorial.');
-//                 }
+// // ==========================
+// // Delete Tutorial Form
+// // ==========================
+//     document.getElementById('deleteTutorialForm')?.addEventListener('submit', async e => {
+//         e.preventDefault();
+//         const id = document.getElementById('deleteTutorialId').value;
+//         try {
+//             const res = await fetch(`/dr/tutorial/${id}/delete-json`, {
+//                 method: 'POST', headers: {
+//                     'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRF-TOKEN': csrfToken
+//                 }, body: `id=${id}`
 //             });
+//             const data = await res.json();
+//             if (data.success) {
+//                 const sectionId = document.getElementById('tutorialSectionId')?.value;
+//                 if (sectionId) await loadTutorials(sectionId);
+//                 bootstrap.Modal.getInstance(document.getElementById('modalDeleteTutorial')).hide();
+//             } else alert(data.message);
+//         } catch (err) {
+//             console.error(err);
+//             alert('Error deleting tutorial.');
 //         }
 //     });
 //
+// // ==========================
+// // View Tutorial Modal
+// // ==========================
+//     async function openViewTutorialModal(id) {
+//         console.log("openViewTutorialModal", id);
+//         try {
+//             const tutorial = await fetch(`/dr/tutorial/${id}/json`).then(res => res.json());
 //
+//             document.getElementById('viewTutorialTitle').textContent = tutorial.title;
 //
+//             // Hide all sections
+//             ['viewFileSection', 'viewArticleSection', 'viewQuizSection'].forEach(id =>
+//                 document.getElementById(id).classList.add('d-none')
+//             );
 //
+//             // ============================
+//             // TYPE: VIDEO
+//             // ============================
+//             if (tutorial.type === 'VIDEO') {
+//                 const container = document.getElementById('viewFileContainer');
+//                 container.innerHTML = `
+//                 <video class="w-100 rounded border" controls>
+//                     <source src="${tutorial.filePath}" type="video/mp4">
+//                     Your browser does not support HTML5 video.
+//                 </video>`;
+//                 document.getElementById('viewFileSection').classList.remove('d-none');
+//             }
 //
+//                 // ============================
+//                 // TYPE: PDF (Embedded Viewer)
+//             // ============================
+//             else if (tutorial.type === 'PDF') {
+//                 const container = document.getElementById('viewFileContainer');
+//                 container.innerHTML = `
+//                 <embed src="${tutorial.filePath}"
+//                        type="application/pdf"
+//                        class="w-100 border rounded"
+//                        style="height: 600px;">
+//                 </embed>`;
+//                 document.getElementById('viewFileSection').classList.remove('d-none');
+//             }
 //
+//                 // ============================
+//                 // TYPE: ARTICLE
+//             // ============================
+//             else if (tutorial.type === 'ARTICLE') {
+//                 document.getElementById('viewArticleContent').innerHTML =
+//                     `<div class="formatted-article">${tutorial.articleContent}</div>`;
+//                 document.getElementById('viewArticleSection').classList.remove('d-none');
+//             }
 //
-//     /* ====================================================
-//      *                   STUDENTS
-//      * ==================================================== */
+//                 // ============================
+//                 // TYPE: QUIZ
+//             // ============================
+//             else if (tutorial.type === 'QUIZ') {
+//                 const container = document.getElementById('viewQuizQuestionsContainer');
+//                 container.innerHTML = '';
 //
-//         async function loadStudents(courseId, page = 0) {
-//         const container = document.getElementById(`students-container-${courseId}`);
-//         if (!container) return;
-//         container.innerHTML = `<div class="text-center text-muted">
-//             <i class="fas fa-spinner fa-spin me-1"></i> Loading students...
-//         </div>`;
-//         const res = await fetch(`/dr/courses/${courseId}/students-fragment?page=${page}`);
-//         container.innerHTML = await res.text();
-//         attachStudentPagination(courseId);
+//                 if (!tutorial.quizQuestions || tutorial.quizQuestions.length === 0) {
+//                     container.innerHTML = `
+//             <div class="alert alert-warning text-center">No questions added.</div>
+//         `;
+//                     document.getElementById('viewQuizSection').classList.remove('d-none');
+//                     return;
+//                 }
+//
+//                 tutorial.quizQuestions.forEach((q, i) => {
+//
+//                     const optionsHtml = q.options
+//                         .map((opt, idx) => `
+//                 <li class="list-group-item d-flex justify-content-between align-items-center
+//                     ${idx === q.correctOptionIndex ? 'list-group-item-success fw-bold border-success' : ''}">
+//
+//                     <span>
+//                         <strong>${String.fromCharCode(65 + idx)}.</strong> ${opt}
+//                     </span>
+//
+//                     ${idx === q.correctOptionIndex
+//                             ? '<span class="badge bg-success">Correct</span>'
+//                             : ''}
+//                 </li>
+//             `)
+//                         .join('');
+//
+//                     const div = document.createElement('div');
+//                     div.classList.add('mb-3', 'p-3', 'border', 'rounded', 'bg-light');
+//
+//                     div.innerHTML = `
+//             <div class="fw-bold mb-2">
+//                 Q${i + 1}. ${q.question}
+//             </div>
+//             <ul class="list-group">
+//                 ${optionsHtml}
+//             </ul>
+//         `;
+//
+//                     container.appendChild(div);
+//                 });
+//
+//                 document.getElementById('viewQuizSection').classList.remove('d-none');
+//             }
+//
+//             // ============================
+//             // SHOW MODAL
+//             // ============================
+//             const modalEl = document.getElementById('modalViewTutorial');
+//             let modal = bootstrap.Modal.getInstance(modalEl);
+//             if (!modal) modal = new bootstrap.Modal(modalEl);
+//             modal.show();
+//
+//         } catch (err) {
+//             console.error(err);
+//             alert('Failed to load tutorial: ' + err.message);
+//         }
 //     }
+//
+//
+//
+//     // =======================
+//     // STUDENTS
+//     // =======================
 //
 //     function attachStudentPagination(courseId) {
-//         document.querySelectorAll(`#students-container-${courseId} .pagination a`).forEach(link => {
-//             link.addEventListener('click', (e) => {
-//                 e.preventDefault();
-//                 const page = new URL(link.href).searchParams.get('page') || 0;
-//                 loadStudents(courseId, page);
+//         document.querySelectorAll("#enrollmentsContainer .pagination a")
+//             .forEach(a => {
+//                 a.addEventListener("click", e => {
+//                     e.preventDefault();
+//                     const p = parseInt(a.dataset.page);
+//                     loadStudents(courseId, p);
+//                 });
 //             });
-//         });
 //     }
+//
+//
+//     //Modal view
+//
+//     window.loadStudents = async function (courseId, page = 0) {
+//
+//         const container = document.getElementById("enrollmentsContainer");
+//         container.innerHTML = `
+//         <div class="text-center text-muted">
+//             <i class="fas fa-spinner fa-spin me-2"></i> Loading students...
+//         </div>
+//     `;
+//
+//         const html = await fetch(`/dr/courses/${courseId}/students-fragment?page=${page}`)
+//             .then(res => res.text());
+//
+//         container.innerHTML = html;
+//
+//         attachStudentPagination(courseId);
+//     };
+//
+//
+//     window.showEnrollments = function (courseId) {
+//         const modal = new bootstrap.Modal(document.getElementById("modalViewEnrollments"));
+//         modal.show();
+//
+//         loadStudents(courseId, 0);
+//     };
+//
 //
 //
 //     document.querySelectorAll(".btn-view-enrollments").forEach(btn => {
 //         btn.addEventListener("click", async () => {
 //             const courseId = btn.dataset.courseId;
-//
 //             const modalBody = document.getElementById("enrollmentsContainer");
 //             modalBody.innerHTML = "Loading...";
-//
 //             const res = await fetch(`/dr/courses/${courseId}/students-fragment`);
-//             const html = await res.text();
-//             modalBody.innerHTML = html;
-//
-//             // attachPaginationListeners();
-//
+//             modalBody.innerHTML = await res.text();
 //             new bootstrap.Modal(document.getElementById("modalViewEnrollments")).show();
 //         });
 //     });
 //
-//
-//
-//     //     async function loadStudents(courseId, page = 0) {
-//     //     const container = document.getElementById(`students-container-${courseId}`);
-//     //     if (!container) return;
-//     //     container.innerHTML = `<div class="text-center text-muted">
-//     //         <i class="fas fa-spinner fa-spin me-1"></i> Loading students...
-//     //     </div>`;
-//     //     const res = await fetch(`/dr/courses/${courseId}/students-fragment?page=${page}`);
-//     //     container.innerHTML = await res.text();
-//     //     attachStudentPagination(courseId);
-//     // }
-//     //     function attachStudentPagination(courseId) {
-//     //     document.querySelectorAll(`#students-container-${courseId} .pagination a`).forEach(link => {
-//     //         link.addEventListener('click', (e) => {
-//     //             e.preventDefault();
-//     //             const page = new URL(link.href).searchParams.get('page') || 0;
-//     //             loadStudents(courseId, page);
-//     //         });
-//     //     });
-//     // }
-//     /* ====================================================
-//      *                   INITIAL LOAD
-//      * ==================================================== */
+//     // =======================
+//     // LOAD ALL COURSES INITIAL
+//     // =======================
 //     async function loadAllCourses() {
 //         document.querySelectorAll('.course-card').forEach(card => {
 //             const courseId = card.querySelector('.btn-add-section')?.dataset.courseId;
@@ -942,537 +706,552 @@
 //     }
 //
 //     loadAllCourses();
-//
 // });
-// function openDeleteTutorialModal(id) {
-//     document.getElementById("deleteTutorialId").value = id;
-//     document.getElementById("deleteTutorialForm").action = `/dr/tutorial/${id}/delete`;
-//     new bootstrap.Modal(document.getElementById("modalDeleteTutorial")).show();
-// }
-//
-// document.addEventListener("DOMContentLoaded", () => {
-//
-//     const deleteCourseModalEl = document.getElementById("deleteCourseModal");
-//     const deleteCourseModal = new bootstrap.Modal(deleteCourseModalEl);
-//
-//     let selectedCourseId = null;
-//
-//     document.querySelectorAll(".btn-delete-course").forEach(btn => {
-//         btn.addEventListener("click", () => {
-//             selectedCourseId = btn.dataset.courseId;
-//             deleteCourseModal.show();
-//         });
-//     });
-//
-//     document.getElementById("confirmDeleteBtn").addEventListener("click", async () => {
-//         if (!selectedCourseId) return;
-//
-//         await fetch(`/dr/courses/delete/${selectedCourseId}`, {
-//             method: "POST",
-//             headers: {
-//                 "Content-Type": "application/x-www-form-urlencoded"
-//             },
-//             body: "_csrf=" + document.querySelector('meta[name="_csrf"]').content
-//         });
-//
-//         deleteCourseModal.hide();
-//         window.location.reload();
-//     });
-//
-// });
-//
-//
-// /////////////////////////////
-// /////////
-//
-//
-//
+
+/* ============================================================================
+   DR DASHBOARD – Unified JS Controller
+   Handles: Courses, Sections, Tutorials, Quizzes, Students
+   Author: ChatGPT refactor (optimized for delegation & DR principles)
+============================================================================ */
 
 document.addEventListener("DOMContentLoaded", () => {
-    // =======================
-    // CSRF SETUP
-    // =======================
-    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
-    // =======================
-    // COURSES
-    // =======================
-    const createCourseModal = new bootstrap.Modal(document.getElementById('modalCreateCourse'));
+    /* ------------------------------------------------------------------------
+       CSRF
+    ------------------------------------------------------------------------ */
+    const csrf = {
+        token: document.querySelector('meta[name="_csrf"]').content,
+        header: document.querySelector('meta[name="_csrf_header"]').content
+    };
 
-    document.getElementById('btnCreateCourse')?.addEventListener('click', () => {
-        resetCourseForm();
-        createCourseModal.show();
+    const addCsrf = (headers = {}) => ({
+        ...headers,
+        [csrf.header]: csrf.token
     });
 
-    document.querySelectorAll(".btnEditCourse").forEach(btn => {
-        btn.addEventListener("click", async () => {
-            const courseId = btn.dataset.courseId;
-            await loadCourseIntoForm(courseId);
-            createCourseModal.show();
+    /* ------------------------------------------------------------------------
+       Bootstrap modals
+    ------------------------------------------------------------------------ */
+    const modals = {
+        createCourse: new bootstrap.Modal("#modalCreateCourse"),
+        deleteCourse: new bootstrap.Modal("#deleteCourseModal"),
+        section: new bootstrap.Modal("#modalSection"),
+        deleteSection: new bootstrap.Modal("#deleteSectionModal"),
+        addTutorial: new bootstrap.Modal("#modalAddTutorial"),
+        deleteTutorial: new bootstrap.Modal("#modalDeleteTutorial"),
+        viewTutorial: new bootstrap.Modal("#modalViewTutorial"),
+        enrollments: new bootstrap.Modal("#modalViewEnrollments")
+    };
+
+    /* ------------------------------------------------------------------------
+       Helpers
+    ------------------------------------------------------------------------ */
+    const fetchHTML = (url) => fetch(url).then(r => r.text());
+    const fetchJSON = (url) => fetch(url).then(r => r.json());
+
+    const post = (url, body) => {
+        const headers = {};
+        headers[csrf.header] = csrf.token;
+
+        return fetch(url, {
+            method: "POST",
+            body,
+            headers // NO Content-Type here
         });
+    };
+
+
+    const postJSON = (url, data) =>
+        fetch(url, {
+            method: "POST",
+            headers: addCsrf({ "Content-Type": "application/json" }),
+            body: JSON.stringify(data)
+        });
+
+    /* =========================================================================
+       COURSES
+       ========================================================================= */
+
+    // Open create course modal
+    document.getElementById("btnCreateCourse")?.addEventListener("click", () => {
+        const form = document.getElementById("formCreateCourse");
+        form.reset();
+        delete form.dataset.courseId;
+        modals.createCourse.show();
     });
 
-    document.getElementById("formCreateCourse")?.addEventListener("submit", async e => {
+    // Submit create/edit course
+    document.getElementById("formCreateCourse")?.addEventListener("submit", async (e) => {
         e.preventDefault();
         const form = e.target;
         const courseId = form.dataset.courseId;
         const url = courseId ? `/dr/courses/edit/${courseId}` : `/dr/courses/create`;
-        const formData = new FormData(form);
-        formData.append("_csrf", csrfToken);
+        const fd = new FormData(form);
+        fd.append("_csrf", csrf.token);
 
-        await fetch(url, { method: 'POST', body: formData });
-        createCourseModal.hide();
-        loadAllCourses();
+        await fetch(url, { method: "POST", body: fd });
+        modals.createCourse.hide();
+        location.reload();
     });
 
-    async function loadCourseIntoForm(courseId) {
-        const res = await fetch(`/dr/courses/${courseId}/json`);
-        const course = await res.json();
-        const form = document.getElementById('formCreateCourse');
-        form.querySelector('input[name="title"]').value = course.title;
-        form.querySelector('input[name="courseName"]').value = course.courseName;
-        form.querySelector('input[name="price"]').value = course.price;
-        form.querySelector('select[name="published"]').value = course.published;
-        form.querySelector('input[name="videoUrl"]').value = course.videoUrl || "";
-        form.querySelector('textarea[name="description"]').value = course.description || "";
+    // Delegated - Edit course
+    document.addEventListener("click", async (e) => {
+        const btn = e.target.closest(".btnEditCourse");
+        if (!btn) return;
+
+        const courseId = btn.dataset.courseId;
+        const course = await fetchJSON(`/dr/courses/${courseId}/json`);
+
+        const form = document.getElementById("formCreateCourse");
         form.dataset.courseId = course.id;
-    }
+        form.title.value = course.title;
+        form.courseName.value = course.courseName;
+        form.price.value = course.price;
+        form.published.value = course.published;
+        form.videoUrl.value = course.videoUrl ?? "";
+        form.description.value = course.description ?? "";
 
-    function resetCourseForm() {
-        const form = document.getElementById('formCreateCourse');
-        form.reset();
-        delete form.dataset.courseId;
-    }
+        modals.createCourse.show();
+    });
 
-    const deleteCourseModal = new bootstrap.Modal(document.getElementById("deleteCourseModal"));
-    let selectedCourseId = null;
-
-    document.querySelectorAll(".btn-delete-course").forEach(btn => {
-        btn.addEventListener("click", () => {
-            selectedCourseId = btn.dataset.courseId;
-            deleteCourseModal.show();
-        });
+    // Delegated - delete course
+    let deleteCourseId = null;
+    document.addEventListener("click", (e) => {
+        const btn = e.target.closest(".btn-delete-course");
+        if (!btn) return;
+        deleteCourseId = btn.dataset.courseId;
+        modals.deleteCourse.show();
     });
 
     document.getElementById("confirmDeleteBtn")?.addEventListener("click", async () => {
-        if (!selectedCourseId) return;
-        await fetch(`/dr/courses/delete/${selectedCourseId}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `_csrf=${csrfToken}`
-        });
-        deleteCourseModal.hide();
-        window.location.reload();
+        if (!deleteCourseId) return;
+        await post(`/dr/courses/delete/${deleteCourseId}`, `_csrf=${csrf.token}`);
+        location.reload();
     });
 
-    // =======================
-    // SECTIONS
-    // =======================
-    const sectionModal = new bootstrap.Modal(document.getElementById('modalSection'));
+    /* =========================================================================
+       SECTIONS
+       ========================================================================= */
 
-    function attachSectionButtons() {
-        document.querySelectorAll('.btn-add-section').forEach(btn => {
-            btn.onclick = () => {
-                document.getElementById('sectionCourseId').value = btn.dataset.courseId;
-                document.getElementById('sectionTitle').value = '';
-                document.getElementById('sectionId').value = '';
-                sectionModal.show();
-            };
-        });
+    // Delegated add/edit section
+    document.addEventListener("click", (e) => {
+        const btn = e.target.closest(".btn-add-section, .btn-edit-section");
+        if (!btn) return;
 
-        document.querySelectorAll('.btn-edit-section').forEach(btn => {
-            btn.onclick = () => {
-                document.getElementById('sectionCourseId').value = btn.dataset.courseId;
-                document.getElementById('sectionTitle').value = btn.dataset.sectionTitle;
-                document.getElementById('sectionId').value = btn.dataset.sectionId;
-                sectionModal.show();
-            };
-        });
-    }
+        const form = document.getElementById("sectionForm");
+        form.reset();
 
-    const deleteSectionModal = new bootstrap.Modal(document.getElementById("deleteSectionModal"));
-    let selectedSectionId = null;
+        form.sectionCourseId.value = btn.dataset.courseId;
+        form.sectionId.value = btn.dataset.sectionId ?? "";
+        form.sectionTitle.value = btn.dataset.sectionTitle ?? "";
+        form.sectionDescription.value = btn.dataset.sectionDescription ?? "";
 
-    document.body.addEventListener("click", (e) => {
-        if (e.target.closest(".btn-delete-section")) {
-            const btn = e.target.closest(".btn-delete-section");
-            selectedSectionId = btn.dataset.sectionId;
-            deleteSectionModal.show();
-        }
+        modals.section.show();
+    });
+
+    // Save section
+    document.getElementById("sectionForm")?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const f = e.target;
+
+        const url = f.sectionId.value
+            ? `/dr/sections/edit/${f.sectionId.value}`
+            : `/dr/courses/${f.sectionCourseId.value}/sections/add`;
+
+        await post(url, new URLSearchParams({
+            title: f.sectionTitle.value,
+            description: f.sectionDescription.value
+        }));
+
+        modals.section.hide();
+        loadSections(f.sectionCourseId.value);
+    });
+
+    // Delete section
+    let deleteSectionId = null;
+    document.addEventListener("click", (e) => {
+        const btn = e.target.closest(".btn-delete-section");
+        if (!btn) return;
+        deleteSectionId = btn.dataset.sectionId;
+        modals.deleteSection.show();
     });
 
     document.getElementById("confirmSectionDeleteBtn")?.addEventListener("click", async () => {
-        if (!selectedSectionId) return;
-        await fetch(`/dr/sections/delete/${selectedSectionId}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `_csrf=${csrfToken}`
-        });
-        deleteSectionModal.hide();
-        const currentCourseId = document.getElementById("sectionList")?.dataset.courseId;
-        if (currentCourseId) loadSections(currentCourseId, 1);
-        else window.location.reload();
+        await post(`/dr/sections/delete/${deleteSectionId}`, `_csrf=${csrf.token}`);
+        modals.deleteSection.hide();
+        location.reload();
     });
 
-    document.getElementById('btnSaveSection')?.addEventListener('click', () => {
-        document.getElementById('sectionForm').requestSubmit();
-    });
+    // Load sections (recalled after edits)
+    window.loadSections = async (courseId, page = 1) => {
+        const box = document.getElementById(`sections-container-${courseId}`);
+        if (!box) return;
 
-    document.getElementById('sectionForm')?.addEventListener('submit', async e => {
-        e.preventDefault();
-        const courseId = document.getElementById('sectionCourseId').value;
-        const sectionId = document.getElementById('sectionId').value;
-        const title = document.getElementById('sectionTitle').value;
-        const description = document.getElementById('sectionDescription').value;
+        box.innerHTML = `<div class="text-muted text-center"><i class="fas fa-spinner fa-spin"></i> Loading…</div>`;
+        box.innerHTML = await fetchHTML(`/dr/courses/${courseId}/sections-fragment?page=${page}`);
 
-        const url = sectionId ? `/dr/sections/edit/${sectionId}` : `/dr/courses/${courseId}/sections/add`;
-        const formData = new URLSearchParams();
-        formData.append('title', title);
-        formData.append('description', description);
+        // reattach pagination
+        box.querySelectorAll(".pagination a").forEach(a =>
+            a.onclick = (ev) => {
+                ev.preventDefault();
+                loadSections(courseId, a.dataset.page);
+            }
+        );
+    };
 
-        await fetch(url, { method: 'POST', body: formData, headers: { 'Content-Type': 'application/x-www-form-urlencoded', [csrfHeader]: csrfToken } });
-        sectionModal.hide();
-        loadSections(courseId);
-    });
-
-    async function loadSections(courseId, page = 1) {
-        const container = document.getElementById(`sections-container-${courseId}`);
-        if (!container) return;
-        container.innerHTML = `<div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-1"></i> Loading sections...</div>`;
-        const res = await fetch(`/dr/courses/${courseId}/sections-fragment?page=${page}`);
-        container.innerHTML = await res.text();
-
-        attachSectionButtons();
-        attachSectionPagination(courseId);
-
-        container.querySelectorAll('.tutorial-wrapper').forEach(wrapper => {
-            const sectionId = wrapper.id.replace('tutorials-container-', '');
-            loadTutorials(sectionId, 1);
-        });
-    }
-
-    function attachSectionPagination(courseId) {
-        document.querySelectorAll(`#sections-container-${courseId} .pagination a`).forEach(link => {
-            link.addEventListener('click', e => {
-                e.preventDefault();
-                const page = new URL(link.href).searchParams.get('page') || 1;
-                loadSections(courseId, page);
-            });
-        });
-    }
-
-
-    // =======================
-    // TUTORIALS
-    // =======================
-// ==========================
-// Global state
-// ==========================
+    /* =========================================================================
+       TUTORIALS + QUIZ BUILDER
+       ========================================================================= */
     const quizQuestions = [];
-    const modalAddTutorial = document.getElementById('modalAddTutorial');
 
-// ==========================
-// Delegated click listener
-// ==========================
-    document.addEventListener('click', async (e) => {
-        const btn = e.target.closest('button');
+    // Toggle tutorials
+    document.addEventListener("click", async (e) => {
+        const btn = e.target.closest(".btn-toggle-tutorials");
         if (!btn) return;
 
-        const sectionId = btn.dataset.sectionId;
-        const tutorialId = btn.dataset.id;
+        const secId = btn.dataset.sectionId;
+        const collapse = document.getElementById(`tutorials-collapse-${secId}`);
 
-        // 1️⃣ Toggle Tutorials Collapse
-        if (btn.classList.contains('btn-toggle-tutorials')) {
-            const collapse = document.getElementById(`tutorials-collapse-${sectionId}`);
-            if (!collapse.classList.contains('show')) {
-                const html = await fetch(`/dr/sections/${sectionId}/tutorials-fragment`).then(res => res.text());
-                document.getElementById(`tutorials-container-${sectionId}`).innerHTML = html;
-                new bootstrap.Collapse(collapse, { toggle: true });
-            } else {
-                new bootstrap.Collapse(collapse, { toggle: true });
-            }
+        if (!collapse.classList.contains("show")) {
+            await loadTutorials(secId);
         }
-
-        // 2️⃣ Add Tutorial
-        else if (btn.classList.contains('btn-add-tutorial')) {
-            document.getElementById('tutorialForm').reset();
-            document.getElementById('tutorialSectionId').value = sectionId;
-            showTutorialType('');
-            quizQuestions.length = 0;
-            renderQuizQuestions();
-            new bootstrap.Modal(modalAddTutorial).show();
-        }
-
-        // 3️⃣ Edit Tutorial
-        else if (btn.classList.contains('btn-edit-tutorial')) {
-            if (!tutorialId) return;
-            await loadTutorialIntoForm(tutorialId);
-            new bootstrap.Modal(modalAddTutorial).show();
-        }
-
-        // 4️⃣ Delete Tutorial
-        else if (btn.classList.contains('btn-delete-tutorial')) {
-            if (!tutorialId) return;
-            openDeleteTutorialModal(tutorialId);
-        }
-
-
-
-        // 5️⃣ Remove Quiz Question
-        else if (btn.classList.contains('btnRemoveQuestion')) {
-            const idx = parseInt(btn.dataset.index);
-            quizQuestions.splice(idx, 1);
-            renderQuizQuestions();
-        }
-        //  View Tutorial
-        else if (btn.classList.contains('btn-view-tutorial')) {
-            if (!tutorialId) return;
-            await openViewTutorialModal(tutorialId);
-        }
+        new bootstrap.Collapse(collapse, { toggle: true });
     });
 
-// ==========================
-// Tutorial type change
-// ==========================
-    document.getElementById('tutorialTypeSelect')?.addEventListener('change', e => {
-        showTutorialType(e.target.value);
-    });
 
-// ==========================
-// Functions
-// ==========================
-    function showTutorialType(type) {
-        document.getElementById("fileUploadSection").classList.toggle("d-none", !(type === "VIDEO" || type === "PDF"));
-        document.getElementById("articleSection").classList.toggle("d-none", type !== "ARTICLE");
-        document.getElementById("quizSection").classList.toggle("d-none", type !== "QUIZ");
-    }
+    // Add tutorial
+    document.addEventListener("click", (e) => {
+        const btn = e.target.closest(".btn-add-tutorial");
+        if (!btn) return;
 
-    function renderQuizQuestions() {
-        const container = document.getElementById('quizQuestionsContainer');
-        container.innerHTML = '';
+        const form = document.getElementById("tutorialForm");
+        form.reset();
 
-        quizQuestions.forEach((q, i) => {
-            const div = document.createElement('div');
-            div.classList.add('border', 'p-2', 'mb-2', 'rounded');
-            div.innerHTML = `
-            <div class="d-flex justify-content-between align-items-center mb-1">
-                <strong>Question ${i + 1}</strong>
-                <button type="button" class="btn btn-sm btn-danger btnRemoveQuestion" data-index="${i}">Remove</button>
-            </div>
-            <input type="text" class="form-control mb-1" placeholder="Question text" value="${q.question}" data-index="${i}" data-field="question">
-            ${q.options.map((opt, j) => `<input type="text" class="form-control mb-1" placeholder="Option ${j+1}" value="${opt}" data-index="${i}" data-option="${j}">`).join('')}
-            <label>Correct Option:
-                <select class="form-select mb-1" data-index="${i}" data-field="correctOptionIndex">
-                    ${q.options.map((_, j) => `<option value="${j}" ${q.correctOptionIndex === j ? 'selected' : ''}>Option ${j+1}</option>`).join('')}
-                </select>
-            </label>
-        `;
-            container.appendChild(div);
-        });
+        document.getElementById("tutorialSectionId").value = btn.dataset.sectionId;
+        document.getElementById("tutorialId").value = "";
+        document.getElementById("tutorialTypeSelect").value = "";
 
-        // Input handling
-        container.querySelectorAll('input, select').forEach(input => {
-            input.oninput = e => {
-                const idx = parseInt(e.target.dataset.index);
-                if (e.target.dataset.field === 'question') quizQuestions[idx].question = e.target.value;
-                else if (e.target.dataset.field === 'correctOptionIndex') quizQuestions[idx].correctOptionIndex = parseInt(e.target.value);
-                else if (e.target.dataset.option !== undefined) quizQuestions[idx].options[e.target.dataset.option] = e.target.value;
-            };
-        });
-    }
-
-// Add new quiz question
-    document.getElementById('btnAddQuizQuestion')?.addEventListener('click', () => {
-        quizQuestions.push({ question: '', options: ['', '', '', ''], correctOptionIndex: 0 });
+        quizQuestions.length = 0;
         renderQuizQuestions();
+
+        modals.addTutorial.show();
     });
 
-// ==========================
-// Load Tutorials
-// ==========================
-    async function loadTutorials(sectionId, page = 1) {
-        const container = document.getElementById(`tutorials-container-${sectionId}`);
-        if (!container) return;
-        container.innerHTML = `<div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-1"></i> Loading tutorials...</div>`;
-        const html = await fetch(`/dr/sections/${sectionId}/tutorials-fragment?page=${page}`).then(res => res.text());
-        container.innerHTML = html;
-    }
+// Edit tutorial
+    document.addEventListener("click", async (e) => {
+        const btn = e.target.closest(".btn-edit-tutorial");
+        if (!btn) return;
 
-// ==========================
-// Load Tutorial Into Form
-// ==========================
-    async function loadTutorialIntoForm(tutorialId) {
-        const t = await fetch(`/dr/tutorial/${tutorialId}/json`).then(res => res.json());
-        const form = document.getElementById('tutorialForm');
-        form.querySelector('input[name="title"]').value = t.title || '';
-        form.querySelector('input[name="tutorialId"]').value = t.id;
-        form.querySelector('input[name="sectionId"]').value = t.sectionId || '';
-        form.querySelector('select[name="type"]').value = t.type || '';
+        const t = await fetchJSON(`/dr/tutorial/${btn.dataset.id}/json`);
+        const form = document.getElementById("tutorialForm");
+
+        document.getElementById("tutorialTitle").value = t.title;
+        document.getElementById("tutorialSectionId").value = t.sectionId;
+        document.getElementById("tutorialId").value = t.id;
+        document.getElementById("tutorialTypeSelect").value = t.type;
+
         showTutorialType(t.type);
 
-        if (t.type === 'QUIZ') {
+        if (t.type === "QUIZ") {
             quizQuestions.length = 0;
             t.quizQuestions.forEach(q => quizQuestions.push(q));
             renderQuizQuestions();
         }
-    }
 
-// ==========================
-// Delete Tutorial Modal
-// ==========================
-    function openDeleteTutorialModal(id) {
-        document.getElementById("deleteTutorialId").value = id;
-        new bootstrap.Modal(document.getElementById("modalDeleteTutorial")).show();
-    }
-
-// ==========================
-// Submit Tutorial Form
-// ==========================
-    document.getElementById('tutorialForm')?.addEventListener('submit', async e => {
-        e.preventDefault();
-        const form = e.target;
-        const formData = new FormData(form);
-
-        if (!formData.has('_csrf')) formData.append('_csrf', csrfToken);
-
-        // ✅ Add quizQuestions if type is QUIZ
-        if (formData.get('type') === 'QUIZ') {
-            formData.append('quizQuestions', JSON.stringify(quizQuestions));
-        }
-
-        const tutorialId = formData.get('tutorialId');
-        const sectionId = formData.get('sectionId');
-        const url = tutorialId ? `/dr/tutorial/${tutorialId}/edit` : `/dr/sections/${sectionId}/tutorials/add`;
-
-        const res = await fetch(url, { method: 'POST', body: formData });
-        if (res.ok) {
-            await loadTutorials(sectionId);
-            bootstrap.Modal.getInstance(modalAddTutorial).hide();
-            quizQuestions.length = 0;      // Clear questions after submit
-            renderQuizQuestions();          // Reset the quiz container
-        } else {
-            const data = await res.json();
-            alert(data.message || "Error");
-        }
+        modals.addTutorial.show();
     });
 
 
-// ==========================
-// Delete Tutorial Form
-// ==========================
-    document.getElementById('deleteTutorialForm')?.addEventListener('submit', async e => {
+    // Save tutorial
+    document.getElementById("tutorialForm")?.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const id = document.getElementById('deleteTutorialId').value;
+
+        const fd = new FormData(e.target);
+
+        const sectionId = document.getElementById("tutorialSectionId").value;
+        const tutorialId = document.getElementById("tutorialId").value;
+        const form = document.getElementById("tutorialForm");
+
+        const type = fd.get("type");
+
+        if (type === "QUIZ") {
+            fd.set("quizQuestionsJson", JSON.stringify(quizQuestions));
+        }
+
         try {
-            const res = await fetch(`/dr/tutorial/${id}/delete-json`, {
-                method: 'POST',
+            const resp = await fetch(`/dr/sections/${sectionId}/tutorials/add`, {
+                method: "POST",
+                body: fd,
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRF-TOKEN': csrfToken
-                },
-                body: `id=${id}`
-            });
-            const data = await res.json();
-            if (data.success) {
-                const sectionId = document.getElementById('tutorialSectionId')?.value;
-                if(sectionId) await loadTutorials(sectionId);
-                bootstrap.Modal.getInstance(document.getElementById('modalDeleteTutorial')).hide();
-            } else alert(data.message);
-        } catch (err) {
-            console.error(err);
-            alert('Error deleting tutorial.');
-        }
-    });
+                    [csrf.header]: csrf.token
+                }
+            }).then(r => r.json());
 
-// ==========================
-// View Tutorial Modal
-// ==========================
-    async function openViewTutorialModal(id) {
-        console.log("openViewTutorialModal", id);
-        try {
-            const tutorial = await fetch(`/dr/tutorial/${id}/json`).then(res => res.json());
-
-            document.getElementById('viewTutorialTitle').textContent = tutorial.title;
-
-            // Hide all sections
-            ['viewFileSection','viewArticleSection','viewQuizSection'].forEach(id => document.getElementById(id).classList.add('d-none'));
-
-            if (tutorial.type === 'VIDEO' || tutorial.type === 'PDF') {
-                const container = document.getElementById('viewFileContainer');
-                container.innerHTML = tutorial.type === 'VIDEO'
-                    ? `<video class="w-100" controls><source src="${tutorial.filePath}" type="video/mp4"></video>`
-                    : `<a href="${tutorial.filePath}" target="_blank">Download PDF</a>`;
-                document.getElementById('viewFileSection').classList.remove('d-none');
-            } else if (tutorial.type === 'ARTICLE') {
-                document.getElementById('viewArticleContent').innerHTML = tutorial.articleContent;
-                document.getElementById('viewArticleSection').classList.remove('d-none');
-            } else if (tutorial.type === 'QUIZ') {
-                const container = document.getElementById('viewQuizQuestionsContainer');
-                container.innerHTML = '';
-                tutorial.quizQuestions.forEach((q,i) => {
-                    const div = document.createElement('div');
-                    div.classList.add('mb-3','p-2','border','rounded');
-                    div.innerHTML = `<strong>Q${i+1}: ${q.question}</strong><br>Options: ${q.options.join(', ')}<br>Answer: ${q.answer}`;
-                    container.appendChild(div);
-                });
-                document.getElementById('viewQuizSection').classList.remove('d-none');
+            if (resp.success) {
+                modals.addTutorial.hide();
+                loadTutorials(sectionId);
+            } else {
+                alert("Error saving tutorial: " + resp.message);
             }
-
-            const modalEl = document.getElementById('modalViewTutorial');
-            let modal = bootstrap.Modal.getInstance(modalEl);
-            if (!modal) modal = new bootstrap.Modal(modalEl);
-            modal.show();
-
         } catch (err) {
             console.error(err);
-            alert('Failed to load tutorial: ' + err.message);
+            alert("Failed to save tutorial");
+        }
+    });
+
+
+    // Delete tutorial
+    document.addEventListener("click", (e) => {
+        const btn = e.target.closest(".btn-delete-tutorial");
+        if (!btn) return;
+
+        document.getElementById("deleteTutorialId").value = btn.dataset.id;
+        modals.deleteTutorial.show();
+    });
+
+    document.getElementById("deleteTutorialForm")?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const id = deleteTutorialId.value;
+        await post(`/dr/tutorial/${id}/delete-json`, `id=${id}`);
+        modals.deleteTutorial.hide();
+        location.reload();
+    });
+
+    // Load tutorials
+    window.loadTutorials = async (sectionId, page = 1) => {
+        const box = document.getElementById(`tutorials-container-${sectionId}`);
+        if (!box) return;
+
+        box.innerHTML = `<div class="text-center"><i class="fas fa-spinner fa-spin"></i></div>`;
+        box.innerHTML = await fetchHTML(`/dr/sections/${sectionId}/tutorials-fragment?page=${page}`);
+
+        box.querySelectorAll(".pagination a").forEach(a =>
+            a.onclick = (ev) => {
+                ev.preventDefault();
+                loadTutorials(sectionId, a.dataset.page);
+            }
+        );
+    };
+
+    /* ------------------------------------------------------------------------
+       QUIZ BUILDER
+    ------------------------------------------------------------------------ */
+    const renderQuizQuestions = () => {
+        const container = document.getElementById("quizQuestionsContainer");
+        container.innerHTML = "";
+
+        quizQuestions.forEach((q, i) => {
+            const card = document.createElement("div");
+            card.className = "border rounded p-2 mb-2";
+
+            const opts = q.options.map((opt, idx) => `
+                <div class="input-group mb-1">
+                    <input type="text" 
+                           class="form-control opt" 
+                           data-q="${i}" data-idx="${idx}" value="${opt}">
+                    <button class="btn btn-danger btn-del-opt" data-q="${i}" data-idx="${idx}">✕</button>
+                </div>`).join("");
+
+            card.innerHTML = `
+                <div class="d-flex justify-content-between">
+                    <strong>Question ${i + 1}</strong>
+                    <button class="btn btn-sm btn-danger btn-del-q" data-index="${i}">Remove</button>
+                </div>
+                <input class="form-control qtext mt-2" data-q="${i}" value="${q.question}">
+                <div class="mt-2"><strong>Options:</strong></div>
+                ${opts}
+                <button class="btn btn-sm btn-secondary btn-add-opt" data-q="${i}">+ Option</button>
+                <label class="mt-2">Correct Answer</label>
+                <select class="form-select correct" data-q="${i}">
+                    ${q.options.map((_, idx) =>
+                `<option value="${idx}" ${idx === q.correctOptionIndex ? "selected" : ""}>
+                            Option ${idx + 1}
+                        </option>`).join("")}
+                </select>
+            `;
+
+            container.appendChild(card);
+        });
+    };
+
+    // Quiz input events (delegated)
+    document.addEventListener("input", (e) => {
+        if (e.target.classList.contains("qtext")) {
+            quizQuestions[e.target.dataset.q].question = e.target.value;
+        }
+        if (e.target.classList.contains("opt")) {
+            quizQuestions[e.target.dataset.q].options[e.target.dataset.idx] = e.target.value;
+        }
+    });
+
+    document.addEventListener("change", (e) => {
+        if (e.target.classList.contains("correct")) {
+            quizQuestions[e.target.dataset.q].correctOptionIndex = Number(e.target.value);
+        }
+    });
+
+    document.addEventListener("click", (e) => {
+        if (e.target.classList.contains("btn-del-q")) {
+            quizQuestions.splice(e.target.dataset.index, 1);
+            renderQuizQuestions();
+        }
+        if (e.target.classList.contains("btn-add-opt")) {
+            quizQuestions[e.target.dataset.q].options.push("");
+            renderQuizQuestions();
+        }
+        if (e.target.classList.contains("btn-del-opt")) {
+            const q = e.target.dataset.q;
+            const i = e.target.dataset.idx;
+            quizQuestions[q].options.splice(i, 1);
+            renderQuizQuestions();
+        }
+    });
+
+    document.getElementById("btnAddQuizQuestion")?.addEventListener("click", () => {
+        quizQuestions.push({
+            question: "",
+            options: ["", ""],
+            correctOptionIndex: 0
+        });
+        renderQuizQuestions();
+    });
+
+    /* =========================================================================
+       VIEW TUTORIAL
+       ========================================================================= */
+
+    document.addEventListener("click", async (e) => {
+        const btn = e.target.closest(".btn-view-tutorial");
+        if (!btn) return;
+
+        const t = await fetchJSON(`/dr/tutorial/${btn.dataset.id}/json`);
+
+        // Reset visibility
+        ["viewFileSection", "viewArticleSection", "viewQuizSection"].forEach(id =>
+            document.getElementById(id).classList.add("d-none")
+        );
+
+        if (t.type === "VIDEO" || t.type === "PDF") {
+            const box = document.getElementById("viewFileContainer");
+            box.innerHTML = t.type === "VIDEO"
+                ? `<video class="w-100" controls><source src="${t.filePath}" type="video/mp4"></video>`
+                : `<embed src="${t.filePath}" class="w-100" style="height:600px">`;
+            document.getElementById("viewFileSection").classList.remove("d-none");
+        }
+
+        if (t.type === "ARTICLE") {
+            document.getElementById("viewArticleContent").innerHTML = t.articleContent;
+            document.getElementById("viewArticleSection").classList.remove("d-none");
+        }
+
+        if (t.type === "QUIZ") {
+            const box = document.getElementById("viewQuizQuestionsContainer");
+            box.innerHTML = "";
+
+            t.quizQuestions.forEach((q, i) => {
+                const div = document.createElement("div");
+                div.className = "mb-3 p-3 border rounded";
+
+                div.innerHTML = `
+                    <strong>Q${i + 1}. ${q.question}</strong>
+                    <ul class="list-group mt-2">
+                        ${q.options.map((opt, idx) =>
+                    `<li class="list-group-item ${idx === q.correctOptionIndex ? 'list-group-item-success' : ''}">
+                                ${String.fromCharCode(65 + idx)}. ${opt}
+                            </li>`
+                ).join("")}
+                    </ul>
+                `;
+
+                box.appendChild(div);
+            });
+
+            document.getElementById("viewQuizSection").classList.remove("d-none");
+        }
+
+        modals.viewTutorial.show();
+    });
+
+    /* =========================================================================
+       STUDENTS
+       ========================================================================= */
+
+    window.loadStudents = async (courseId, page = 0) => {
+        const container = document.getElementById("enrollmentsContainer");
+        container.innerHTML = `<div class="text-center"><i class="fas fa-spinner fa-spin"></i></div>`;
+        container.innerHTML = await fetchHTML(`/dr/courses/${courseId}/students-fragment?page=${page}`);
+
+        container.querySelectorAll(".pagination a").forEach(a =>
+            a.onclick = (ev) => {
+                ev.preventDefault();
+                loadStudents(courseId, a.dataset.page);
+            }
+        );
+    };
+
+    window.showEnrollments = (courseId) => {
+        modals.enrollments.show();
+        loadStudents(courseId);
+    };
+
+    /* =========================================================================
+       INIT – LOAD SECTIONS & STUDENTS FOR ALL COURSES
+       ========================================================================= */
+    document.querySelectorAll(".course-card").forEach(card => {
+        const courseId = card.querySelector(".btn-add-section")?.dataset.courseId;
+        if (courseId) {
+            loadSections(courseId);
+        }
+    });
+
+
+    function waitForElement(id, callback) {
+        const el = document.getElementById(id);
+        if (el) return callback(el);
+
+        const observer = new MutationObserver(() => {
+            const el = document.getElementById(id);
+            if (el) {
+                observer.disconnect();
+                callback(el);
+            }
+        });
+
+        observer.observe(document.body, {childList: true, subtree: true});
+    }
+    waitForElement("tutorialTypeSelect", el => {
+        el.addEventListener("change", e => {
+            showTutorialType(e.target.value);
+        });
+    });
+
+    function showTutorialType(type) {
+
+        const fileUpload = document.getElementById("fileUploadSection");
+        const article = document.getElementById("articleSection");
+        const quiz = document.getElementById("quizSection");
+
+        if (!fileUpload || !article || !quiz) {
+            console.warn("Tutorial type UI elements not loaded yet.");
+            return;
+        }
+
+        // Hide all first
+        fileUpload.classList.add("d-none");
+        article.classList.add("d-none");
+        quiz.classList.add("d-none");
+
+        // Show based on type
+        if (type === "VIDEO" || type === "PDF") {
+            fileUpload.classList.remove("d-none");
+        }
+        else if (type === "ARTICLE") {
+            article.classList.remove("d-none");
+        }
+        else if (type === "QUIZ") {
+            quiz.classList.remove("d-none");
         }
     }
 
 
-
-    // =======================
-    // STUDENTS
-    // =======================
-    async function loadStudents(courseId, page = 0) {
-        const container = document.getElementById(`students-container-${courseId}`);
-        if (!container) return;
-        container.innerHTML = `<div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-1"></i> Loading students...</div>`;
-        const res = await fetch(`/dr/courses/${courseId}/students-fragment?page=${page}`);
-        container.innerHTML = await res.text();
-        attachStudentPagination(courseId);
-    }
-
-    function attachStudentPagination(courseId) {
-        document.querySelectorAll(`#students-container-${courseId} .pagination a`).forEach(link => {
-            link.addEventListener('click', e => {
-                e.preventDefault();
-                const page = new URL(link.href).searchParams.get('page') || 0;
-                loadStudents(courseId, page);
-            });
-        });
-    }
-
-    document.querySelectorAll(".btn-view-enrollments").forEach(btn => {
-        btn.addEventListener("click", async () => {
-            const courseId = btn.dataset.courseId;
-            const modalBody = document.getElementById("enrollmentsContainer");
-            modalBody.innerHTML = "Loading...";
-            const res = await fetch(`/dr/courses/${courseId}/students-fragment`);
-            modalBody.innerHTML = await res.text();
-            new bootstrap.Modal(document.getElementById("modalViewEnrollments")).show();
-        });
-    });
-
-    // =======================
-    // LOAD ALL COURSES INITIAL
-    // =======================
-    async function loadAllCourses() {
-        document.querySelectorAll('.course-card').forEach(card => {
-            const courseId = card.querySelector('.btn-add-section')?.dataset.courseId;
-            if (courseId) { loadSections(courseId); loadStudents(courseId); }
-        });
-    }
-    loadAllCourses();
 });

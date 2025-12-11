@@ -597,3 +597,28 @@ body {
 .btn-aminah:hover {
     background: #8d1116;
 }
+
+.formatted-article {
+    max-width: 100%;
+    overflow-wrap: break-word;     /* Prevent long words from breaking layout */
+    word-break: break-word;        /* Additional fallback */
+    white-space: normal;           /* Avoid overflow caused by white-space */
+}
+
+.formatted-article p {
+    margin-bottom: 12px;
+}
+
+.formatted-article h1,
+.formatted-article h2,
+.formatted-article h3 {
+    margin-top: 18px;
+    font-weight: bold;
+}
+
+.formatted-article img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    display: block;                /* Prevent accidental overflow due to inline behavior */
+}

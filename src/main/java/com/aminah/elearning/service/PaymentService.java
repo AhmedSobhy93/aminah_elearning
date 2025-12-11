@@ -44,7 +44,7 @@ public class PaymentService {
         paymentRepository.save(payment);
 
         // enroll after payment
-        enrollmentService.enrollUser(user, enrollment.getCourse());
+//        enrollmentService.enrollUser(user, enrollment.getCourse());
         return payment;
     }
 }

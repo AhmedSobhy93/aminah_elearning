@@ -82,12 +82,37 @@ public class ElearningApplication {
 
                 tutorialRepository.save(tutorial);
                 tutorialRepository.save(tutorial2);
-                CourseEnrollment courseEnrollment = new CourseEnrollment();
-                courseEnrollment.setCourse(course);
-                courseEnrollment.setUser(student);
-                courseEnrollment.setEnrollmentDate(LocalDateTime.MAX);
-                courseEnrollmentRepository.save(courseEnrollment);
-
+                CourseEnrollment courseEnrollment1 = new CourseEnrollment();
+                courseEnrollment1.setCourse(course);
+                courseEnrollment1.setUser(student);
+                courseEnrollment1.setEnrollmentDate(LocalDateTime.MAX);
+                CourseEnrollment courseEnrollment2 = new CourseEnrollment();
+                courseEnrollment2.setCourse(course);
+                courseEnrollment2.setUser(student);
+                courseEnrollment2.setEnrollmentDate(LocalDateTime.MAX);
+                CourseEnrollment courseEnrollment3 = new CourseEnrollment();
+                courseEnrollment3.setCourse(course);
+                courseEnrollment3.setUser(student);
+                courseEnrollment3.setEnrollmentDate(LocalDateTime.MAX);
+                CourseEnrollment courseEnrollment4 = new CourseEnrollment();
+                courseEnrollment4.setCourse(course);
+                courseEnrollment4.setUser(student);
+                courseEnrollment4.setEnrollmentDate(LocalDateTime.MAX);
+                CourseEnrollment courseEnrollment5 = new CourseEnrollment();
+                courseEnrollment5.setCourse(course);
+                courseEnrollment5.setUser(student);
+                courseEnrollment5.setEnrollmentDate(LocalDateTime.MAX);
+                CourseEnrollment courseEnrollment6 = new CourseEnrollment();
+                courseEnrollment6.setCourse(course);
+                courseEnrollment6.setUser(student);
+                courseEnrollment6.setEnrollmentDate(LocalDateTime.MAX);
+                courseEnrollmentRepository.save(courseEnrollment1);
+                courseEnrollmentRepository.save(courseEnrollment2);
+                courseEnrollmentRepository.save(courseEnrollment3);
+                courseEnrollmentRepository.save(courseEnrollment4);
+                courseEnrollmentRepository.save(courseEnrollment5);
+                courseEnrollmentRepository.save(courseEnrollment6);
+                System.out.println(courseEnrollmentRepository.findAll().size());
             }
         };
     }

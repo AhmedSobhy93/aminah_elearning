@@ -22,7 +22,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     List<Course> findCoursesByEnrollments_User_Id(Long userId);
 
-    List<Course> findByPublishedTrue();
+    Page<Course> findByPublishedTrue(Pageable pageable);
 
 }
 

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,6 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class Tutorial {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,5 +45,15 @@ public class Tutorial {
     private String articleContent; // ARTICLE content
 
     @OneToMany(mappedBy = "tutorial", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuizQuestion> quizQuestions;
+    private List<QuizQuestion> quizQuestions = new ArrayList<>();
+
+    public Tutorial(Long tutorialId) {
+        this.id = tutorialId;
+    }
+
+    public void addQuizQuestion(QuizQuestion question) {
+        quizQuestions.add(question);
+        question.setTutorial(this);
+    }
+
 }

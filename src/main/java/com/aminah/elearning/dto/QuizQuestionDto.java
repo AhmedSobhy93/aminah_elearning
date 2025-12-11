@@ -1,5 +1,7 @@
 package com.aminah.elearning.dto;
 
+import com.aminah.elearning.model.QuizQuestion;
+import com.aminah.elearning.model.Tutorial;
 import lombok.*;
 
 import java.util.List;
@@ -21,4 +23,15 @@ public class QuizQuestionDto {
         dto.setCorrectOptionIndex(q.getCorrectOptionIndex());
         return dto;
     }
+
+    // DTO → Entity
+    public QuizQuestion toEntity(Tutorial tutorial) {
+        QuizQuestion q = new QuizQuestion();
+        q.setQuestion(this.question);
+        q.setOptions(this.options);
+        q.setCorrectOptionIndex(this.correctOptionIndex);
+        q.setTutorial(tutorial);
+        return q;
+    }
+
 }

@@ -53,9 +53,9 @@ public class CourseService {
     }
 
 
-    public List<Course> getPublishedCourses() {
-        return courseRepository.findByPublishedTrue();
-    }
+//    public List<Course> getPublishedCourses() {
+//        return courseRepository.findByPublishedTrue();
+//    }
 //    public Tutorial addTutorial(Long sectionId, Tutorial tutorial, MultipartFile file) throws IOException {
 //        Section course = getCourse(courseId);
 //        String path = FileUploadUtil.saveFile("uploads/tutorials", file);

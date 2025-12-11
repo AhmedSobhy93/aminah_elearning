@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<section layout:fragment="content">
+
+<div class="container">
+    <h1 th:text="${section.title}">Section Name</h1>
+    <p th:text="${section.description}">Section description...</p>
+
+    <ul>
+        <li th:each="tutorial : ${tutorials}">
+            <a th:href="@{/student/tutorials/{id}(id=${tutorial.id})}" th:text="${tutorial.title}">Tutorial Title</a>
+        </li>
+    </ul>
+</div>
+</section>>

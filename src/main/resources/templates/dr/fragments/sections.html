@@ -27,47 +27,64 @@
 
                 <div class="d-flex gap-1 flex-column flex-md-row mt-2 mt-md-0">
                     <button class="btn btn-sm btn-primary btn-toggle-tutorials" th:data-section-id="${section.id}">
-                        <i class="fas fa-eye me-1"></i> Tutorials
+                        <i class="fas fa-eye me-1"></i>Tutorials
                     </button>
 
                     <button class="btn btn-sm btn-success btn-add-tutorial" th:data-section-id="${section.id}">
-                        <i class="fas fa-plus me-1"></i> Add
+                        <i class="fas fa-plus me-1"></i>Tutorial
                     </button>
 
                     <button class="btn btn-sm btn-warning btn-edit-section" th:data-section-id="${section.id}"
                             th:data-section-title="${section.title}" th:data-section-description="${section.description}">
-                        <i class="fas fa-edit"></i>
+                        <i class="fas fa-edit"></i>Section
                     </button>
 
                     <button class="btn btn-sm btn-danger btn-delete-section" th:data-section-id="${section.id}">
-                        <i class="fas fa-trash"></i>
+                        <i class="fas fa-trash"></i> Section
                     </button>
                 </div>
             </div>
         </li>
     </ul>
 
-        <!-- Pagination -->
-        <nav th:if="${totalPages > 1}" class="mt-2">
-            <ul class="pagination pagination-sm justify-content-center">
-                <li class="page-item" th:classappend="${page == 1} ? 'disabled'">
-                    <a class="page-link" href="javascript:void(0)"
-                       th:onclick="'loadSections(' + ${courseId} + ',' + (${page}-1) + ')'">&laquo;</a>
-                </li>
+    <nav th:if="${totalPages > 1}" class="mt-2">
+        <ul class="pagination pagination-aminah justify-content-center">
 
-                <li th:each="i : ${#numbers.sequence(1, totalPages)}" class="page-item"
-                    th:classappend="${i == page} ? 'active'">
-                    <a class="page-link" href="javascript:void(0)"
-                       th:onclick="'loadSections(' + ${courseId} + ',' + ${i} + ')'"
-                       th:text="${i}"></a>
-                </li>
+            <!-- Previous -->
+            <li class="page-item" th:classappend="${page == 1} ? 'disabled'">
+                <a class="page-link"
+                   href="#"
+                   th:data-page="${page - 1}"
+                   th:onclick="'loadSections(' + ${courseId} + ',' + (${page} - 1) + ')'">
+                    &laquo;
+                </a>
+            </li>
 
-                <li class="page-item" th:classappend="${page == totalPages} ? 'disabled'">
-                    <a class="page-link" href="javascript:void(0)"
-                       th:onclick="'loadSections(' + ${courseId} + ',' + (${page}+1) + ')'">&raquo;</a>
-                </li>
-            </ul>
-        </nav>
+            <!-- Page Numbers -->
+            <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+                class="page-item"
+                th:classappend="${i == page} ? 'active'">
+                <a class="page-link"
+                   href="#"
+                   th:data-page="${i}"
+                   th:text="${i}"
+                   th:onclick="'loadSections(' + ${courseId} + ',' + ${i} + ')'">
+                </a>
+            </li>
+
+            <!-- Next -->
+            <li class="page-item" th:classappend="${page == totalPages} ? 'disabled'">
+                <a class="page-link"
+                   href="#"
+                   th:data-page="${page + 1}"
+                   th:onclick="'loadSections(' + ${courseId} + ',' + (${page} + 1) + ')'">
+                    &raquo;
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+
 
 
 </div>

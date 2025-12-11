@@ -19,6 +19,10 @@ import lombok.*;
 @AllArgsConstructor
 public class Course {
 
+    public Course(Long id) {
+        this.id = id;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
