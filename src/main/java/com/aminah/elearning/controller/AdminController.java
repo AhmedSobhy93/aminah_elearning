@@ -11,6 +11,9 @@ import com.aminah.elearning.service.CourseService;
 import com.aminah.elearning.service.UserService;
 import lombok.RequiredArgsConstructor;
 //import org.antlr.v4.runtime.tree.pattern.ParseTreePattern;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,13 +33,21 @@ public class AdminController {
 
     private final UserRepository userRepo;
     private final CourseEnrollmentService courseEnrollmentService;
-
-    // Admin Users Management Controllers //
     @GetMapping("/users")
-    public String getAllUsers(Model model) {
-        model.addAttribute("users", userService.getAllUsers());
+    public String getAllUsers(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            Model model) {
+
+        int pageSize = 10; // 10 users per page
+        Page<User> usersPage = userService.getUsers(PageRequest.of(page - 1, pageSize));
+
+        model.addAttribute("users", usersPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", usersPage.getTotalPages());
+
         return "admin/users/list";
     }
+
 
     @GetMapping("/users/{id}")
     public String viewUser(@PathVariable Long id, Model model) {
@@ -72,9 +83,13 @@ public class AdminController {
 
 
     @GetMapping("/courses")
-    public String list(Model model) {
-        model.addAttribute("courses", courseService.getCourses("", 0, 50));
-        return "courses/list";
+    public String list(Model model,@RequestParam(name = "page", defaultValue = "1") int page) {
+
+        Page<Course> courses=courseService.getCourses("", page, 5);
+        model.addAttribute("totalPages", page);
+
+        model.addAttribute("courses", courses);
+        return "admin/course-list";
     }
 
     @GetMapping("/courses/{id}")

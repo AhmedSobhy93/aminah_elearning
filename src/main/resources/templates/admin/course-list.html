@@ -1,25 +1,141 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"/><title>Admin - Courses</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"></head>
-<body class="bg-light">
-<div class="container mt-4">
-  <h3>Admin - Courses</h3>
-  <a href="/admin/courses/new" class="btn btn-primary mb-2">New Course</a>
-  <table class="table table-striped">
-    <thead><tr><th>ID</th><th>Title</th><th>Price</th><th>Actions</th></tr></thead>
-    <tbody>
-      <tr th:each="c : ${courses}">
-        <td th:text="${c.id}">1</td>
-        <td th:text="${c.title}">Title</td>
-        <td th:text="${c.price}">0.00</td>
-        <td>
-          <a th:href="@{'/admin/courses/edit/' + ${c.id}}" class="btn btn-sm btn-warning">Edit</a>
-          <a th:href="@{'/admin/courses/delete/' + ${c.id}}" class="btn btn-sm btn-danger">Delete</a>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Admin - Manage Courses</title>
+</head>
+<body>
+
+<section layout:fragment="content">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold"><i class="fas fa-graduation-cap me-2"></i>Manage Courses</h2>
+<!--        <a href="/admin/courses/new" class="btn btn-primary">-->
+<!--            <i class="fas fa-plus-circle me-1"></i> New Course-->
+<!--        </a>-->
+    </div>
+
+    <!-- Courses List -->
+    <div th:each="course : ${courses}" class="course-card mb-4 p-3 border rounded shadow-sm bg-white">
+
+        <!-- Course Header -->
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h4>
+                    <i class="fas fa-book-medical text-secondary me-2"></i>
+                    <span th:text="${course.title}">Course Title</span>
+                </h4>
+                <p th:text="${course.description}">Course description...</p>
+                <div class="course-badges mt-1">
+                    <span class="badge bg-secondary me-1">
+                        <i class="fas fa-dollar-sign me-1"></i>
+                        <span th:text="${course.price}">0.00</span>
+                    </span>
+                    <span class="badge bg-info">
+                        <i class="fas fa-circle-notch me-1"></i>
+<!--                        <span th:text="${course.active} ? 'Published' : 'Draft'"></span>-->
+                    </span>
+                </div>
+            </div>
+
+<!--            <div class="d-flex gap-2">-->
+<!--                <a th:href="@{'/admin/courses/edit/' + ${course.id}}" class="btn btn-warning btn-sm" title="Edit Course">-->
+<!--                    <i class="fas fa-edit"></i>-->
+<!--                </a>-->
+<!--                <button class="btn btn-danger btn-sm"-->
+<!--                        th:onclick="'confirmDelete(' + ${course.id} + ')'" title="Delete Course">-->
+<!--                    <i class="fas fa-trash-alt"></i>-->
+<!--                </button>-->
+<!--                <button class="btn btn-success btn-sm"-->
+<!--                        th:onclick="'toggleSections(' + ${course.id} + ')'" title="Show Sections">-->
+<!--                    <i class="fas fa-layer-group"></i>-->
+<!--                </button>-->
+<!--            </div>-->
+        </div>
+
+        <!-- Sections -->
+<!--        <div class="sections-container mt-3" th:id="'sections-container-' + ${course.id}" style="display:none;">-->
+<!--            <div th:each="section : ${course.sections}" class="section-card mb-2 p-2 border rounded bg-light">-->
+<!--                <div class="d-flex justify-content-between align-items-center">-->
+<!--                    <strong th:text="${section.title}">Section Title</strong>-->
+<!--                    <div class="d-flex gap-2">-->
+<!--                        <a th:href="@{'/admin/sections/edit/' + ${section.id}}" class="btn btn-sm btn-warning" title="Edit Section">-->
+<!--                            <i class="fas fa-edit"></i>-->
+<!--                        </a>-->
+<!--                        <button class="btn btn-sm btn-danger"-->
+<!--                                th:onclick="'confirmDeleteSection(' + ${section.id} + ')'" title="Delete Section">-->
+<!--                            <i class="fas fa-trash-alt"></i>-->
+<!--                        </button>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Tutorials &ndash;&gt;-->
+<!--                <div class="tutorials-container mt-2 ms-3">-->
+<!--                    <div th:each="tutorial : ${section.tutorials}" class="tutorial-card mb-1 p-2 border rounded bg-white">-->
+<!--                        <div class="d-flex justify-content-between align-items-center">-->
+<!--                            <span th:text="${tutorial.title}">Tutorial Title</span>-->
+<!--                            <div class="d-flex gap-1">-->
+<!--                                <a th:href="@{'/admin/tutorials/edit/' + ${tutorial.id}}" class="btn btn-sm btn-info" title="Edit Tutorial">-->
+<!--                                    <i class="fas fa-edit"></i>-->
+<!--                                </a>-->
+<!--                                <button class="btn btn-sm btn-danger"-->
+<!--                                        th:onclick="'confirmDeleteTutorial(' + ${tutorial.id} + ')'" title="Delete Tutorial">-->
+<!--                                    <i class="fas fa-trash-alt"></i>-->
+<!--                                </button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <button class="btn btn-sm btn-success mt-1"-->
+<!--                            th:onclick="'addTutorial(' + ${section.id} + ')'" title="Add Tutorial">-->
+<!--                        <i class="fas fa-plus"></i> Add Tutorial-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <button class="btn btn-sm btn-primary mt-2"-->
+<!--                    th:onclick="'addSection(' + ${course.id} + ')'" title="Add Section">-->
+<!--                <i class="fas fa-plus"></i> Add Section-->
+<!--            </button>-->
+<!--        </div>-->
+
+    </div>
+    <nav aria-label="Course navigation" class="mt-3">
+        <ul class="pagination pagination-aminah justify-content-center">
+
+            <!-- Previous -->
+            <li class="page-item"
+                th:classappend="${courses.hasPrevious()} ? '' : 'disabled'">
+                <a class="page-link"
+                   th:href="${courses.hasPrevious()} ?
+                        @{/admin/courses(page=${courses.number - 1})} : '#'">
+                    Previous
+                </a>
+            </li>
+
+            <!-- Page numbers -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, courses.totalPages - 1)}"
+                th:classappend="${i == courses.number} ? 'active'">
+                <a class="page-link"
+                   th:text="${i + 1}"
+                   th:href="@{/admin/courses(page=${i})}">
+                </a>
+            </li>
+
+            <!-- Next -->
+            <li class="page-item"
+                th:classappend="${courses.hasNext()} ? '' : 'disabled'">
+                <a class="page-link"
+                   th:href="${courses.hasNext()} ?
+                        @{/admin/courses(page=${courses.number + 1})} : '#'">
+                    Next
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+</section>
+
+
 </body>
 </html>
