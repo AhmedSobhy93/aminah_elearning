@@ -9,11 +9,18 @@
     <!-- Local CSS -->
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/all.min.css}"> <!-- FontAwesome -->
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/common/buttons.css}">
+    <link rel="stylesheet" th:href="@{/css/common/cards.css}">
+    <link rel="stylesheet" th:href="@{/css/common/footer.css}">
+    <link rel="stylesheet" th:href="@{/css/common/pagination.css}">
+    <link rel="stylesheet" th:href="@{/css/common/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/common/common.css}">
+    <link rel="stylesheet" th:href="@{/css/common/sideBar.css}">
     <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
 
 </head>
+
 <body class="d-flex flex-column min-vh-100">
 
 <!-- Header -->
@@ -21,7 +28,12 @@
 
 <div class="d-flex flex-grow-1">
     <!-- Sidebar -->
-    <div th:replace="~{'layout/fragments/sidebar' :: sidebar}"></div>
+<!--    <div th:replace="~{'layout/fragments/sidebar' :: sidebar}"></div>-->
+    <!-- Floating Action Bar -->
+    <div th:replace="~{'layout/fragments/leftActions' :: leftActions}"></div>
+
+    <!-- Main Sidebar -->
+<!--    <div th:replace="~{'layout/fragments/sidebar' :: sidebar}"></div>-->
 
     <!-- Page content -->
 <!--    <main class="flex-grow-1 p-3" layout:fragment="content">-->
@@ -38,5 +50,6 @@
 <script th:src="@{/js/sweetalert2.all.min.js}"></script>
 <script th:src="@{/js/dr/dr-courses.js}"></script>
 <script th:src="@{/js/student/student.js}"></script>
+<script th:src="@{/js/main.js}"></script>
 </body>
 </html>

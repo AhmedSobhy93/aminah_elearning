@@ -1,0 +1,144 @@
+/* --- Sidebar --- */
+aside {
+    background-color: #fff;
+    width: 250px;
+    min-height: 100vh;
+    box-shadow: 0 0 12px rgba(0,0,0,0.08);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+aside a.nav-link {
+    color: var(--text-color);
+    margin-bottom: 0.6rem;
+    border-radius: var(--border-radius);
+    padding: 0.6rem 1rem;
+    display: block;
+    transition: var(--transition);
+}
+aside a.nav-link:hover {
+    background-color: var(--primary);
+    color: white !important;
+}
+aside .dropdown-menu { min-width: 150px; }
+@media (max-width: 992px) {
+    aside { position: fixed; left: -260px; top: 0; z-index: 1050; }
+    aside.show { left: 0; }
+}
+
+
+
+/* --- Left Action Bar Container --- */
+#leftActionBar {
+    position: fixed;
+    top: 120px;
+    left: 12px;
+    width: 55px;
+    padding: 12px 8px;
+    background: rgba(255, 255, 255, 0.15);  /* very transparent */
+    backdrop-filter: blur(10px);             /* frosted glass effect */
+    border-radius: 16px;
+    box-shadow: 0 6px 22px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    z-index: 999;
+    transition: all 0.3s ease;
+}
+
+/* --- Action Buttons --- */
+.action-btn {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.3);   /* semi-transparent */
+    backdrop-filter: blur(6px);             /* blur behind buttons */
+    border: none;
+    outline: none;
+    border-radius: 14px;
+    font-size: 22px;
+    color: #2CA6A4;                         /* primary icon color */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* --- Hover Effect for Buttons --- */
+.action-btn:hover {
+    background: rgba(44, 166, 164, 0.9);    /* nearly opaque colored */
+    color: #fff;
+    transform: translateY(-4px) scale(1.1);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+
+/* --- Tooltip Labels --- */
+.action-btn::after {
+    content: attr(data-label);
+    position: absolute;
+    left: 60px;
+    top: 50%;
+    transform: translateY(-50%) translateX(0);
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.25s ease;
+    z-index: 1000;
+}
+
+/* Show tooltip on hover */
+.action-btn:hover::after {
+    opacity: 1;
+    transform: translateY(-50%) translateX(10px);
+}
+
+/* --- Floating Help Panel --- */
+#floatingHelpPanel {
+    position: fixed;
+    top: 120px;
+    left: 80px;
+    width: 280px;
+    padding: 22px;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.18);
+    display: none;
+    z-index: 998;
+    animation: fadeIn 0.3s ease;
+}
+
+#floatingHelpPanel h5 {
+    color: #2CA6A4;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+#floatingHelpPanel .list-group-item {
+    background: transparent;
+    border: none;
+    color: #333;
+    padding-left: 0;
+    transition: all 0.2s ease;
+}
+
+#floatingHelpPanel .list-group-item:hover {
+    background: rgba(44, 166, 164, 0.1);
+    color: #2CA6A4;
+    cursor: pointer;
+}
+
+/* --- Keyframes for fade-in --- */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(-10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}

@@ -1,30 +1,30 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/base}">
-<section layout:fragment="content">
-    <div class="container">
-        <h1>Available Courses</h1>
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org"-->
+<!--      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"-->
+<!--      layout:decorate="~{layout/base}">-->
+<!--<section layout:fragment="content">-->
+<!--    <div class="container">-->
+<!--        <h1>Available Courses</h1>-->
 
-        <form th:action="@{/student/courses}" method="get">
-            <input type="text" name="keyword" placeholder="Search..." th:value="${keyword}">
-            <button type="submit">Search</button>
-        </form>
+<!--        <form th:action="@{/student/courses}" method="get">-->
+<!--            <input type="text" name="keyword" placeholder="Search..." th:value="${keyword}">-->
+<!--            <button type="submit">Search</button>-->
+<!--        </form>-->
 
-        <div class="courses-grid">
-            <div th:each="course : ${courses.content}" class="course-card">
-                <h3 th:text="${course.title}">Course Title</h3>
-                <p th:text="${course.description}">Course description...</p>
-                <a th:href="@{/student/courses/{id}(id=${course.id})}">View Details</a>
-            </div>
-        </div>
+<!--        <div class="courses-grid">-->
+<!--            <div th:each="course : ${courses.content}" class="course-card">-->
+<!--                <h3 th:text="${course.title}">Course Title</h3>-->
+<!--                <p th:text="${course.description}">Course description...</p>-->
+<!--                <a th:href="@{/student/courses/{id}(id=${course.id})}">View Details</a>-->
+<!--            </div>-->
+<!--        </div>-->
 
-        <div class="pagination">
-            <a th:if="${!courses.first}" th:href="@{/student/courses(page=${courses.number-1}, keyword=${keyword})}">Prev</a>
-            <span th:text="${courses.number + 1}">1</span> / <span th:text="${courses.totalPages}">1</span>
-            <a th:if="${!courses.last}" th:href="@{/student/courses(page=${courses.number+1}, keyword=${keyword})}">Next</a>
-        </div>
-    </div>
+<!--        <div class="pagination">-->
+<!--            <a th:if="${!courses.first}" th:href="@{/student/courses(page=${courses.number-1}, keyword=${keyword})}">Prev</a>-->
+<!--            <span th:text="${courses.number + 1}">1</span> / <span th:text="${courses.totalPages}">1</span>-->
+<!--            <a th:if="${!courses.last}" th:href="@{/student/courses(page=${courses.number+1}, keyword=${keyword})}">Next</a>-->
+<!--        </div>-->
+<!--    </div>-->
 <!--    <div class="container py-5">-->
 <!--        <h2 class="text-center mb-4">Courses</h2>-->
 <!--        <form method="get" class="mb-3">-->
@@ -57,34 +57,92 @@
 <!--            <a th:if="${currentPage +1 < totalPages}" th:href="@{/student/courses(page=${currentPage+1}, keyword=${param.keyword})}" class="btn btn-secondary">Next</a>-->
 <!--        </div>-->
 <!--    </div>-->
-</section>
-
-<!--<section layout:fragment="content">-->
-<!--     <span th:if="${message}">-->
-<!--    <h1 style="text-align: center; padding-bottom:200px;color: #4B5563;" th:text="${message}"></h1>-->
-<!--    </span>-->
-<!--    <div class="container py-5">-->
-<!--        <h2 class="mb-4 text-center">Available Courses</h2>-->
-
-<!--        <div class="row">-->
-<!--            <div th:each="course : ${courses}" class="col-md-4 mb-4">-->
-<!--                <div class="card shadow-sm">-->
-<!--                    <div class="card-body">-->
-<!--                        <h5 class="card-title" th:text="${course.courseName}"></h5>-->
-<!--                        <p class="card-text" th:text="${course.description}"></p>-->
-
-<!--                        <span th:if="${#lists.contains(enrollments, course)}">-->
-<!--                            <button class="btn btn-success" disabled>Enrolled</button>-->
-<!--                        </span>-->
-<!--                        <span th:if="${!#lists.contains(enrollments, course)}">-->
-<!--                            <form th:action="@{/student/enroll/{id}(id=${course.id})}" method="post">-->
-<!--                                <button class="btn btn-primary">Enroll</button>-->
-<!--                            </form>-->
-<!--                        </span>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
 <!--</section>-->
 
+<!--&lt;!&ndash;<section layout:fragment="content">&ndash;&gt;-->
+<!--&lt;!&ndash;     <span th:if="${message}">&ndash;&gt;-->
+<!--&lt;!&ndash;    <h1 style="text-align: center; padding-bottom:200px;color: #4B5563;" th:text="${message}"></h1>&ndash;&gt;-->
+<!--&lt;!&ndash;    </span>&ndash;&gt;-->
+<!--&lt;!&ndash;    <div class="container py-5">&ndash;&gt;-->
+<!--&lt;!&ndash;        <h2 class="mb-4 text-center">Available Courses</h2>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <div class="row">&ndash;&gt;-->
+<!--&lt;!&ndash;            <div th:each="course : ${courses}" class="col-md-4 mb-4">&ndash;&gt;-->
+<!--&lt;!&ndash;                <div class="card shadow-sm">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div class="card-body">&ndash;&gt;-->
+<!--&lt;!&ndash;                        <h5 class="card-title" th:text="${course.courseName}"></h5>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <p class="card-text" th:text="${course.description}"></p>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                        <span th:if="${#lists.contains(enrollments, course)}">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <button class="btn btn-success" disabled>Enrolled</button>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </span>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <span th:if="${!#lists.contains(enrollments, course)}">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <form th:action="@{/student/enroll/{id}(id=${course.id})}" method="post">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <button class="btn btn-primary">Enroll</button>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </form>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </span>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--&lt;!&ndash;            </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;</section>&ndash;&gt;-->
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<section layout:fragment="content" class="container py-5">
+
+    <h2 class="mb-4 text-center">Available Courses</h2>
+
+    <!-- Search -->
+    <form method="get" class="input-group mb-4">
+        <input type="text" name="keyword" th:value="${keyword}"
+               class="form-control" placeholder="Search courses...">
+        <button class="btn btn-primary">Search</button>
+    </form>
+
+    <div class="row">
+        <div th:each="course : ${courses}" class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4 th:text="${course.title}"></h4>
+                    <p th:text="${course.description}"></p>
+
+                    <span class="badge bg-success"
+                          th:text="${course.price == 0 ? 'FREE' : 'EGP ' + course.price}">
+                    </span>
+
+                    <div class="mt-3">
+                        <a th:href="@{/student/course/{id}(id=${course.id})}"
+                           class="btn btn-outline-primary">View</a>
+
+                        <form th:action="@{/student/enroll/{id}(id=${course.id})}"
+                              method="post" class="d-inline">
+                            <button class="btn btn-primary">Enroll</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="text-center mt-4">
+        <a th:if="${currentPage > 0}"
+           th:href="@{/student/courses(page=${currentPage-1}, keyword=${keyword})}"
+           class="btn btn-secondary">Prev</a>
+
+        <span class="mx-2">Page <span th:text="${currentPage+1}"></span> of
+            <span th:text="${totalPages}"></span>
+        </span>
+
+        <a th:if="${currentPage + 1 < totalPages}"
+           th:href="@{/student/courses(page=${currentPage+1}, keyword=${keyword})}"
+           class="btn btn-secondary">Next</a>
+    </div>
+
+</section>
+</html>
