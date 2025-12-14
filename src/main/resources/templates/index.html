@@ -16,7 +16,7 @@
             <a class="btn btn-primary btn-role" sec:authorize="hasRole('ADMIN')" th:href="@{/admin/users}">
                 <i class="fa-solid fa-user-shield"></i> Manage Users
             </a>
-            <a class="btn btn-primary btn-role" sec:authorize="hasRole('DR')" th:href="@{/dr/courses}">
+            <a class="btn btn-aminah btn-role" sec:authorize="hasRole('DR')" th:href="@{/dr/courses}">
                 <i class="fa-solid fa-chalkboard-teacher"></i> My Courses
             </a>
             <a class="btn btn-primary btn-role" sec:authorize="hasRole('STUDENT')" th:href="@{/student/courses}">

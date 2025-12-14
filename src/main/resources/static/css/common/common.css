@@ -673,7 +673,7 @@
 
 /* --- Root Theme Colors --- */
 :root {
-    --primary: #2CA6A4;       /* Aminah brand green */
+    --primary: #C8A66A;       /* Aminah brand green */
     --primary-dark: #218583;
     --secondary: #F38F08;
     --accent: #43A047;
@@ -685,6 +685,12 @@
     --font-main: 'Poppins', 'Segoe UI', sans-serif;
     --border-radius: 12px;
     --transition: 0.3s ease;
+    --aminah-primary: #4f46e5;   /* indigo */
+    --aminah-secondary: #06b6d4; /* cyan */
+    --aminah-success: #22c55e;
+    --aminah-warning: #f59e0b;
+    --aminah-danger: #ef4444;
+    --aminah-bg-glass: rgba(255, 255, 255, 0.85);
 }
 
 /* --- Global Reset --- */
@@ -737,3 +743,24 @@ a:hover { color: var(--secondary); }
     width: 100vw;       /* Stretch wave to full width */
     height: 50px;
 }
+
+/* Headings */
+h2, h4, h5 {
+    letter-spacing: 0.3px;
+}
+
+/* Glass table */
+.glass-table {
+    background: rgba(255,255,255,.85);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Subtle animation */
+.fade-in {
+    animation: fadeInUp .3s ease-in-out;
+}
+
+
+.course-header h4 i { font-size: 2rem; }

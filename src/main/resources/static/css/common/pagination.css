@@ -8,13 +8,18 @@
 }
 
 .pagination-aminah .page-item .page-link {
-    color: var(--primary);
+    color: var(--aminah-primary);
     border-radius: 8px;
     border: 1px solid #d6ecec;
     padding: 6px 14px;
     transition: all 0.25s ease;
-}
+    margin: 0 4px;
 
+}
+.pagination-aminah .active .page-link {
+    background: var(--aminah-primary);
+    border-color: var(--aminah-primary);
+}
 .pagination-aminah .page-item.active .page-link {
     background-color: var(--primary);
     border-color: var(--primary);

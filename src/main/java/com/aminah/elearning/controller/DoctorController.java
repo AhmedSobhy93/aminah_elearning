@@ -5,7 +5,9 @@ import com.aminah.elearning.dto.QuizQuestionDto;
 import com.aminah.elearning.dto.TutorialDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.transaction.Transactional;
+//import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -50,6 +52,7 @@ public class DoctorController {
     /* ----------------------------------------------------
      *   LIST COURSES (MAIN PAGE)
      * ---------------------------------------------------- */
+    @Transactional(readOnly = true)
     @GetMapping("/courses")
     public String listCourses(
             Model model,
