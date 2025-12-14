@@ -1,29 +1,39 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<footer th:fragment="footer" class="ftr-footer">
+    <div class="ftr-container text-center">
 
-<footer th:fragment="footer">
-<!--    <div class="container text-center">-->
-<!--        <img th:src="@{/images/logo.png}" height="40" alt="Aminah Hospital Logo" class="mb-2">-->
-<!--        <p>Aminah Hospital – Benha | Excellence in Medical Education</p>-->
-<!--        <small>&copy; 2025 Aminah Hospital. All rights reserved.</small>-->
-<!--        <div class="mt-2">-->
-<!--            <a href="#" class="me-3"><i class="bi bi-facebook"></i></a>-->
-<!--            <a href="#" class="me-3"><i class="bi bi-twitter"></i></a>-->
-<!--            <a href="#"><i class="bi bi-instagram"></i></a>-->
-<!--        </div>-->
-<!--    </div>-->
+        <!-- Logo -->
+        <div class="ftr-footer_logo_container">
+            <img th:src="@{/images/logo.png}" height="60" class="rounded-circle shadow-sm mb-2">
+            <h2 class="ftr-footer_logo_text">Aminah <span>Hospital</span></h2>
+        </div>
 
-    <div class="container text-center">
-        <img th:src="@{/images/logo.png}" height="40" class="mb-2 rounded-circle shadow-sm">
-        <p class="mb-1">Aminah Hospital – Benha | Excellence in Medical Education</p>
-        <small>&copy; 2025 Aminah Hospital. All rights reserved.</small>
-        <div class="mt-2">
-            <a href="#"><i class="bi bi-facebook"></i></a>
-            <a href="#"><i class="bi bi-twitter"></i></a>
-            <a href="#"><i class="bi bi-instagram"></i></a>
+        <!-- About / Description -->
+        <p class="ftr-footer_about_text mb-1">
+            Excellence in Medical Education – Benha
+        </p>
+
+        <!-- Quick Links -->
+        <div class="ftr-footer_links_container mb-3">
+            <ul>
+                <li><a href="https://aminahhospital.com" target="_blank">Home</a></li>
+                <li><a href="https://aminahhospital.com/about" target="_blank">About Us</a></li>
+                <li><a href="https://aminahhospital.com/departments" target="_blank">Departments</a></li>
+                <li><a href="https://aminahhospital.com/contact" target="_blank">Contact</a></li>
+            </ul>
+        </div>
+
+        <!-- Social Icons -->
+        <div class="ftr-footer_social">
+            <ul>
+                <li><a href="https://facebook.com/aminahhospital" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+                <li><a href="https://twitter.com/aminahhospital" target="_blank"><i class="fab fa-twitter"></i></a></li>
+                <li><a href="https://instagram.com/aminahhospital" target="_blank"><i class="fab fa-instagram"></i></a></li>
+            </ul>
+        </div>
+
+        <!-- Copyright -->
+        <div class="ftr-copyright mt-3">
+            <small>&copy; 2025 <a href="https://aminahhospital.com" target="_blank">Aminah Hospital – Benha</a>. All rights reserved.</small>
         </div>
     </div>
 </footer>
-
-</html>

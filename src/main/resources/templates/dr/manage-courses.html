@@ -1,133 +1,448 @@
+<!--&lt;!&ndash;<html lang="en" xmlns:th="http://www.thymeleaf.org"&ndash;&gt;-->
+<!--&lt;!&ndash;      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"&ndash;&gt;-->
+<!--&lt;!&ndash;      layout:decorate="~{layout/base}">&ndash;&gt;-->
+<!--&lt;!&ndash;<head>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <title>Manage Courses</title>&ndash;&gt;-->
+
+<!--&lt;!&ndash;</head>&ndash;&gt;-->
+<!--&lt;!&ndash;<body>&ndash;&gt;-->
+
+<!--&lt;!&ndash; <section layout:fragment="content" >&ndash;&gt;-->
+
+<!--&lt;!&ndash;    &lt;!&ndash; Header &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;    <div class="d-flex justify-content-between align-items-center mb-3">&ndash;&gt;-->
+<!--&lt;!&ndash;        <h2 class="fw-bold"><i class="fas fa-graduation-cap me-2"></i>Your Courses</h2>&ndash;&gt;-->
+<!--&lt;!&ndash;        <button class="btn btn-primary shadow-sm" id="btnCreateCourse">&ndash;&gt;-->
+<!--&lt;!&ndash;            <i class="fas fa-plus-circle me-1"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;            Create New Course&ndash;&gt;-->
+<!--&lt;!&ndash;        </button>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    &lt;!&ndash; Courses List &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;    <div th:each="course : ${courses}" class="course-card mb-4 p-3 border rounded">&ndash;&gt;-->
+
+<!--&lt;!&ndash;        &lt;!&ndash; Course Header &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;        <div class="d-flex justify-content-between align-items-start course-header">&ndash;&gt;-->
+
+<!--&lt;!&ndash;            <div class="course-card mb-4 p-4 fade-in">&ndash;&gt;-->
+
+<!--&lt;!&ndash;                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">&ndash;&gt;-->
+
+<!--&lt;!&ndash;                    <div class="flex-grow-1">&ndash;&gt;-->
+<!--&lt;!&ndash;                        <h4 class="fw-semibold mb-1">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <i class="fas fa-book-open text-primary me-2"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <span th:text="${course.title}"></span>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </h4>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                        <p class="text-muted mb-2" th:text="${course.description}"></p>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                        <div class="d-flex gap-2 flex-wrap">&ndash;&gt;-->
+<!--&lt;!&ndash;                <span class="badge bg-light text-dark">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <i class="fas fa-dollar-sign text-success me-1"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <span th:text="${course.price}"></span>&ndash;&gt;-->
+<!--&lt;!&ndash;                </span>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                            <span class="badge bg-info bg-opacity-10 text-info">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <i class="fas fa-globe me-1"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <span th:text="${course.published}"></span>&ndash;&gt;-->
+<!--&lt;!&ndash;                </span>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--&lt;!&ndash;            </div>&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;            <div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;                <h4>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;                    <i class="fas fa-book-medical text-secondary me-2"></i>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;                    <span th:text="${course.title}"></span>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;                </h4>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;                <p th:text="${course.description}"></p>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;                <div class="course-badges mt-1">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;                    <span class="badge bg-secondary">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;                        <i class="fas fa-dollar-sign me-1"></i>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;                        <span th:text="${course.price}"></span>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;                    </span>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;                    <span class="badge bg-info">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;                        <i class="fas fa-circle-notch me-1"></i>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;                        <span th:text="${course.published}"></span>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;                    </span>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;                </div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;            </div>&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;            <div class="d-flex gap-2 course-actions">&ndash;&gt;-->
+<!--&lt;!&ndash;                <button class="btn btn-success btn-sm btn-add-section" th:data-course-id="${course.id}"&ndash;&gt;-->
+<!--&lt;!&ndash;                        title="Add Section">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <i class="fas fa-layer-group"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                </button>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                <button class="btn btn-info btn-sm"&ndash;&gt;-->
+<!--&lt;!&ndash;                        title="Shoe EnrolledIn Students"&ndash;&gt;-->
+<!--&lt;!&ndash;                        th:onclick="'showEnrollments(' + ${course.id} + ')'">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <i class="fas fa-users me-1"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                </button>&ndash;&gt;-->
+
+
+<!--&lt;!&ndash;                <button class="btn btn-warning btn-sm btnEditCourse" th:data-course-id="${course.id}"&ndash;&gt;-->
+<!--&lt;!&ndash;                        title="Edit Course">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <i class="fas fa-edit"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                </button>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                <button class="btn btn-danger btn-sm btn-delete-course"&ndash;&gt;-->
+<!--&lt;!&ndash;                        th:data-course-id="${course.id}"&ndash;&gt;-->
+<!--&lt;!&ndash;                        title="Delete Course">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <i class="fas fa-trash-alt"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                </button>&ndash;&gt;-->
+
+<!--&lt;!&ndash;            </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        &lt;!&ndash; Sections &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;        <div class="sections-container mt-3" th:id="'sections-container-' + ${course.id}">&ndash;&gt;-->
+<!--&lt;!&ndash;            <div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-1"></i>Loading sections...</div>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        &lt;!&ndash; Students fragment&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;        &lt;!&ndash;        <div class="students-container mt-3" th:id="'students-container-' + ${course.id}">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;        &lt;!&ndash;            <div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-1"></i>Loading students...</div>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;        &lt;!&ndash;        </div>&ndash;&gt;&ndash;&gt;-->
+
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    &lt;!&ndash; Pagination &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;    <nav aria-label="Course navigation" class="mt-3">&ndash;&gt;-->
+<!--&lt;!&ndash;        <ul class="pagination pagination-aminah justify-content-center">&ndash;&gt;-->
+
+<!--&lt;!&ndash;            &lt;!&ndash; Previous &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            <li class="page-item"&ndash;&gt;-->
+<!--&lt;!&ndash;                th:classappend="${coursesPage.hasPrevious()} ? '' : 'disabled'">&ndash;&gt;-->
+<!--&lt;!&ndash;                <a class="page-link"&ndash;&gt;-->
+<!--&lt;!&ndash;                   th:href="${coursesPage.hasPrevious()} ?&ndash;&gt;-->
+<!--&lt;!&ndash;                        @{/dr/courses(page=${coursesPage.number - 1})} : '#'">&ndash;&gt;-->
+<!--&lt;!&ndash;                    Previous&ndash;&gt;-->
+<!--&lt;!&ndash;                </a>&ndash;&gt;-->
+<!--&lt;!&ndash;            </li>&ndash;&gt;-->
+
+<!--&lt;!&ndash;            &lt;!&ndash; Page numbers &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            <li class="page-item"&ndash;&gt;-->
+<!--&lt;!&ndash;                th:each="i : ${#numbers.sequence(0, coursesPage.totalPages - 1)}"&ndash;&gt;-->
+<!--&lt;!&ndash;                th:classappend="${i == coursesPage.number} ? 'active'">&ndash;&gt;-->
+<!--&lt;!&ndash;                <a class="page-link"&ndash;&gt;-->
+<!--&lt;!&ndash;                   th:text="${i + 1}"&ndash;&gt;-->
+<!--&lt;!&ndash;                   th:href="@{/dr/courses(page=${i})}">&ndash;&gt;-->
+<!--&lt;!&ndash;                </a>&ndash;&gt;-->
+<!--&lt;!&ndash;            </li>&ndash;&gt;-->
+
+<!--&lt;!&ndash;            &lt;!&ndash; Next &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            <li class="page-item"&ndash;&gt;-->
+<!--&lt;!&ndash;                th:classappend="${coursesPage.hasNext()} ? '' : 'disabled'">&ndash;&gt;-->
+<!--&lt;!&ndash;                <a class="page-link"&ndash;&gt;-->
+<!--&lt;!&ndash;                   th:href="${coursesPage.hasNext()} ?&ndash;&gt;-->
+<!--&lt;!&ndash;                        @{/dr/courses(page=${coursesPage.number + 1})} : '#'">&ndash;&gt;-->
+<!--&lt;!&ndash;                    Next&ndash;&gt;-->
+<!--&lt;!&ndash;                </a>&ndash;&gt;-->
+<!--&lt;!&ndash;            </li>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        </ul>&ndash;&gt;-->
+<!--&lt;!&ndash;    </nav>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <div th:replace="~{dr/modals/modalCreateCourse :: modal}"></div>&ndash;&gt;-->
+<!--&lt;!&ndash;    <div th:replace="~{dr/modals/modalAddTutorial :: modal}"></div>&ndash;&gt;-->
+<!--&lt;!&ndash;    <div th:replace="~{dr/modals/modalSection :: modal}"></div>&ndash;&gt;-->
+<!--&lt;!&ndash;    <div th:replace="~{dr/modals/modalDeleteCourse :: modal}"></div>&ndash;&gt;-->
+<!--&lt;!&ndash;    <div th:replace="~{dr/modals/modalViewEnrollments :: modal}"></div>&ndash;&gt;-->
+<!--&lt;!&ndash;    <div th:replace="~{dr/modals/modalViewTutorial :: modal}"></div>&ndash;&gt;-->
+<!--&lt;!&ndash;    <div th:replace="~{dr/modals/modalDeleteSection :: modal}"></div>&ndash;&gt;-->
+<!--&lt;!&ndash;    <div th:replace="~{dr/modals/modalDeleteTutorial :: modal}"></div>&ndash;&gt;-->
+
+
+<!--&lt;!&ndash;</section>&ndash;&gt;-->
+<!--&lt;!&ndash;</body>&ndash;&gt;-->
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org"-->
+<!--      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"-->
+<!--      layout:decorate="~{layout/base}">-->
+<!--<head>-->
+<!--    <title>Manage Courses</title>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<section layout:fragment="content" class="hero-section">-->
+
+<!--    &lt;!&ndash; Header &ndash;&gt;-->
+<!--    <div class="d-flex justify-content-between align-items-center mb-4">-->
+<!--        <h2 class="fw-bold mb-0">-->
+<!--            <i class="fas fa-graduation-cap me-2"></i>-->
+<!--            Your Courses-->
+<!--        </h2>-->
+
+<!--        <button class="btn btn-primary shadow-sm" id="btnCreateCourse">-->
+<!--            <i class="fas fa-plus-circle me-1"></i>-->
+<!--            Create New Course-->
+<!--        </button>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Courses List &ndash;&gt;-->
+<!--    <div th:each="course : ${courses}" class="course-card mb-4 p-4 border rounded fade-in">-->
+
+<!--        &lt;!&ndash; Course Header &ndash;&gt;-->
+<!--        <div class="d-flex justify-content-between align-items-start course-header flex-wrap gap-3">-->
+
+<!--            &lt;!&ndash; Course Info &ndash;&gt;-->
+<!--            <div class="flex-grow-1">-->
+<!--                <h4 class="fw-semibold mb-1">-->
+<!--                    <i class="fas fa-book-open text-primary me-2"></i>-->
+<!--                    <span th:text="${course.title}"></span>-->
+<!--                </h4>-->
+
+<!--                <p class="text-muted mb-2" th:text="${course.description}"></p>-->
+
+<!--                <div class="d-flex gap-2 flex-wrap mb-2">-->
+<!--                    <span class="badge bg-light text-dark">-->
+<!--                        <i class="fas fa-dollar-sign text-success me-1"></i>-->
+<!--                        <span th:text="${course.price}"></span>-->
+<!--                    </span>-->
+
+<!--                    <span class="badge bg-info bg-opacity-10 text-info">-->
+<!--                        <i class="fas fa-globe me-1"></i>-->
+<!--                        <span th:text="${course.published}"></span>-->
+<!--                    </span>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            &lt;!&ndash; Actions &ndash;&gt;-->
+<!--            <div class="d-flex gap-2 course-actions">-->
+
+<!--                &lt;!&ndash; Add Section &ndash;&gt;-->
+<!--                <button class="action-btn bg-success text-white btn-add-section"-->
+<!--                        th:data-course-id="${course.id}"-->
+<!--                        title="Add Section">-->
+<!--                    <i class="fas fa-layer-group"></i>-->
+<!--                </button>-->
+
+<!--                &lt;!&ndash; Show Enrolled Students &ndash;&gt;-->
+<!--                <button class="action-btn bg-info text-white"-->
+<!--                        th:onclick="'showEnrollments(' + ${course.id} + ')'"-->
+<!--                        title="Show Enrolled Students">-->
+<!--                    <i class="fas fa-users"></i>-->
+<!--                </button>-->
+
+<!--                &lt;!&ndash; Edit Course &ndash;&gt;-->
+<!--                <button class="action-btn bg-warning text-white btnEditCourse"-->
+<!--                        th:data-course-id="${course.id}"-->
+<!--                        title="Edit Course">-->
+<!--                    <i class="fas fa-pen"></i>-->
+<!--                </button>-->
+
+<!--                &lt;!&ndash; Delete Course &ndash;&gt;-->
+<!--                <button class="action-btn bg-danger text-white btn-delete-course"-->
+<!--                        th:data-course-id="${course.id}"-->
+<!--                        title="Delete Course">-->
+<!--                    <i class="fas fa-trash"></i>-->
+<!--                </button>-->
+
+<!--                &lt;!&ndash; Share Course &ndash;&gt;-->
+<!--&lt;!&ndash;                <button class="action-btn bg-purple text-white"&ndash;&gt;-->
+<!--&lt;!&ndash;                        title="Share Course">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <i class="fas fa-share-alt"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                </button>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                &lt;!&ndash; LiftSide / Pin &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                <button class="action-btn bg-teal text-white"&ndash;&gt;-->
+<!--&lt;!&ndash;                        title="LiftSide">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <i class="fas fa-arrow-up"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                </button>&ndash;&gt;-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Sections &ndash;&gt;-->
+<!--        <div class="sections-container mt-3" th:id="'sections-container-' + ${course.id}">-->
+<!--            <div class="text-center text-muted py-3">-->
+<!--                <i class="fas fa-spinner fa-spin me-1"></i>-->
+<!--                Loading sections...-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Pagination &ndash;&gt;-->
+<!--    <nav aria-label="Course navigation" class="mt-4">-->
+<!--        <ul class="pagination pagination-aminah justify-content-center">-->
+
+<!--            <li class="page-item" th:classappend="${coursesPage.hasPrevious()} ? '' : 'disabled'">-->
+<!--                <a class="page-link"-->
+<!--                   th:href="${coursesPage.hasPrevious()} ? @{/dr/courses(page=${coursesPage.number - 1})} : '#'">-->
+<!--                    <i class="fas fa-chevron-left me-1"></i>-->
+<!--                    Previous-->
+<!--                </a>-->
+<!--            </li>-->
+
+<!--            <li class="page-item"-->
+<!--                th:each="i : ${#numbers.sequence(0, coursesPage.totalPages - 1)}"-->
+<!--                th:classappend="${i == coursesPage.number} ? 'active'">-->
+<!--                <a class="page-link" th:text="${i + 1}" th:href="@{/dr/courses(page=${i})}"></a>-->
+<!--            </li>-->
+
+<!--            <li class="page-item" th:classappend="${coursesPage.hasNext()} ? '' : 'disabled'">-->
+<!--                <a class="page-link"-->
+<!--                   th:href="${coursesPage.hasNext()} ? @{/dr/courses(page=${coursesPage.number + 1})} : '#'">-->
+<!--                    Next-->
+<!--                    <i class="fas fa-chevron-right ms-1"></i>-->
+<!--                </a>-->
+<!--            </li>-->
+
+<!--        </ul>-->
+<!--    </nav>-->
+
+<!--    &lt;!&ndash; Modals &ndash;&gt;-->
+<!--    <div th:replace="~{dr/modals/modalCreateCourse :: modal}"></div>-->
+<!--    <div th:replace="~{dr/modals/modalAddTutorial :: modal}"></div>-->
+<!--    <div th:replace="~{dr/modals/modalSection :: modal}"></div>-->
+<!--    <div th:replace="~{dr/modals/modalDeleteCourse :: modal}"></div>-->
+<!--    <div th:replace="~{dr/modals/modalViewEnrollments :: modal}"></div>-->
+<!--    <div th:replace="~{dr/modals/modalViewTutorial :: modal}"></div>-->
+<!--    <div th:replace="~{dr/modals/modalDeleteSection :: modal}"></div>-->
+<!--    <div th:replace="~{dr/modals/modalDeleteTutorial :: modal}"></div>-->
+
+<!--</section>-->
+<!--</body>-->
+<!--</html>-->
 
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
-      layout:decorate="~{layout/base}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
-
     <title>Manage Courses</title>
-
 </head>
 <body>
 
 <section layout:fragment="content">
 
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="fw-bold"><i class="fas fa-graduation-cap me-2"></i>Your Courses</h2>
-        <button class="btn btn-primary" id="btnCreateCourse">
-            <i class="fas fa-plus-circle me-1"></i> New Course
-        </button>
-    </div>
+    <!-- Main Container with horizontal padding -->
+    <div class="container-lg px-4">
 
-    <!-- Courses List -->
-    <div th:each="course : ${courses}" class="course-card mb-4 p-3 border rounded">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap p-3 rounded shadow-sm bg-white position-relative">
+            <!-- Welcome Text -->
+            <h2 class="fw-bold mb-0 d-flex align-items-center flex-wrap gap-2">
+                <i class="fas fa-graduation-cap text-primary" style="font-size:1.5rem;"></i>
+                <span>
+            Welcome, <strong sec:authentication="name"></strong>!
+            <span class="text-muted fw-normal">Manage your courses below</span>
+        </span>
+            </h2>
 
-        <!-- Course Header -->
-        <div class="d-flex justify-content-between align-items-start course-header">
-            <div>
-                <h4>
-                    <i class="fas fa-book-medical text-secondary me-2"></i>
-                    <span th:text="${course.title}"></span>
-                </h4>
-                <p th:text="${course.description}"></p>
-                <div class="course-badges mt-1">
-                    <span class="badge bg-secondary">
-                        <i class="fas fa-dollar-sign me-1"></i>
-                        <span th:text="${course.price}"></span>
-                    </span>
-                    <span class="badge bg-info">
-                        <i class="fas fa-circle-notch me-1"></i>
-                        <span th:text="${course.published}"></span>
-                    </span>
+            <!-- Create Course Button -->
+            <button class="action-btn shadow-sm mt-3 mt-md-0 position-relative"
+                    data-label="New Course" id="btnCreateCourse" style="z-index:1001;">
+                <i class="fas fa-plus-circle"></i>
+            </button>
+        </div>
+
+
+
+        <!-- Courses List -->
+        <div th:each="course : ${courses}" class="card mb-4 shadow-sm course-card">
+
+            <!-- Card Body -->
+            <div class="card-body">
+
+                <!-- Course Header -->
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+
+                    <!-- Course Info -->
+                    <div class="flex-grow-1">
+                        <h4 class="fw-semibold mb-1">
+                            <i class="fas fa-book-open text-primary me-2"></i>
+                            <span th:text="${course.title}"></span>
+                        </h4>
+
+                        <p class="text-muted mb-2" th:text="${course.description}"></p>
+
+                        <div class="d-flex gap-2 flex-wrap">
+                            <span class="badge bg-light text-dark">
+                                <i class="fas fa-dollar-sign text-success me-1"></i>
+                                <span th:text="${course.price}"></span>
+                            </span>
+                            <span class="badge bg-info bg-opacity-10 text-info">
+                                <i class="fas fa-globe me-1"></i>
+                                <span th:text="${course.published}"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class=" action-btn btn-add-section" data-label="Add Section"
+                                th:data-course-id="${course.id}" >
+                            <i class="fas fa-layer-group"></i>
+                        </button>
+                        <button class="action-btn btn-sm" data-label="Show Enrolled Students"
+                                th:onclick="'showEnrollments(' + ${course.id} + ')'">
+                            <i class="fas fa-users"></i>
+                        </button>
+                        <button class="action-btn btnEditCourse" data-label="Edit Course"
+                                th:data-course-id="${course.id}" >
+                            <i class="fas fa-pen"></i>
+                        </button>
+                        <button class="action-btn  btn-delete-course" data-label="Delete Course"
+                                th:data-course-id="${course.id}" >
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="d-flex gap-2 course-actions">
-                <button class="btn btn-success btn-sm btn-add-section" th:data-course-id="${course.id}"
-                        title="Add Section">
-                    <i class="fas fa-layer-group"></i>
-                </button>
-
-                <button class="btn btn-info btn-sm"
-                        title="Shoe EnrolledIn Students"
-                        th:onclick="'showEnrollments(' + ${course.id} + ')'">
-                    <i class="fas fa-users me-1"></i>
-                </button>
-
-
-                <button class="btn btn-warning btn-sm btnEditCourse" th:data-course-id="${course.id}"
-                        title="Edit Course">
-                    <i class="fas fa-edit"></i>
-                </button>
-
-                <button class="btn btn-danger btn-sm btn-delete-course"
-                        th:data-course-id="${course.id}"
-                        title="Delete Course">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
+                <!-- Sections (Collapsible) -->
+                <div class="sections-container mt-3" th:id="'sections-container-' + ${course.id}">
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-spinner fa-spin me-1"></i>
+                        Loading sections...
+                    </div>
+                </div>
 
             </div>
         </div>
 
-        <!-- Sections -->
-        <div class="sections-container mt-3" th:id="'sections-container-' + ${course.id}">
-            <div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-1"></i>Loading sections...</div>
-        </div>
+        <!-- Pagination -->
+        <nav aria-label="Course navigation" class="mt-4">
+            <ul class="pagination pagination-aminah justify-content-center">
 
-        <!-- Students fragment-->
-<!--        <div class="students-container mt-3" th:id="'students-container-' + ${course.id}">-->
-<!--            <div class="text-center text-muted"><i class="fas fa-spinner fa-spin me-1"></i>Loading students...</div>-->
-<!--        </div>-->
+                <!-- Previous -->
+                <li class="page-item" th:classappend="${coursesPage.hasPrevious()} ? '' : 'disabled'">
+                    <a class="page-link" th:href="${coursesPage.hasPrevious()} ? @{/dr/courses(page=${coursesPage.number - 1})} : '#'">
+                        <i class="fas fa-chevron-left me-1"></i> Previous
+                    </a>
+                </li>
 
-    </div>
+                <!-- Page numbers -->
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, coursesPage.totalPages - 1)}"
+                    th:classappend="${i == coursesPage.number} ? 'active'">
+                    <a class="page-link" th:text="${i + 1}" th:href="@{/dr/courses(page=${i})}"></a>
+                </li>
 
-    <!-- Pagination -->
-    <nav aria-label="Course navigation" class="mt-3">
-        <ul class="pagination pagination-aminah justify-content-center">
+                <!-- Next -->
+                <li class="page-item" th:classappend="${coursesPage.hasNext()} ? '' : 'disabled'">
+                    <a class="page-link" th:href="${coursesPage.hasNext()} ? @{/dr/courses(page=${coursesPage.number + 1})} : '#'">
+                        Next <i class="fas fa-chevron-right ms-1"></i>
+                    </a>
+                </li>
 
-            <!-- Previous -->
-            <li class="page-item"
-                th:classappend="${coursesPage.hasPrevious()} ? '' : 'disabled'">
-                <a class="page-link"
-                   th:href="${coursesPage.hasPrevious()} ?
-                        @{/dr/courses(page=${coursesPage.number - 1})} : '#'">
-                    Previous
-                </a>
-            </li>
+            </ul>
+        </nav>
 
-            <!-- Page numbers -->
-            <li class="page-item"
-                th:each="i : ${#numbers.sequence(0, coursesPage.totalPages - 1)}"
-                th:classappend="${i == coursesPage.number} ? 'active'">
-                <a class="page-link"
-                   th:text="${i + 1}"
-                   th:href="@{/dr/courses(page=${i})}">
-                </a>
-            </li>
+        <!-- Modals -->
+        <div th:replace="~{dr/modals/modalCreateCourse :: modal}"></div>
+        <div th:replace="~{dr/modals/modalAddTutorial :: modal}"></div>
+        <div th:replace="~{dr/modals/modalSection :: modal}"></div>
+        <div th:replace="~{dr/modals/modalDeleteCourse :: modal}"></div>
+        <div th:replace="~{dr/modals/modalViewEnrollments :: modal}"></div>
+        <div th:replace="~{dr/modals/modalViewTutorial :: modal}"></div>
+        <div th:replace="~{dr/modals/modalDeleteSection :: modal}"></div>
+        <div th:replace="~{dr/modals/modalDeleteTutorial :: modal}"></div>
 
-            <!-- Next -->
-            <li class="page-item"
-                th:classappend="${coursesPage.hasNext()} ? '' : 'disabled'">
-                <a class="page-link"
-                   th:href="${coursesPage.hasNext()} ?
-                        @{/dr/courses(page=${coursesPage.number + 1})} : '#'">
-                    Next
-                </a>
-            </li>
-
-        </ul>
-    </nav>
-
-    <div th:replace="~{dr/modals/modalCreateCourse :: modal}"></div>
-    <div th:replace="~{dr/modals/modalAddTutorial :: modal}"></div>
-    <div th:replace="~{dr/modals/modalSection :: modal}"></div>
-    <div th:replace="~{dr/modals/modalDeleteCourse :: modal}"></div>
-    <div th:replace="~{dr/modals/modalViewEnrollments :: modal}"></div>
-    <div th:replace="~{dr/modals/modalViewTutorial :: modal}"></div>
-    <div th:replace="~{dr/modals/modalDeleteSection :: modal}"></div>
-    <div th:replace="~{dr/modals/modalDeleteTutorial :: modal}"></div>
-
+    </div> <!-- /container -->
 
 </section>
+
 </body>
 </html>

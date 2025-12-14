@@ -1,128 +1,67 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"><head th:fragment="head(title)">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${title}">Aminah E-Learning</title>
-
-    <!-- Favicon -->
-    <link th:href="@{/images/logo.png}" rel="icon" type="image/png">
-</head>
-
-<nav th:fragment="navbar" class="navbar navbar-expand-lg shadow-sm">
-<!--    <div class="container py-2">-->
-
-
-<!--        <div class="collapse navbar-collapse" id="navbarNav">-->
-<!--            <ul class="navbar-nav ms-auto align-items-center">-->
-<!--                &lt;!&ndash; Admin Only &ndash;&gt;-->
-<!--                <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link" th:href="@{/admin/users}">Manage Users</a></li>-->
-<!--                <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link" th:href="@{/admin/courses}">Manage Courses</a></li>-->
-
-<!--                &lt;!&ndash; Doctor &ndash;&gt;-->
-<!--                <li class="nav-item" sec:authorize="hasRole('DR')"><a class="nav-link" th:href="@{/dr/courses}">My Courses</a></li>-->
-<!--&lt;!&ndash;                <li class="nav-item" sec:authorize="hasRole('DR')"><a class="nav-link" th:href="@{/dr/create-course}">Create Course</a></li>&ndash;&gt;-->
-
-<!--                &lt;!&ndash; Student &ndash;&gt;-->
-<!--                <li class="nav-item" sec:authorize="hasRole('STUDENT')"><a class="nav-link" th:href="@{/student/courses}">Available Courses</a></li>-->
-<!--                <li class="nav-item" sec:authorize="hasRole('STUDENT')"><a class="nav-link" th:href="@{/student/my-courses}">My Learning</a></li>-->
-
-<!--                &lt;!&ndash; Non Admin &ndash;&gt;-->
-<!--                <li class="nav-item" sec:authorize="!hasRole('ADMIN')" ><a class="nav-link" th:href="@{/about}">About Us</a></li>-->
-<!--                <li class="nav-item" sec:authorize="!hasRole('ADMIN')"><a class="nav-link" th:href="@{/contact}">Contact</a></li>-->
-
-
-<!--                <li class="nav-item dropdown ms-2">-->
-<!--                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">-->
-<!--                        Account-->
-<!--                    </a>-->
-<!--                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">-->
-<!--                        <li sec:authorize="isAuthenticated()">-->
-<!--                            <a class="dropdown-item" th:href="@{/profile/profile}">-->
-<!--                                👋 Hello, <strong sec:authentication="name"></strong>-->
-<!--                            </a>-->
-<!--                        </li>-->
-<!--                        <li sec:authorize="isAuthenticated()">-->
-<!--                            <form th:action="@{/profile/logout}" method="post" class="m-0">-->
-<!--                                <button type="submit" class="dropdown-item text-danger">Logout</button>-->
-<!--                            </form>-->
-<!--                        </li>-->
-<!--                        <li sec:authorize="isAnonymous() and !hasRole('ADMIN')">-->
-<!--                            <a class="dropdown-item" th:href="@{/profile/login}">Login</a>-->
-<!--                        </li>-->
-<!--                        <li sec:authorize="isAnonymous() and !hasRole('ADMIN')">-->
-<!--                            <a class="dropdown-item" th:href="@{/profile/register}">Register</a>-->
-<!--                        </li>-->
-<!--                    </ul>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</nav>-->
-<!--<nav class="navbar navbar-expand-lg shadow-sm">-->
+<nav th:fragment="navbar" class="navbar navbar-expand-lg shadow-sm" style="background-color: #2CA6A4;">
     <div class="container">
+        <!-- Brand -->
         <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
-            <img th:src="@{/images/logo.png}" height="40" class="me-2 rounded-circle">
+            <img th:src="@{/images/logo.png}" height="40" class="me-2 rounded-circle shadow-sm">
             Aminah Hospital eLearning
         </a>
+
+        <!-- Toggler -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
+
+        <!-- Navbar links -->
         <div class="collapse navbar-collapse" id="navMenu">
-<!--            <ul class="navbar-nav ms-auto align-items-center">-->
-<!--                <li class="nav-item" sec:authorize="hasRole('ADMIN')">-->
-<!--                    <a class="nav-link" th:href="@{/admin/users}"><i class="bi bi-people-fill me-1"></i> Manage Users</a>-->
-<!--                </li>-->
-<!--                <li class="nav-item" sec:authorize="hasRole('DR')">-->
-<!--                    <a class="nav-link" th:href="@{/dr/courses}"><i class="bi bi-journal-bookmark-fill me-1"></i> My Courses</a>-->
-<!--                </li>-->
-<!--                <li class="nav-item" sec:authorize="hasRole('STUDENT')">-->
-<!--                    <a class="nav-link" th:href="@{/student/courses}"><i class="bi bi-book-half me-1"></i> Courses</a>-->
-<!--                </li>-->
-<!--                <li class="nav-item dropdown ms-2">-->
-<!--                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">-->
-<!--                        <i class="bi bi-person-circle me-1"></i> Account-->
-<!--                    </a>-->
-<!--                    <ul class="dropdown-menu dropdown-menu-end shadow">-->
-<!--                        <li sec:authorize="isAuthenticated()">-->
-<!--                            <a class="dropdown-item" th:href="@{/profile/profile}">👋 Hello, <strong sec:authentication="name"></strong></a>-->
-<!--                        </li>-->
-<!--                        <li sec:authorize="isAuthenticated()">-->
-<!--                            <form th:action="@{/profile/logout}" method="post" class="m-0">-->
-<!--                                <button type="submit" class="dropdown-item text-danger">Logout</button>-->
-<!--                            </form>-->
-<!--                        </li>-->
-<!--                        <li sec:authorize="isAnonymous()">-->
-<!--                            <a class="dropdown-item" th:href="@{/profile/login}">Login</a>-->
-<!--                        </li>-->
-<!--                        <li sec:authorize="isAnonymous()">-->
-<!--                            <a class="dropdown-item" th:href="@{/profile/register}">Register</a>-->
-<!--                        </li>-->
-<!--                    </ul>-->
-<!--                </li>-->
-<!--            </ul>-->
-
             <ul class="navbar-nav ms-auto align-items-center">
-                <!-- Admin Only -->
-                <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link" th:href="@{/admin/users}">Manage Users</a></li>
-                <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link" th:href="@{/admin/courses}">Manage Courses</a></li>
 
-                <!-- Doctor -->
-                <li class="nav-item" sec:authorize="hasRole('DR')"><a class="nav-link" th:href="@{/dr/courses}">My Courses</a></li>
-                <!--                <li class="nav-item" sec:authorize="hasRole('DR')"><a class="nav-link" th:href="@{/dr/create-course}">Create Course</a></li>-->
+                <!-- Admin Links -->
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" th:href="@{/admin/users}">
+                        <i class="fas fa-users me-1"></i> Manage Users
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" th:href="@{/admin/courses}">
+                        <i class="fas fa-book me-1"></i> Manage Courses
+                    </a>
+                </li>
 
-                <!-- Student -->
-                <li class="nav-item" sec:authorize="hasRole('STUDENT')"><a class="nav-link" th:href="@{/student/courses}">Available Courses</a></li>
-                <li class="nav-item" sec:authorize="hasRole('STUDENT')"><a class="nav-link" th:href="@{/student/my-courses}">My Learning</a></li>
+                <!-- Doctor Links -->
+                <li class="nav-item" sec:authorize="hasRole('DR')">
+                    <a class="nav-link" th:href="@{/dr/courses}">
+                        <i class="fas fa-chalkboard-teacher me-1"></i> My Courses
+                    </a>
+                </li>
 
-                <!-- Non Admin -->
-                <li class="nav-item" sec:authorize="!hasRole('ADMIN')" ><a class="nav-link" th:href="@{/about}">About Us</a></li>
-                <li class="nav-item" sec:authorize="!hasRole('ADMIN')"><a class="nav-link" th:href="@{/contact}">Contact</a></li>
+                <!-- Student Links -->
+                <li class="nav-item" sec:authorize="hasRole('STUDENT')">
+                    <a class="nav-link" th:href="@{/student/courses}">
+                        <i class="fas fa-book-open me-1"></i> Available Courses
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('STUDENT')">
+                    <a class="nav-link" th:href="@{/student/my-courses}">
+                        <i class="fas fa-graduation-cap me-1"></i> My Learning
+                    </a>
+                </li>
 
+                <!-- Public Links -->
+                <li class="nav-item" sec:authorize="!hasRole('ADMIN')">
+                    <a class="nav-link" th:href="@{/about}">
+                        <i class="fas fa-info-circle me-1"></i> About Us
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="!hasRole('ADMIN')">
+                    <a class="nav-link" th:href="@{/contact}">
+                        <i class="fas fa-envelope me-1"></i> Contact
+                    </a>
+                </li>
 
+                <!-- Account Dropdown -->
                 <li class="nav-item dropdown ms-2">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        Account
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-1"></i> Account
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                         <li sec:authorize="isAuthenticated()">
@@ -135,10 +74,10 @@
                                 <button type="submit" class="dropdown-item text-danger">Logout</button>
                             </form>
                         </li>
-                        <li sec:authorize="isAnonymous() and !hasRole('ADMIN')">
+                        <li sec:authorize="isAnonymous()">
                             <a class="dropdown-item" th:href="@{/profile/login}">Login</a>
                         </li>
-                        <li sec:authorize="isAnonymous() and !hasRole('ADMIN')">
+                        <li sec:authorize="isAnonymous()">
                             <a class="dropdown-item" th:href="@{/profile/register}">Register</a>
                         </li>
                     </ul>
@@ -147,5 +86,3 @@
         </div>
     </div>
 </nav>
-
-</html>

@@ -21,99 +21,155 @@ public class ElearningApplication {
     public static void main(String[] args) {
         SpringApplication.run(ElearningApplication.class, args);
     }
-
     @Bean
-    public CommandLineRunner seed(UserRepository userRepository, CourseRepository courseRepository, TutorialRepository tutorialRepository, CourseEnrollmentRepository courseEnrollmentRepository, PasswordEncoder encoder, SectionRepository sectionRepository) {
+    public CommandLineRunner seedData(
+            UserRepository userRepository,
+            CourseRepository courseRepository,
+            SectionRepository sectionRepository,
+            TutorialRepository tutorialRepository,
+            CourseEnrollmentRepository enrollmentRepository,
+            PasswordEncoder encoder
+    ) {
         return args -> {
-            if (userRepository.count() == 0) {
 
-                User admin = new User();
-                admin.setUsername("admin");
-                admin.setEmail("admin@aminah.com");
-                admin.setPassword(encoder.encode("P@ssw0rd"));
-                admin.setRole(Role.ADMIN);
-                userRepository.save(admin);
-                User dr = new User();
-                dr.setUsername("drsaber");
-                dr.setEmail("dr.saber@aminah.com");
-                dr.setPassword(encoder.encode("P@ssw0rd"));
-                dr.setRole(Role.DR);
-                userRepository.save(dr);
-                User student = new User();
-                student.setUsername("student1");
-                student.setEmail("s1@aminah.com");
-                student.setPassword(encoder.encode("P@ssw0rd"));
-                student.setRole(Role.STUDENT);
-                userRepository.save(student);
-                Course course = new Course();
-                course.setCourseName("Course 1");
-                course.setAuthor(dr);
-                course.setTitle("Course 1");
-                course.setDescription("Course Description");
-                course.setCourseName("Namee");
-                course.setPrice(Double.valueOf(234));
-
-                courseRepository.save(course);
-                Section section = new Section();
-                section.setCourse(course);
-                section.setTitle("Section 1");
-                section.setOrderIndex(1);
-                sectionRepository.save(section);
-                List<Section> sectionList = new ArrayList<>();
-                sectionList.add(section);
-                course.setSections(sectionList);
-                Tutorial tutorial = new Tutorial();
-                tutorial.setSection(section);
-                tutorial.setTitle("Tutorial title");
-                tutorial.setType(TutorialType.PDF);
-                tutorial.setFilePath("Tutorial file path");
-                tutorial.setOrderIndex(2);
-                Tutorial tutorial2 = new Tutorial();
-                tutorial2.setSection(section);
-                tutorial2.setTitle("Tutorial title");
-                tutorial2.setType(TutorialType.PDF);
-                tutorial2.setFilePath("Tutorial file path");
-                tutorial2.setOrderIndex(1);
-                List<Tutorial> tutorialList = new ArrayList<>();
-                tutorialList.add(tutorial);
-                tutorialList.add(tutorial2);
-
-                section.setTutorials(tutorialList);
-
-                tutorialRepository.save(tutorial);
-                tutorialRepository.save(tutorial2);
-                CourseEnrollment courseEnrollment1 = new CourseEnrollment();
-                courseEnrollment1.setCourse(course);
-                courseEnrollment1.setUser(student);
-                courseEnrollment1.setEnrollmentDate(LocalDateTime.MAX);
-                CourseEnrollment courseEnrollment2 = new CourseEnrollment();
-                courseEnrollment2.setCourse(course);
-                courseEnrollment2.setUser(student);
-                courseEnrollment2.setEnrollmentDate(LocalDateTime.MAX);
-                CourseEnrollment courseEnrollment3 = new CourseEnrollment();
-                courseEnrollment3.setCourse(course);
-                courseEnrollment3.setUser(student);
-                courseEnrollment3.setEnrollmentDate(LocalDateTime.MAX);
-                CourseEnrollment courseEnrollment4 = new CourseEnrollment();
-                courseEnrollment4.setCourse(course);
-                courseEnrollment4.setUser(student);
-                courseEnrollment4.setEnrollmentDate(LocalDateTime.MAX);
-                CourseEnrollment courseEnrollment5 = new CourseEnrollment();
-                courseEnrollment5.setCourse(course);
-                courseEnrollment5.setUser(student);
-                courseEnrollment5.setEnrollmentDate(LocalDateTime.MAX);
-                CourseEnrollment courseEnrollment6 = new CourseEnrollment();
-                courseEnrollment6.setCourse(course);
-                courseEnrollment6.setUser(student);
-                courseEnrollment6.setEnrollmentDate(LocalDateTime.MAX);
-                courseEnrollmentRepository.save(courseEnrollment1);
-                courseEnrollmentRepository.save(courseEnrollment2);
-                courseEnrollmentRepository.save(courseEnrollment3);
-                courseEnrollmentRepository.save(courseEnrollment4);
-                courseEnrollmentRepository.save(courseEnrollment5);
-                courseEnrollmentRepository.save(courseEnrollment6);
-                System.out.println(courseEnrollmentRepository.findAll().size());
+            if (userRepository.count() > 3) {
+                System.out.println("Seed already exists — skipping.");
+                return;
             }
+
+            // -----------------------
+            // USERS
+            // -----------------------
+            // -----------------------
+// USERS
+// -----------------------
+            User admin = new User();
+            admin.setUsername("admin");
+            admin.setEmail("admin@aminah.com");
+            admin.setPassword(encoder.encode("P@ssw0rd"));
+            admin.setRole(Role.ADMIN);
+            userRepository.save(admin);
+
+            User dr = new User();
+            dr.setUsername("drsaber");
+            dr.setEmail("dr.saber@aminah.com");
+            dr.setPassword(encoder.encode("P@ssw0rd"));
+            dr.setRole(Role.DR);
+            userRepository.save(dr);
+
+            User student1 = new User();
+            student1.setUsername("student1");
+            student1.setEmail("s1@aminah.com");
+            student1.setPassword(encoder.encode("P@ssw0rd"));
+            student1.setRole(Role.STUDENT);
+            userRepository.save(student1);
+
+            User student2 = new User();
+            student2.setUsername("student2");
+            student2.setEmail("s2@aminah.com");
+            student2.setPassword(encoder.encode("P@ssw0rd"));
+            student2.setRole(Role.STUDENT);
+            userRepository.save(student2);
+
+            User student3 = new User();
+            student3.setUsername("student3");
+            student3.setEmail("s3@aminah.com");
+            student3.setPassword(encoder.encode("P@ssw0rd"));
+            student3.setRole(Role.STUDENT);
+            userRepository.save(student3);
+
+            List<User> students = List.of(student1, student2, student3);
+
+            // -----------------------
+            // COURSE GENERATOR LOGIC
+            // -----------------------
+
+            // Each course will have a different number of sections
+            int[] sectionsPerCourse = {3, 2, 4, 5, 3, 6};
+
+            // Different tutorials count per section (looped)
+            int[] tutorialsPerSectionPattern = {2, 3, 1, 4}; // rotates
+
+            // Tutorial types rotation
+            TutorialType[] tutorialTypes = {
+                    TutorialType.PDF,
+                    TutorialType.VIDEO,
+                    TutorialType.ARTICLE
+            };
+
+            for (int c = 1; c <= 6; c++) {
+
+                Course course = new Course();
+                course.setAuthor(dr);
+                course.setTitle("Course Title " + c);
+                course.setCourseName("Course " + c);
+                course.setDescription("This is a unique description for Course #" + c);
+                course.setPrice(200.0 + (c * 40));
+                courseRepository.save(course);
+
+                int numberOfSections = sectionsPerCourse[c - 1];
+
+                // -------------------------------------
+                // GENERATE SECTIONS FOR THIS COURSE
+                // -------------------------------------
+                for (int s = 1; s <= numberOfSections; s++) {
+
+                    Section section = new Section();
+                    section.setCourse(course);
+                    section.setTitle("Section " + s + " of Course " + c);
+                    section.setDescription("Details about section " + s + " of course " + c);
+                    section.setOrderIndex(s);
+                    sectionRepository.save(section);
+
+                    // number of tutorials for this section (rotating)
+                    int tutorialCount = tutorialsPerSectionPattern[(s - 1) % tutorialsPerSectionPattern.length];
+
+                    // -------------------------------------
+                    // GENERATE TUTORIALS FOR THIS SECTION
+                    // -------------------------------------
+                    for (int t = 1; t <= tutorialCount; t++) {
+
+                        Tutorial tutorial = new Tutorial();
+                        tutorial.setSection(section);
+                        tutorial.setCourse(course);
+                        tutorial.setUser(dr);
+                        tutorial.setTitle("Tutorial " + t + " (Section " + s + ", Course " + c + ")");
+                        tutorial.setOrderIndex(t);
+
+                        // rotate tutorial type
+                        TutorialType type = tutorialTypes[(t - 1) % tutorialTypes.length];
+                        tutorial.setType(type);
+
+                        switch (type) {
+                            case PDF -> tutorial.setFilePath("/samples/course" + c + "/section" + s + "/tutorial" + t + ".pdf");
+                            case VIDEO -> tutorial.setFilePath("/videos/sample" + t + ".mp4");
+                            case ARTICLE -> tutorial.setArticleContent("This is a sample article for tutorial " + t);
+                        }
+
+                        tutorialRepository.save(tutorial);
+                    }
+                }
+
+                // -----------------------
+                // ENROLL ALL STUDENTS
+                // -----------------------
+                for (User student : students) {
+                    CourseEnrollment enrollment = new CourseEnrollment();
+                    enrollment.setCourse(course);
+                    enrollment.setUser(student);
+                    enrollment.setPaymentStatus("SUCCESS");
+                    enrollment.setEnrollmentDate(LocalDateTime.now());
+                    enrollmentRepository.save(enrollment);
+                }
+            }
+
+            System.out.println("Seed completed:");
+            System.out.println("Users: " + userRepository.count());
+            System.out.println("Courses: " + courseRepository.count());
+            System.out.println("Sections: " + sectionRepository.count());
+            System.out.println("Tutorials: " + tutorialRepository.count());
+            System.out.println("Enrollments: " + enrollmentRepository.count());
         };
     }
+
 }

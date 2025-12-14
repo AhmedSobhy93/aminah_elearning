@@ -1,0 +1,41 @@
+<div th:fragment="leftActions">
+
+    <!-- LEFT ACTION BAR -->
+    <div id="leftActionBar">
+        <button class="action-btn" data-label="Dashboard" th:onclick="|window.location='@{/}'|">
+            <i class="fas fa-tachometer-alt"></i>
+        </button>
+
+        <button class="action-btn" data-label="Courses" sec:authorize="hasRole('DR')"
+                th:onclick="|window.location='@{/dr/courses}'|">
+            <i class="fas fa-book"></i>
+        </button>
+
+        <button class="action-btn" data-label="Admin" sec:authorize="hasRole('ADMIN')"
+                th:onclick="|window.location='@{/admin}'|">
+            <i class="fas fa-cog"></i>
+        </button>
+
+        <button class="action-btn" data-label="Profile" th:onclick="|window.location='@{/profile/profile}'|">
+            <i class="fas fa-user-circle"></i>
+        </button>
+
+        <button class="action-btn" id="helpToggle" data-label="Help">
+            <i class="fas fa-question-circle"></i>
+        </button>
+    </div>
+
+
+
+    <!-- HELP PANEL -->
+    <div id="floatingHelpPanel">
+        <h5 class="mb-3">Quick Help</h5>
+        <div class="list-group small">
+            <a href="#" class="list-group-item list-group-item-action">Dashboard Guide</a>
+            <a href="#" class="list-group-item list-group-item-action">Managing Courses</a>
+            <a href="#" class="list-group-item list-group-item-action">Profile Settings</a>
+            <a href="#" class="list-group-item list-group-item-action">Contact Support</a>
+        </div>
+    </div>
+
+</div>

@@ -1,102 +1,135 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org"-->
+<!--      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">-->
 <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">-->
 
-<div th:fragment="sidebar">
+<!--<div th:fragment="sidebar">-->
 
-<!--    <aside class="bg-light border-end vh-100 p-3" style="width: 250px;">-->
-<!--        <a th:href="@{/}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">-->
+<!--&lt;!&ndash;    <aside class="bg-light border-end vh-100 p-3" style="width: 250px;">&ndash;&gt;-->
+<!--&lt;!&ndash;        <a th:href="@{/}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">&ndash;&gt;-->
+<!--&lt;!&ndash;            <i class="bi bi-hospital fs-4 text-primary me-2"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;            <span class="fs-5 fw-semibold text-dark">Aminah Hospital</span>&ndash;&gt;-->
+<!--&lt;!&ndash;        </a>&ndash;&gt;-->
+<!--&lt;!&ndash;        <hr>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <ul class="nav nav-pills flex-column mb-auto">&ndash;&gt;-->
+<!--&lt;!&ndash;            <li class="nav-item">&ndash;&gt;-->
+<!--&lt;!&ndash;                <a class="nav-link d-flex align-items-center text-dark" th:href="@{/}" aria-current="page">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <i class="bi bi-speedometer2 me-2 text-primary"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                    Home&ndash;&gt;-->
+<!--&lt;!&ndash;                </a>&ndash;&gt;-->
+<!--&lt;!&ndash;            </li>&ndash;&gt;-->
+
+<!--&lt;!&ndash;            <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                <a class="nav-link d-flex align-items-center text-dark" th:href="@{/courses}">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <i class="bi bi-journal-text me-2 text-primary"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                    Courses&ndash;&gt;-->
+<!--&lt;!&ndash;                </a>&ndash;&gt;-->
+<!--&lt;!&ndash;            </li>&ndash;&gt;-->
+
+<!--&lt;!&ndash;            <li sec:authorize="hasRole('ADMIN')">&ndash;&gt;-->
+<!--&lt;!&ndash;                <a class="nav-link d-flex align-items-center text-dark" th:href="@{/}">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <i class="bi bi-gear me-2 text-primary"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                    Admin Panel&ndash;&gt;-->
+<!--&lt;!&ndash;                </a>&ndash;&gt;-->
+<!--&lt;!&ndash;            </li>&ndash;&gt;-->
+
+<!--&lt;!&ndash;            <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                <a class="nav-link d-flex align-items-center text-dark" th:href="@{/profile/profile}">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <i class="bi bi-person-circle me-2 text-primary"></i>&ndash;&gt;-->
+<!--&lt;!&ndash;                    Profile&ndash;&gt;-->
+<!--&lt;!&ndash;                </a>&ndash;&gt;-->
+<!--&lt;!&ndash;            </li>&ndash;&gt;-->
+<!--&lt;!&ndash;        </ul>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <hr>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <div class="dropdown mt-auto">&ndash;&gt;-->
+<!--&lt;!&ndash;            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="dropdownUser"&ndash;&gt;-->
+<!--&lt;!&ndash;               data-bs-toggle="dropdown" aria-expanded="false">&ndash;&gt;-->
+<!--&lt;!&ndash;                <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="" width="32" height="32"&ndash;&gt;-->
+<!--&lt;!&ndash;                     class="rounded-circle me-2">&ndash;&gt;-->
+<!--&lt;!&ndash;                <strong sec:authentication="name">User</strong>&ndash;&gt;-->
+<!--&lt;!&ndash;            </a>&ndash;&gt;-->
+<!--&lt;!&ndash;            <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser">&ndash;&gt;-->
+<!--&lt;!&ndash;                <li><a class="dropdown-item" th:href="@{/profile/profile}">Profile</a></li>&ndash;&gt;-->
+<!--&lt;!&ndash;                <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <hr class="dropdown-divider">&ndash;&gt;-->
+<!--&lt;!&ndash;                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                <li sec:authorize="isAuthenticated()">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <form th:action="@{/profile/logout}" method="post" class="m-0">&ndash;&gt;-->
+<!--&lt;!&ndash;                        <button type="submit" class="dropdown-item text-danger">Logout</button>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </form>&ndash;&gt;-->
+<!--&lt;!&ndash;                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                <li sec:authorize="isAnonymous()">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <a class="dropdown-item" th:href="@{/profile/login}">Login</a>&ndash;&gt;-->
+<!--&lt;!&ndash;                </li>&ndash;&gt;-->
+<!--&lt;!&ndash;            </ul>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;    </aside>&ndash;&gt;-->
+<!--    <aside>-->
+<!--        <a th:href="@{/}" class="d-flex align-items-center mb-3 text-decoration-none">-->
 <!--            <i class="bi bi-hospital fs-4 text-primary me-2"></i>-->
 <!--            <span class="fs-5 fw-semibold text-dark">Aminah Hospital</span>-->
 <!--        </a>-->
 <!--        <hr>-->
-
-<!--        <ul class="nav nav-pills flex-column mb-auto">-->
+<!--        <ul class="nav flex-column">-->
 <!--            <li class="nav-item">-->
-<!--                <a class="nav-link d-flex align-items-center text-dark" th:href="@{/}" aria-current="page">-->
-<!--                    <i class="bi bi-speedometer2 me-2 text-primary"></i>-->
-<!--                    Home-->
+<!--                <a class="nav-link d-flex align-items-center" th:href="@{/}">-->
+<!--                    <i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard-->
 <!--                </a>-->
 <!--            </li>-->
-
-<!--            <li>-->
-<!--                <a class="nav-link d-flex align-items-center text-dark" th:href="@{/courses}">-->
-<!--                    <i class="bi bi-journal-text me-2 text-primary"></i>-->
-<!--                    Courses-->
+<!--            <li class="nav-item" sec:authorize="hasRole('DR')">-->
+<!--                <a class="nav-link d-flex align-items-center" th:href="@{/dr/courses}">-->
+<!--                    <i class="bi bi-journal-text me-2 text-primary"></i> Courses-->
 <!--                </a>-->
 <!--            </li>-->
-
-<!--            <li sec:authorize="hasRole('ADMIN')">-->
-<!--                <a class="nav-link d-flex align-items-center text-dark" th:href="@{/}">-->
-<!--                    <i class="bi bi-gear me-2 text-primary"></i>-->
-<!--                    Admin Panel-->
-<!--                </a>-->
-<!--            </li>-->
-
-<!--            <li>-->
-<!--                <a class="nav-link d-flex align-items-center text-dark" th:href="@{/profile/profile}">-->
-<!--                    <i class="bi bi-person-circle me-2 text-primary"></i>-->
-<!--                    Profile-->
+<!--&lt;!&ndash;            <li class="nav-item" sec:authorize="hasRole('ADMIN')">&ndash;&gt;-->
+<!--&lt;!&ndash;                <a class="nav-link d-flex align-items-center" th:href="@{/}">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <i class="bi bi-gear me-2 text-primary"></i> Admin Panel&ndash;&gt;-->
+<!--&lt;!&ndash;                </a>&ndash;&gt;-->
+<!--&lt;!&ndash;            </li>&ndash;&gt;-->
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link d-flex align-items-center" th:href="@{/profile/profile}">-->
+<!--                    <i class="bi bi-person-circle me-2 text-primary"></i> Profile-->
 <!--                </a>-->
 <!--            </li>-->
 <!--        </ul>-->
-
-<!--        <hr>-->
-
-<!--        <div class="dropdown mt-auto">-->
-<!--            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="dropdownUser"-->
-<!--               data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--                <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="" width="32" height="32"-->
-<!--                     class="rounded-circle me-2">-->
-<!--                <strong sec:authentication="name">User</strong>-->
-<!--            </a>-->
-<!--            <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser">-->
-<!--                <li><a class="dropdown-item" th:href="@{/profile/profile}">Profile</a></li>-->
-<!--                <li>-->
-<!--                    <hr class="dropdown-divider">-->
-<!--                </li>-->
-<!--                <li sec:authorize="isAuthenticated()">-->
-<!--                    <form th:action="@{/profile/logout}" method="post" class="m-0">-->
-<!--                        <button type="submit" class="dropdown-item text-danger">Logout</button>-->
-<!--                    </form>-->
-<!--                </li>-->
-<!--                <li sec:authorize="isAnonymous()">-->
-<!--                    <a class="dropdown-item" th:href="@{/profile/login}">Login</a>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </div>-->
 <!--    </aside>-->
-    <aside>
-        <a th:href="@{/}" class="d-flex align-items-center mb-3 text-decoration-none">
-            <i class="bi bi-hospital fs-4 text-primary me-2"></i>
-            <span class="fs-5 fw-semibold text-dark">Aminah Hospital</span>
-        </a>
-        <hr>
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link d-flex align-items-center" th:href="@{/}">
-                    <i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard
-                </a>
-            </li>
-            <li class="nav-item" sec:authorize="hasRole('DR')">
-                <a class="nav-link d-flex align-items-center" th:href="@{/dr/courses}">
-                    <i class="bi bi-journal-text me-2 text-primary"></i> Courses
-                </a>
-            </li>
-            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                <a class="nav-link d-flex align-items-center" th:href="@{/admin}">
-                    <i class="bi bi-gear me-2 text-primary"></i> Admin Panel
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link d-flex align-items-center" th:href="@{/profile/profile}">
-                    <i class="bi bi-person-circle me-2 text-primary"></i> Profile
-                </a>
-            </li>
-        </ul>
+
+<!--</div>-->
+<div th:fragment="sidebar">
+    <aside id="sidebarWrapper" class="position-relative">
+
+        <div id="sidebarContent">
+
+            <a th:href="@{/}" class="d-flex align-items-center mb-3 text-decoration-none">
+                <i class="bi bi-hospital fs-4 text-primary me-2"></i>
+                <span class="fs-5 fw-semibold text-dark">Aminah Hospital</span>
+            </a>
+            <hr>
+
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" th:href="@{/}">
+                        <i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard
+                    </a>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasRole('DR')">
+                    <a class="nav-link d-flex align-items-center" th:href="@{/dr/courses}">
+                        <i class="bi bi-journal-text me-2 text-primary"></i> Courses
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" th:href="@{/profile/profile}">
+                        <i class="bi bi-person-circle me-2 text-primary"></i> Profile
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+
     </aside>
-
 </div>
-
-</html>

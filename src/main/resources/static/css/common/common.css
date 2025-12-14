@@ -1,0 +1,766 @@
+/*!* ===========================*/
+/*   Aminah E-Learning Theme CSS*/
+/*   =========================== *!*/
+
+/*!* --- Root Theme Colors --- *!*/
+/*:root {*/
+/*    --primary: #218583;       !* Aminah brand green *!*/
+/*    --secondary: #f38f08;     !* Accent color / warning *!*/
+/*    --accent: #43A047;        !* Success / highlight *!*/
+/*    --light-bg: #F5F7FA;      !* Page background *!*/
+/*    --text-color: #333;       !* Main text color *!*/
+/*    --nav-bg: #218583;        !* Navbar background *!*/
+/*    --footer-bg: #218583;     !* Footer background *!*/
+/*    --card-bg: #fff;          !* Card background *!*/
+/*    --font-main: 'Poppins', 'Segoe UI', sans-serif;*/
+/*}*/
+
+/*!* --- General --- *!*/
+/*body {*/
+/*    font-family: var(--font-main);*/
+/*    background-color: var(--light-bg);*/
+/*    color: var(--text-color);*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*}*/
+
+/*a {*/
+/*    text-decoration: none;*/
+/*    transition: 0.3s;*/
+/*}*/
+/*a:hover {*/
+/*    color: var(--secondary);*/
+/*}*/
+
+/*!* --- Navbar --- *!*/
+/*.navbar {*/
+/*    background-color: var(--nav-bg);*/
+/*}*/
+/*.navbar-brand {*/
+/*    font-weight: 700;*/
+/*    color: white !important;*/
+/*    transition: 0.3s;*/
+/*}*/
+/*.navbar-brand:hover {*/
+/*    color: var(--secondary) !important;*/
+/*}*/
+/*.navbar .nav-link {*/
+/*    color: #fff !important;*/
+/*    margin-left: 1rem;*/
+/*    transition: 0.3s;*/
+/*}*/
+/*.navbar .nav-link:hover {*/
+/*    color: var(--secondary) !important;*/
+/*}*/
+/*.navbar-toggler-icon {*/
+/*    filter: invert(1);*/
+/*}*/
+/*.navbar .dropdown-menu {*/
+/*    border: none;*/
+/*    box-shadow: 0 2px 10px rgba(0,0,0,0.1);*/
+/*}*/
+
+/*!* --- Sidebar --- *!*/
+/*aside {*/
+/*    background-color: white;*/
+/*    width: 250px;*/
+/*    min-height: 100vh;*/
+/*    box-shadow: 0 0 8px rgba(0,0,0,0.1);*/
+/*    padding: 1rem;*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    transition: all 0.3s ease;*/
+/*}*/
+/*aside a.nav-link {*/
+/*    color: var(--text-color);*/
+/*    margin-bottom: 0.5rem;*/
+/*    border-radius: 0.5rem;*/
+/*    padding: 0.5rem 0.8rem;*/
+/*    display: block;*/
+/*}*/
+/*aside a.nav-link:hover {*/
+/*    background-color: var(--primary);*/
+/*    color: white !important;*/
+/*}*/
+/*aside .dropdown-menu {*/
+/*    min-width: 150px;*/
+/*}*/
+/*@media (max-width: 992px) {*/
+/*    aside {*/
+/*        position: fixed;*/
+/*        left: -260px;*/
+/*        top: 0;*/
+/*        transition: 0.3s;*/
+/*        z-index: 1050;*/
+/*    }*/
+/*    aside.show {*/
+/*        left: 0;*/
+/*    }*/
+/*}*/
+
+/*!* --- Footer --- *!*/
+/*footer {*/
+/*    background-color: var(--footer-bg);*/
+/*    color: white;*/
+/*    padding: 2rem 0;*/
+/*    text-align: center;*/
+/*}*/
+/*footer a {*/
+/*    color: white;*/
+/*    margin: 0 0.5rem;*/
+/*    font-size: 1.2rem;*/
+/*    transition: 0.3s;*/
+/*}*/
+/*footer a:hover {*/
+/*    color: var(--secondary);*/
+/*}*/
+
+/*!* --- Buttons --- *!*/
+/*.btn {*/
+/*    border-radius: 0.5rem;*/
+/*    transition: all 0.2s ease;*/
+/*}*/
+/*.btn-primary {*/
+/*    background-color: var(--primary);*/
+/*    border: none;*/
+/*}*/
+/*.btn-primary:hover {*/
+/*    background-color: var(--secondary);*/
+/*    color: white;*/
+/*}*/
+/*.btn-secondary {*/
+/*    background-color: #6c757d;*/
+/*    color: white;*/
+/*    border: none;*/
+/*}*/
+/*.btn-secondary:hover {*/
+/*    background-color: #5a6268;*/
+/*    color: white;*/
+/*}*/
+/*.btn-role {*/
+/*    margin: 0.3rem;*/
+/*    padding: 0.6rem 1.2rem;*/
+/*    display: inline-flex;*/
+/*    align-items: center;*/
+/*    gap: 0.5rem;*/
+/*    font-weight: 600;*/
+/*    box-shadow: 0 4px 10px rgba(0,0,0,0.1);*/
+/*}*/
+/*.btn-role:hover {*/
+/*    transform: translateY(-2px);*/
+/*    box-shadow: 0 6px 15px rgba(0,0,0,0.15);*/
+/*}*/
+
+/*!* --- Cards --- *!*/
+/*.card, .course-card, .feature-card, .value-card {*/
+/*    border-radius: 1rem;*/
+/*    background-color: var(--card-bg);*/
+/*    box-shadow: 0 6px 18px rgba(0,0,0,0.1);*/
+/*    transition: transform 0.2s ease, box-shadow 0.3s ease;*/
+/*}*/
+/*.card:hover, .course-card:hover, .feature-card:hover, .value-card:hover {*/
+/*    transform: translateY(-5px);*/
+/*    box-shadow: 0 12px 25px rgba(0,0,0,0.15);*/
+/*}*/
+/*.card-title, .course-header h4, .feature-card h5, .value-card h5 {*/
+/*    color: var(--primary);*/
+/*    font-weight: 600;*/
+/*}*/
+
+/*!* --- Hero / Index Section --- *!*/
+/*.hero-section {*/
+/*    text-align: center;*/
+/*    padding: 60px 20px;*/
+/*    background: linear-gradient(135deg, #218583, #1e6f6d);*/
+/*    color: white;*/
+/*}*/
+/*.hero-section img {*/
+/*    width: 130px;*/
+/*    margin-bottom: 1rem;*/
+/*    transition: transform 0.3s ease;*/
+/*}*/
+/*.hero-section img:hover {*/
+/*    transform: rotate(-5deg) scale(1.05);*/
+/*}*/
+/*.hero-section h1 {*/
+/*    font-size: 2.1rem;*/
+/*    margin-bottom: 0.5rem;*/
+/*}*/
+/*.hero-section p {*/
+/*    font-size: 1.05rem;*/
+/*    color: #e3f2fd;*/
+/*}*/
+
+/*!* --- Feature Cards --- *!*/
+/*.feature-cards {*/
+/*    display: grid;*/
+/*    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));*/
+/*    gap: 1.2rem;*/
+/*    margin-top: 40px;*/
+/*}*/
+/*.feature-card {*/
+/*    text-align: center;*/
+/*    padding: 1.5rem;*/
+/*    border-radius: 1rem;*/
+/*    background: white;*/
+/*    box-shadow: 0 6px 18px rgba(0,0,0,0.1);*/
+/*    transition: transform 0.3s ease, box-shadow 0.3s ease;*/
+/*}*/
+/*.feature-card:hover {*/
+/*    transform: translateY(-6px);*/
+/*    box-shadow: 0 12px 25px rgba(0,0,0,0.15);*/
+/*}*/
+/*.feature-card i {*/
+/*    font-size: 2.5rem;*/
+/*    color: var(--primary);*/
+/*    margin-bottom: 0.8rem;*/
+/*}*/
+
+/*!* --- Courses Grid --- *!*/
+/*.grid-cards {*/
+/*    display: grid;*/
+/*    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));*/
+/*    gap: 1.5rem;*/
+/*}*/
+/*.course-card .course-badges .badge {*/
+/*    margin-right: 0.4rem;*/
+/*    font-size: 0.85rem;*/
+/*}*/
+/*.course-actions button {*/
+/*    min-width: 45px;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    gap: 4px;*/
+/*    font-size: 0.9rem;*/
+/*    transition: all 0.2s ease;*/
+/*}*/
+/*.course-actions button i {*/
+/*    font-size: 1rem;*/
+/*}*/
+/*.course-actions button:hover {*/
+/*    transform: translateY(-2px);*/
+/*}*/
+
+/*!* --- Modals --- *!*/
+/*.modal {*/
+/*    padding-right: 0 !important;*/
+/*}*/
+/*.modal-dialog {*/
+/*    margin: auto !important;*/
+/*    top: 50% !important;*/
+/*    transform: translateY(-50%) !important;*/
+/*    transition: none !important;*/
+/*    position: relative;*/
+/*}*/
+/*.modal-content {*/
+/*    border-radius: 1rem;*/
+/*    transform: none !important;*/
+/*}*/
+/*#deleteCourseModal .modal-footer button {*/
+/*    min-width: 100px;*/
+/*}*/
+
+/*!* --- Pagination --- *!*/
+/*.pagination .page-link {*/
+/*    color: var(--primary);*/
+/*}*/
+/*.pagination .page-item.disabled .page-link {*/
+/*    color: #aaa;*/
+/*}*/
+
+/*!* --- Icons / Floating --- *!*/
+/*.icon-circle, .icon-box {*/
+/*    width: 60px;*/
+/*    height: 60px;*/
+/*    border-radius: 50%;*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*}*/
+/*.floating-icon {*/
+/*    position: absolute;*/
+/*    top: -15px;*/
+/*    left: -15px;*/
+/*    width: 65px;*/
+/*    height: 65px;*/
+/*    border-radius: 50%;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    animation: float 3s ease-in-out infinite;*/
+/*}*/
+/*@keyframes float {*/
+/*    0% { transform: translateY(0); }*/
+/*    50% { transform: translateY(-6px); }*/
+/*    100% { transform: translateY(0); }*/
+/*}*/
+
+/*!* --- Responsive --- *!*/
+/*@media(max-width:768px) {*/
+/*    .course-actions {*/
+/*        flex-wrap: wrap;*/
+/*        gap: 0.5rem;*/
+/*    }*/
+/*    .feature-cards {*/
+/*        grid-template-columns: 1fr;*/
+/*    }*/
+/*}*/
+
+/*!* --- Utility Classes --- *!*/
+/*.bg-primary { background: var(--primary) !important; }*/
+/*.text-primary { color: var(--primary) !important; }*/
+/*.bg-secondary { background: var(--secondary) !important; }*/
+/*.text-secondary { color: var(--secondary) !important; }*/
+/*.bg-warning { background: var(--secondary) !important; }*/
+/*.text-warning { color: var(--secondary) !important; }*/
+/*.display-6 { font-size: 2.1rem; font-weight: 700; }*/
+/*.fs-6 { font-size: 0.95rem; }*/
+
+
+
+/*!* Profile Card *!*/
+/*.profile-card {*/
+/*    border-radius: 1rem;*/
+/*    background: white;*/
+/*    box-shadow: 0 8px 20px rgba(0,0,0,0.15);*/
+/*    transition: transform 0.3s ease, box-shadow 0.3s ease;*/
+/*}*/
+/*.profile-card:hover {*/
+/*    transform: translateY(-5px);*/
+/*    box-shadow: 0 12px 25px rgba(0,0,0,0.2);*/
+/*}*/
+
+/*!* Avatar *!*/
+/*.profile-avatar {*/
+/*    font-size: 80px;*/
+/*    color: var(--primary);*/
+/*    border: 4px solid var(--primary);*/
+/*    width: 120px;*/
+/*    height: 120px;*/
+/*    border-radius: 50%;*/
+/*    display: inline-flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    background-color: #e0f2f1;*/
+/*    transition: all 0.3s ease;*/
+/*}*/
+/*.profile-avatar:hover {*/
+/*    transform: scale(1.1);*/
+/*}*/
+
+/*!* Input with Icons *!*/
+/*.input-icon {*/
+/*    position: relative;*/
+/*}*/
+/*.input-icon i {*/
+/*    position: absolute;*/
+/*    left: 12px;*/
+/*    top: 50%;*/
+/*    transform: translateY(-50%);*/
+/*    color: var(--primary);*/
+/*}*/
+/*.input-icon input {*/
+/*    padding-left: 40px;*/
+/*}*/
+
+/*!* Buttons *!*/
+/*.profile-actions .btn {*/
+/*    border-radius: 0.5rem;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    transition: 0.3s;*/
+/*}*/
+/*.profile-actions .btn i {*/
+/*    margin-right: 8px;*/
+/*}*/
+
+/*!* Hover Effects *!*/
+/*.profile-actions .btn:hover {*/
+/*    transform: translateY(-2px);*/
+/*}*/
+
+/*!* Text Styles *!*/
+/*.profile-card h3 {*/
+/*    font-weight: 700;*/
+/*}*/
+/*.profile-card p {*/
+/*    font-size: 0.95rem;*/
+/*    color: #666;*/
+/*}*/
+
+/*!* Responsive *!*/
+/*@media (max-width: 768px) {*/
+/*    .profile-card {*/
+/*        width: 90% !important;*/
+/*        padding: 2rem !important;*/
+/*    }*/
+/*}*/
+/*!* General body style *!*/
+/*body {*/
+/*    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
+/*    background-color: #F9FAFB;*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*}*/
+
+/*!* Centered card container *!*/
+/*.auth-container {*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    min-height: 100vh;*/
+/*}*/
+
+/*!* Card styling *!*/
+/*.auth-card {*/
+/*    background-color: #ffffff;*/
+/*    padding: 2rem;*/
+/*    border-radius: 12px;*/
+/*    box-shadow: 0 4px 15px rgba(0,0,0,0.1);*/
+/*    width: 100%;*/
+/*    max-width: 420px;*/
+/*    text-align: center;*/
+/*}*/
+
+/*!* Headings *!*/
+/*.auth-card h3 {*/
+/*    color: #1F2937;*/
+/*    margin-bottom: 1.5rem;*/
+/*    font-weight: 600;*/
+/*}*/
+
+/*!* Inputs *!*/
+/*.auth-card input,*/
+/*.auth-card select {*/
+/*    width: 100%;*/
+/*    padding: 0.75rem 1rem;*/
+/*    margin-bottom: 1rem;*/
+/*    border: 1px solid #D1D5DB;*/
+/*    border-radius: 8px;*/
+/*    font-size: 0.95rem;*/
+/*}*/
+
+/*!* Buttons *!*/
+/*.auth-card .btn {*/
+/*    width: 100%;*/
+/*    padding: 0.75rem;*/
+/*    border: none;*/
+/*    border-radius: 8px;*/
+/*    font-weight: 600;*/
+/*    font-size: 1rem;*/
+/*    cursor: pointer;*/
+/*    transition: 0.3s;*/
+/*}*/
+
+/*.btn-warning {*/
+/*    background-color: #FBBF24;*/
+/*    color: #fff;*/
+/*}*/
+
+/*.btn-warning:hover {*/
+/*    background-color: #F59E0B;*/
+/*}*/
+
+/*.btn-primary {*/
+/*    background-color: #3B82F6;*/
+/*    color: #fff;*/
+/*}*/
+
+/*.btn-primary:hover {*/
+/*    background-color: #2563EB;*/
+/*}*/
+
+/*!* Links *!*/
+/*.auth-card a {*/
+/*    text-decoration: none;*/
+/*    color: #3B82F6;*/
+/*}*/
+
+/*.auth-card a:hover {*/
+/*    text-decoration: underline;*/
+/*}*/
+
+/*!* Messages *!*/
+/*.text-success {*/
+/*    color: #16A34A;*/
+/*}*/
+
+/*.text-danger {*/
+/*    color: #DC2626;*/
+/*}*/
+
+/*!* Profile icon style (optional for login/register) *!*/
+/*.profile-icon {*/
+/*    width: 80px;*/
+/*    height: 80px;*/
+/*    margin-bottom: 1rem;*/
+/*    border-radius: 50%;*/
+/*    background-color: #E5E7EB;*/
+/*    display: inline-flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    font-size: 2rem;*/
+/*    color: #9CA3AF;*/
+/*}*/
+
+/*.header-bg {*/
+/*    background-color: #C8A66A;*/
+/*    color: #ffffff;*/
+/*}*/
+
+/*.pagination-aminah .page-link {*/
+/*    color: #2CA6A4;*/
+/*    border-radius: 8px;*/
+/*    border: 1px solid #d7efee;*/
+/*    margin: 0 3px;*/
+/*    padding: 6px 14px;*/
+/*}*/
+
+/*.pagination-aminah .page-item.active .page-link {*/
+/*    background-color: #2CA6A4;*/
+/*    border-color: #2CA6A4;*/
+/*    color: white;*/
+/*}*/
+
+/*.pagination-aminah .page-link:hover {*/
+/*    background-color: #d7efee;*/
+/*    border-color: #2CA6A4;*/
+/*}*/
+/*!* Aminah Color Palette *!*/
+/*.bg-aminah {*/
+/*    background-color: #2CA6A4 !important;*/
+/*}*/
+
+/*!* Student Card *!*/
+/*.student-card {*/
+/*    background: #ffffff;*/
+/*    border-radius: 12px;*/
+/*    border: 1px solid #e6f4f4;*/
+/*    padding: 12px 16px;*/
+/*    transition: 0.2s ease;*/
+/*}*/
+
+/*.student-card:hover {*/
+/*    box-shadow: 0 4px 15px rgba(44, 166, 164, 0.15);*/
+/*    transform: translateY(-2px);*/
+/*}*/
+
+/*.student-card-body {*/
+/*    display: flex;*/
+/*}*/
+
+/*!* Avatar *!*/
+/*.student-avatar {*/
+/*    font-size: 48px;*/
+/*    color: #2CA6A4;*/
+/*}*/
+
+/*.pagination-aminah .page-item .page-link {*/
+/*    color: #2CA6A4;*/
+/*    border-radius: 8px;*/
+/*    margin: 0 4px;*/
+/*    border: 1px solid #d6ecec;*/
+/*}*/
+
+/*.pagination-aminah .page-item.active .page-link {*/
+/*    background-color: #2CA6A4;*/
+/*    color: #fff;*/
+/*    border-color: #2CA6A4;*/
+/*}*/
+
+/*.aminah-animate {*/
+/*    animation: fadeInUp 0.6s ease;*/
+/*}*/
+/*.section-card {*/
+/*    transition: 0.3s;*/
+/*}*/
+/*.section-card:hover {*/
+/*    background: #eef5ff;*/
+/*    transform: translateX(5px);*/
+/*}*/
+/*.tutorial-card {*/
+/*    border-left: 5px solid #0d6efd;*/
+/*}*/
+
+/*.bg-aminah {*/
+/*    background: #B4161B !important;*/
+/*}*/
+/*.text-aminah {*/
+/*    color: #B4161B;*/
+/*}*/
+/*.btn-aminah {*/
+/*    background: #B4161B;*/
+/*    color: white;*/
+/*}*/
+/*.btn-aminah:hover {*/
+/*    background: #8d1116;*/
+/*}*/
+
+/*.formatted-article {*/
+/*    max-width: 100%;*/
+/*    overflow-wrap: break-word;     !* Prevent long words from breaking layout *!*/
+/*    word-break: break-word;        !* Additional fallback *!*/
+/*    white-space: normal;           !* Avoid overflow caused by white-space *!*/
+/*}*/
+
+/*.formatted-article p {*/
+/*    margin-bottom: 12px;*/
+/*}*/
+
+/*.formatted-article h1,*/
+/*.formatted-article h2,*/
+/*.formatted-article h3 {*/
+/*    margin-top: 18px;*/
+/*    font-weight: bold;*/
+/*}*/
+
+/*.formatted-article img {*/
+/*    max-width: 100%;*/
+/*    height: auto;*/
+/*    border-radius: 8px;*/
+/*    display: block;                !* Prevent accidental overflow due to inline behavior *!*/
+/*}*/
+
+
+/*!* Table Hover & Shadows *!*/
+/*.aminah-table tbody tr:hover {*/
+/*    background: #f0fcfc;*/
+/*    transform: translateX(2px);*/
+/*    transition: all 0.2s ease;*/
+/*}*/
+
+/*!* Profile Avatar *!*/
+/*.profile-avatar {*/
+/*    width: 80px;*/
+/*    height: 80px;*/
+/*    border-radius: 50%;*/
+/*    font-size: 40px;*/
+/*    background: #e0f5f5;*/
+/*    border: 3px solid #2CA6A4;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    color: #2CA6A4;*/
+/*    transition: transform 0.3s ease;*/
+/*}*/
+/*.profile-avatar:hover { transform: scale(1.1); }*/
+
+/*!* Input Icons *!*/
+/*.input-icon {*/
+/*    position: relative;*/
+/*}*/
+/*.input-icon i {*/
+/*    position: absolute;*/
+/*    top: 50%;*/
+/*    left: 12px;*/
+/*    transform: translateY(-50%);*/
+/*    color: #218583;*/
+/*}*/
+/*.input-icon input { padding-left: 40px; }*/
+
+/*!* Buttons *!*/
+/*.btn-aminah { background-color: #2CA6A4; color: white; transition: 0.3s; }*/
+/*.btn-aminah:hover { background-color: #218583; }*/
+
+/*!* Card Hover *!*/
+/*.card:hover { box-shadow: 0 12px 25px rgba(0,0,0,0.15); transform: translateY(-2px); }*/
+
+/* ===========================
+   Aminah E-Learning Theme - Common
+   =========================== */
+
+/* --- Root Theme Colors --- */
+:root {
+    --primary: #C8A66A;       /* Aminah brand green */
+    --primary-dark: #218583;
+    --secondary: #F38F08;
+    --accent: #43A047;
+    --light-bg: #F9FAFB;
+    --card-bg: #fff;
+    --text-color: #333;
+    --nav-bg: #218583;
+    --footer-bg: #218583;
+    --font-main: 'Poppins', 'Segoe UI', sans-serif;
+    --border-radius: 12px;
+    --transition: 0.3s ease;
+    --aminah-primary: #4f46e5;   /* indigo */
+    --aminah-secondary: #06b6d4; /* cyan */
+    --aminah-success: #22c55e;
+    --aminah-warning: #f59e0b;
+    --aminah-danger: #ef4444;
+    --aminah-bg-glass: rgba(255, 255, 255, 0.85);
+}
+
+/* --- Global Reset --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body, html {
+    font-family: var(--font-main);
+    background-color: var(--light-bg);
+    color: var(--text-color);
+    scroll-behavior: smooth;
+}
+a {
+    text-decoration: none;
+    transition: var(--transition);
+}
+a:hover { color: var(--secondary); }
+
+/* --- Utility Classes --- */
+.text-primary { color: var(--primary) !important; }
+.bg-primary { background: var(--primary) !important; }
+.text-secondary { color: var(--secondary) !important; }
+.bg-secondary { background: var(--secondary) !important; }
+.text-accent { color: var(--accent) !important; }
+.bg-accent { background: var(--accent) !important; }
+.rounded { border-radius: var(--border-radius); }
+.shadow-light { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.shadow-medium { box-shadow: 0 6px 18px rgba(0,0,0,0.15); }
+.shadow-heavy { box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+.transition-all { transition: var(--transition); }
+.display-6 { font-size: 2.1rem; font-weight: 700; }
+.fs-6 { font-size: 0.95rem; }
+.text-center { text-align: center; }
+.flex-center { display: flex; justify-content: center; align-items: center; }
+
+
+.header-bg {
+    color: #ffffff;
+    width: 100vw;       /* Full viewport width */
+    margin: 0;          /* Remove default margin */
+    padding: 1.5rem 0;  /* Adjust height */
+    background-color: #C8A66A;
+    box-sizing: border-box;
+}
+
+.wave-divider svg {
+    display: block;
+    width: 100vw;       /* Stretch wave to full width */
+    height: 50px;
+}
+
+/* Headings */
+h2, h4, h5 {
+    letter-spacing: 0.3px;
+}
+
+/* Glass table */
+.glass-table {
+    background: rgba(255,255,255,.85);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Subtle animation */
+.fade-in {
+    animation: fadeInUp .3s ease-in-out;
+}
+
+
+.course-header h4 i { font-size: 2rem; }

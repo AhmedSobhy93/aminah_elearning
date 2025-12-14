@@ -4,6 +4,8 @@ import com.aminah.elearning.model.User;
 import com.aminah.elearning.repository.PasswordResetTokenRepository;
 import com.aminah.elearning.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -47,6 +49,12 @@ public class UserService implements UserDetailsService {
         existingUser.setEmail(updatedUser.getEmail());
         return userRepository.save(existingUser);
     }
+
+    // Fetch all users with pagination
+    public Page<User> getUsers(Pageable pageable) {
+        return userRepository.findAll(pageable); // fetch all users
+    }
+
 
     public List<User> getAllUsers() {
         return userRepository.findAll();

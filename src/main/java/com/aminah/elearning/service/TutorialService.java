@@ -1,13 +1,8 @@
 package com.aminah.elearning.service;
 
 import com.aminah.elearning.dto.QuizQuestionDto;
-import com.aminah.elearning.model.QuizQuestion;
-import com.aminah.elearning.model.Section;
-import com.aminah.elearning.model.Tutorial;
-import com.aminah.elearning.repository.CourseRepository;
-import com.aminah.elearning.repository.QuizQuestionRepository;
-import com.aminah.elearning.repository.SectionRepository;
-import com.aminah.elearning.repository.TutorialRepository;
+import com.aminah.elearning.model.*;
+import com.aminah.elearning.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,6 +25,7 @@ public class TutorialService {
     private final TutorialRepository tutorialRepository;
     private final SectionRepository sectionRepository;
     private final QuizQuestionRepository quizQuestionRepository;
+    private final TutorialProgressRepository tutorialProgressRepository;
 
 
     @Transactional
@@ -79,7 +75,7 @@ public class TutorialService {
 
             // Remove old questions
             quizQuestionRepository.deleteByTutorialId(tutorial.getId());
-            System.out.println("dtos.getFirst()"+dtos.getFirst());
+            System.out.println("dtos.getFirst()" + dtos.getFirst());
             // Add new questions
             for (QuizQuestionDto dto : dtos) {
                 QuizQuestion q = new QuizQuestion();
@@ -93,7 +89,39 @@ public class TutorialService {
         } catch (Exception e) {
             throw new RuntimeException("Invalid quiz JSON", e);
         }
+
+
+}
+        public TutorialProgress getProgress (User user, Tutorial tutorial){
+            return tutorialProgressRepository.findByUserIdAndTutorialId(user.getId(), tutorial.getId())
+                    .orElseGet(() -> tutorialProgressRepository.save(
+                            new TutorialProgress(user, tutorial, false)
+                    ));
+        }
+
+        public void markComplete (User user, Tutorial tutorial){
+            TutorialProgress progress = getProgress(user, tutorial);
+            progress.setCompleted(true);
+            tutorialProgressRepository.save(progress);
+        }
+
+        public int submitQuiz (User user, Tutorial tutorial, Map < Long, Integer > answers){
+//            Tutorial tutorial = getTutorial(tutorial);
+
+            int score = 0;
+
+            for (QuizQuestion q : tutorial.getQuizQuestions()) {
+                int selected = answers.get(q.getId());
+                if (q.getCorrectOptionIndex() == selected)
+                    score++;
+            }
+
+            markComplete(user, tutorial);
+            return score;
+        }
     }
+
+
 
 //    @Transactional
 //    public void updateQuizQuestions(Tutorial tutorial, String quizQuestionsJson) {
@@ -137,7 +165,6 @@ public class TutorialService {
 //        }
 //    }
 
-}
 
 
 

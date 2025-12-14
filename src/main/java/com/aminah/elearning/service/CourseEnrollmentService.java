@@ -49,6 +49,9 @@ public class CourseEnrollmentService {
         public Boolean existsByCourseIdAndUserId(Long courseId, Long userId) {
             return enrollmentRepo.existsByCourseIdAndUserId(courseId, userId);
         }
+    public Page<CourseEnrollment> getUserEnrollments(Long userId, int page, int size) {
+        return enrollmentRepo.findByUserId(userId,PageRequest.of(page, size));
+    }
     }
 
 
@@ -71,9 +74,7 @@ public class CourseEnrollmentService {
 //        return enrollmentRepository.save(enrollment);
 //    }
 //
-//    public Page<CourseEnrollment> getUserEnrollments(Long userId, int page, int size) {
-//        return enrollmentRepository.findByUserId(userId,PageRequest.of(page, size));
-//    }
+
 //
 //    public CourseEnrollment updatePaymentStatus(Long enrollmentId, String status) {
 //        CourseEnrollment enrollment = enrollmentRepository.findById(enrollmentId)

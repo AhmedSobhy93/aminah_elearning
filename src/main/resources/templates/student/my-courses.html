@@ -1,20 +1,53 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
-<section layout:fragment="content">
-    <div class="container my-5">
-        <h1 class="text-center mb-4">My Courses</h1>
-        <div th:each="enrollment : ${enrolledCourses}" class="card mb-3 shadow-sm p-3">
-            <h4 th:text="${enrollment.course.courseName}"></h4>
-            <p th:text="${enrollment.course.description}"></p>
-            <div class="progress mb-2">
-                <div class="progress-bar" role="progressbar" th:style="'width:' + ${enrollment.progressPercentage} + '%'" th:text="${enrollment.progressPercentage + '%'}"></div>
-            </div>
-            <a th:href="@{/student/course/{id}(id=${enrollment.course.id})}" class="btn btn-primary">Open Course</a>
+<section layout:fragment="content" class="container py-5">
 
-            <span th:if="${enrollment.completed and !enrollment.certificateIssued}" class="badge bg-success ms-2">Complete! Certificate Pending</span>
-            <span th:if="${enrollment.completed and enrollment.certificateIssued}" class="badge bg-success ms-2">Certificate Issued</span>
+    <h2 class="mb-4 text-center">My Courses</h2>
+
+    <div class="row">
+        <div th:each="enroll : ${enrolledCourses.content}" class="col-md-4 mb-4">
+
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4 th:text="${enroll.course.title}"></h4>
+                    <p th:text="${enroll.course.description}"></p>
+
+                    <div class="mt-3">
+                        <div class="progress" style="height: 24px;">
+                            <div class="progress-bar"
+                                 th:style="'width:' + ${enroll.progressPercentage} + '%'"
+                                 th:text="${enroll.progressPercentage + '%'}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <a th:href="@{/student/course/{id}(id=${enroll.course.id})}"
+                       class="btn btn-primary mt-3 w-100">
+                        Continue Course
+                    </a>
+
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Pagination -->
+    <div class="text-center mt-4">
+        <a th:if="${enrolledCourses.hasPrevious()}"
+           th:href="@{/student/my-courses(page=${enrolledCourses.number-1})}"
+           class="btn btn-secondary">Prev</a>
+
+        <span class="mx-2">Page <span th:text="${enrolledCourses.number+1}"></span> of
+            <span th:text="${enrolledCourses.totalPages}"></span>
+        </span>
+
+        <a th:if="${enrolledCourses.hasNext()}"
+           th:href="@{/student/my-courses(page=${enrolledCourses.number+1})}"
+           class="btn btn-secondary">Next</a>
+    </div>
+
 </section>
+</html>

@@ -1,0 +1,63 @@
+/* Navbar Styling */
+.navbar {
+    padding: 0.5rem 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    color: #fff !important;
+    font-size: 1.2rem;
+    transition: 0.3s ease;
+}
+
+.navbar-brand:hover {
+    color: #C8A66A !important;
+}
+
+.navbar .nav-link {
+    color: #fff !important;
+    margin-left: 0.8rem;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
+
+.navbar .nav-link:hover {
+    color: #C8A66A !important;
+}
+
+.navbar .navbar-toggler {
+    border-color: rgba(255,255,255,0.3);
+}
+
+.navbar .navbar-toggler-icon {
+    filter: invert(1);
+}
+
+.navbar .dropdown-menu {
+    border: none;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    border-radius: 0.5rem;
+    min-width: 180px;
+}
+
+.navbar .dropdown-item {
+    font-size: 0.9rem;
+}
+
+.navbar .dropdown-item:hover {
+    background-color: #C8A66A;
+    color: #fff !important;
+}
+
+.navbar .dropdown-toggle::after {
+    margin-left: 0.3rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .navbar .nav-link {
+        margin-left: 0;
+        margin-top: 0.2rem;
+    }
+}

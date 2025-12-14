@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -40,6 +41,7 @@ public class CourseService {
         courseRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     public Page<Course> getCourses(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         if (keyword == null || keyword.isEmpty()) return courseRepository.findAll(pageable);
