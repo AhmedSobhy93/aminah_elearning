@@ -28,9 +28,14 @@ public class Section {
     @ManyToOne
     private Course course;
 
+
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("orderIndex ASC")
     private List<Tutorial> tutorials = new ArrayList<>();
+
+    @Transient
+    private int progress;
+
 
     public void addTutorial(Tutorial tutorial){
         tutorial.setSection(this);

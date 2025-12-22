@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Y & T Kitchen | Menu</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', 'Tahoma', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5e6d3 0%, #d4a574 100%);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .page {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .top-header {
+            background: linear-gradient(135deg, #1c1c1c 0%, #2f4f3e 100%);
+            padding: 8px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-name {
+            color: #c9a24d;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .brand-subtitle {
+            color: #f6f1e7;
+            font-size: 11px;
+        }
+
+        .offer-badge {
+            background: linear-gradient(135deg, #c9a24d 0%, #8b6f3f 100%);
+            color: #1c1c1c;
+            padding: 6px 15px;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .phone-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 15px;
+            color: #c9a24d;
+            font-size: 14px;
+            font-weight: 700;
+            border: 2px solid #c9a24d;
+        }
+
+        /* Menu Container */
+        .menu-container {
+            flex: 1;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        /* Section Card */
+        .section-card {
+            background: white;
+            border-radius: 8px;
+            padding: 8px;
+            height: 100%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #2f4f3e 0%, #1c1c1c 100%);
+            color: white;
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+
+        .section-header i {
+            font-size: 13px;
+            color: #c9a24d;
+        }
+
+        .menu-items {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        .menu-items::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .menu-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .menu-items::-webkit-scrollbar-thumb {
+            background: #c9a24d;
+            border-radius: 10px;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 3px 4px;
+            border-bottom: 1px dotted #ddd;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-name {
+            font-size: 10px;
+            color: #333;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .item-price {
+            color: #c9a24d;
+            font-weight: 800;
+            font-size: 11px;
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 40px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, #1c1c1c 0%, #2f4f3e 100%);
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .footer i {
+            color: #c9a24d;
+        }
+
+        /* Page Navigation */
+        .page-nav {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .page-btn {
+            background: #c9a24d;
+            color: #1c1c1c;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(201, 162, 77, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover {
+            background: #8b6f3f;
+            transform: scale(1.05);
+        }
+
+        .page-btn.active {
+            background: #2f4f3e;
+            color: #c9a24d;
+        }
+
+        .logo-svg {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .row {
+            height: 100%;
+        }
+
+        .col-lg-2, .col-lg-3, .col-lg-4 {
+            display: flex;
+            margin-bottom: 0 !important;
+        }
+
+        .subsection {
+            background: #f8f9fa;
+            padding: 4px;
+            border-radius: 5px;
+            margin: 4px 0;
+            border-left: 2px solid;
+        }
+
+        .subsection-title {
+            font-size: 9px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Page 1: الأكلات الساخنة -->
+<div id="page1" class="page">
+
+    <!-- Header -->
+    <div class="top-header">
+        <div class="container-fluid">
+            <div class="header-content">
+
+                <div class="logo-section">
+                    <svg class="logo-svg" width="45" height="45" viewBox="0 0 260 260">
+                        <circle cx="130" cy="130" r="120" fill="#1c1c1c"/>
+                        <circle cx="130" cy="130" r="115" fill="none" stroke="#c9a24d" stroke-width="6"/>
+                        <circle cx="130" cy="130" r="100" fill="#2f4f3e"/>
+                        <text x="130" y="135" text-anchor="middle"
+                              font-size="64" fill="#c9a24d"
+                              font-family="Georgia, serif"
+                              font-weight="bold">
+                            Y &amp; T
+                        </text>
+                        <text x="130" y="170" text-anchor="middle"
+                              font-size="14" fill="#f6f1e7">
+                            Fine Home Style Cuisine
+                        </text>
+                    </svg>
+                    <div>
+                        <div class="brand-name">Y & T KITCHEN</div>
+                        <div class="brand-subtitle">مطبخ المذاق الأصيل</div>
+                    </div>
+                </div>
+
+                <div class="offer-badge">
+                    <i class="fa-solid fa-tags"></i>
+                    Y&T Kitchen – Real Taste. Real Home
+                </div>
+
+                <div class="phone-section">
+                    <i class="fa-solid fa-phone"></i>
+                    01515199343 - 01143439044
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Content Page 1 -->
+    <div class="menu-container">
+        <div class="row g-2">
+
+            <!-- الشوربة -->
+            <div class="col-lg-2">
+                <div class="section-card">
+                    <div class="section-header" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
+                        <i class="fa-solid fa-bowl-hot"></i>
+                        <span>الشوربة</span>
+                    </div>
+                    <div class="menu-items">
+                        <div class="menu-item">
+                            <span class="item-name">لسان عصفور</span>
+                            <span class="item-price">40 ج</span>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">خضار</span>
+                            <span class="item-price">45 ج</span>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">كريمة فراخ</span>
+                            <span class="item-price">55 ج</span>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">كريمة مشروم</span>
+                            <span class="item-price">55 ج</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الطواجن -->
+            <div class="col-lg-3">
+                <div class="section-card">
+                    <div class="section-header" style="background: linear-gradient(135deg, #8b4513 0%, #654321 100%);">
+                        <i class="fa-solid fa-pot-food"></i>
+                        <span>الطواجن</span>
+                    </div>
+                    <div class="menu-items">
+                        <div class="subsection" style="border-color: #8b4513;">
+                            <div class="subsection-title" style="color: #8b4513;">
+                                <i class="fa-solid fa-bowl-food"></i> رز معمر بدون لحمة
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">فويل - فرد</span>
+                                <span class="item-price">120 ج</span>
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">فويل - 3 أفراد</span>
+                                <span class="item-price">190 ج</span>
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">فخار - فرد</span>
+                                <span class="item-price">155 ج</span>
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">فخار - 3 أفراد</span>
+                                <span class="item-price">225 ج</span>
+                            </div>
+                        </div>
+
+                        <div class="subsection" style="border-color: #8b4513;">
+                            <div class="subsection-title" style="color: #8b4513;">
+                                <i class="fa-solid fa-bowl-food"></i> رز معمر باللحمة
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">فويل - فرد</span>
+                                <span class="item-price">245 ج</span>
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">فويل - 3 أفراد</span>
+                                <span class="item-price">315 ج</span>
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">فخار - فرد</span>
+                                <span class="item-price">280 ج</span>
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">فخار - 3 أفراد</span>
+                                <span class="item-price">350 ج</span>
+                            </div>
+                        </div>
+
+                        <div class="menu-item">
+                            <span class="item-name">ورق عنب إستيك - فردين</span>
+                            <span class="item-price">350 ج</span>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">ورق عنب إستيك - 3 أفراد</span>
+                            <span class="item-price">450 ج</span>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">بامية ضاني - 3 أفراد</span>
+                            <span class="item-price">320 ج</span>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">لحمة بصل - 3 أفراد</span>
+                            <span class="item-price">320 ج</span>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">بطاطس لحمة - 3 أفراد</span>
+                            <span class="item-price">300 ج</span>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">لسان عصفور لحمة</span>
+                            <span class="item-price">280 ج</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- مكرونة وفراخ -->
+            <div class="col-lg-3">
+                <div class="section-card">
+                    <div class="section-header" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">
+                        <i class="fa-solid fa-utensils"></i>
+                        <span>مكرونة وفراخ</span>
+                    </div>
+                    <div class="menu-items">
+                        <div class="subsection" style="border-color: #f39c12;">
+                            <div class="subsection-title" style="color: #e67e22;">
+                                <i class="fa-solid fa-fire"></i> فراخ مشوية
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">نص فرخة - كيلو</span>
+                                <span class="item-price">170 ج</span>
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">فرخة كاملة - 2 كيلو</span>
+                                <span class="item-price">330 ج</span>
+                            </div>
+                        </div>
+
+                        <div class="subsection" style="border-color: #f39c12;">
+                            <div class="subsection-title" style="color: #e67e22;">
+                                <i class="fa-solid fa-plate-wheat"></i> بشاميل
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">فويل - فرد</span>
+                                <span class="item-price">160 ج</span>
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">فويل - فردين</span>
+                                <span class="item-price">250 ج</span>
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">فخار - فرد</span>
+                                <span class="item-price">195 ج</span>
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">فخار - 2-3 أفراد</span>
+                                <span class="item-price">285 ج</span>
+                            </div>
+                        </div>
+
+                        <div class="subsection" style="border-color: #f39c12;">
+                            <div class="subsection-title" style="color: #e67e22;">
+                                <i class="fa-solid fa-drumstick-bite"></i> بانيه
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">نص كيلو</span>
+                                <span class="item-price">250 ج</span>
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">ربع كيلو</span>
+                                <span class="item-price">135 ج</span>
+                            </div>
+                        </div>
+
+                        <div class="menu-item">
+                            <span class="item-name">مبكبكة لحمة - 3 أفراد</span>
+                            <span class="item-price">285 ج</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- حمام وأطباق إضافية -->
+            <div class="col-lg-2">
+                <div class="section-card">
+                    <div class="section-header" style="background: linear-gradient(135deg, #16a085 0%, #138d75 100%);">
+                        <i class="fa-solid fa-dove"></i>
+                        <span>حمام وإضافات</span>
+                    </div>
+                    <div class="menu-items">
+                        <div class="subsection" style="border-color: #16a085;">
+                            <div class="subsection-title" style="color: #138d75;">
+                                <i class="fa-solid fa-dove"></i> حمام
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">حمام رز</span>
+                                <span class="item-price">190 ج</span>
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">حمام فريك</span>
+                                <span class="item-price">190 ج</span>
+                            </div>
+                        </div>
+
+                        <div class="menu-item">
+                            <span class="item-name">حواوشي</span>
+                            <span class="item-price">70 ج</span>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">ورقة لحمة</span>
+                            <span class="item-price">300 ج</span>
+                        </div>
+
+                        <div class="subsection" style="border-color: #16a085;">
+                            <div class="subsection-title" style="color: #138d75;">
+                                <i class="fa-solid fa-bowl-rice"></i> رز
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">رز أبيض</span>
+                                <span class="item-price">45 ج</span>
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">رز بالشعرية</span>
+                                <span class="item-price">45 ج</span>
+                            </div>
+                        </div>
+                        <div class="menu-items">
+                            <div class="menu-item">
+                                <span class="item-name">ملوخية</span>
+                                <span class="item-price">55 ج</span>
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">محشي كرنب - فردين</span>
+                                <span class="item-price">190 ج</span>
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">ورق عنب كوارع</span>
+                                <span class="item-price">330 ج</span>
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">فتة باللحمة</span>
+                                <span class="item-price">350 ج</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- عزومات خاصة -->
+            <div class="col-lg-2">
+                <div class="section-card">
+                    <div class="section-header" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);">
+                        <i class="fa-solid fa-crown"></i>
+                        <span>عزومات خاصة</span>
+                    </div>
+                    <div class="menu-items">
+                        <div style="background: linear-gradient(135deg, #f4ecf7 0%, #e8daef 100%); padding: 6px; border-radius: 6px; margin-bottom: 4px; border: 2px dashed #9b59b6; text-align: center;">
+                            <div style="color: #8e44ad; font-weight: 800; font-size: 10px;">
+                                <i class="fa-solid fa-star"></i> للمناسبات <i class="fa-solid fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">كتف ضاني - 2 كيلو</span>
+                            <span class="item-price">1990 ج</span>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">بط بلدي - 3 كيلو</span>
+                            <span class="item-price">590 ج</span>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">بط بلدي - 2.5 كيلو</span>
+                            <span class="item-price">520 ج</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <i class="fa-solid fa-star"></i>
+<!--        جميع الأسعار تشمل خصم الافتتاح-->
+        <i class="fa-solid fa-phone"></i>
+        للطلب: 01515199343
+        <i class="fa-solid fa-star"></i>
+    </div>
+</div>
+
+<!-- Page 2: المنتجات البلدي -->
+<div id="page2" class="page" style="display: none;">
+
+    <!-- Header -->
+    <div class="top-header">
+        <div class="container-fluid">
+            <div class="header-content">
+
+                <div class="logo-section">
+                    <svg class="logo-svg" width="45" height="45" viewBox="0 0 260 260">
+                        <circle cx="130" cy="130" r="120" fill="#1c1c1c"/>
+                        <circle cx="130" cy="130" r="115" fill="none" stroke="#c9a24d" stroke-width="6"/>
+                        <circle cx="130" cy="130" r="100" fill="#2f4f3e"/>
+                        <text x="130" y="135" text-anchor="middle"
+                              font-size="64" fill="#c9a24d"
+                              font-family="Georgia, serif"
+                              font-weight="bold">
+                            Y &amp; T
+                        </text>
+                        <text x="130" y="170" text-anchor="middle"
+                              font-size="14" fill="#f6f1e7">
+                            Fine Home Style Cuisine
+                        </text>
+                    </svg>
+                    <div>
+                        <div class="brand-name">Y & T KITCHEN</div>
+                        <div class="brand-subtitle">منتجات بلدي أصلية</div>
+                    </div>
+                </div>
+
+                <div class="offer-badge">
+                    <i class="fa-solid fa-tags"></i>
+                    منتجات بلدي طازجة
+                </div>
+
+                <div class="phone-section">
+                    <i class="fa-solid fa-phone"></i>
+                    01515199343 - 01143439044
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Content Page 2 -->
+    <div class="menu-container">
+        <div class="row g-2">
+
+            <!-- الفطير -->
+            <div class="col-lg-3">
+                <div class="section-card">
+                    <div class="section-header" style="background: linear-gradient(135deg, #d35400 0%, #ba4a00 100%);">
+                        <i class="fa-solid fa-cookie-bite"></i>
+                        <span>فطير مشلتت</span>
+                    </div>
+                    <div class="menu-items">
+                        <div style="background: linear-gradient(135deg, #fef5e7 0%, #fdebd0 100%); padding: 10px; border-radius: 8px; border: 2px solid #d35400;">
+                            <div style="text-align: center; margin-bottom: 8px;">
+                                <i class="fa-solid fa-award" style="font-size: 20px; color: #d35400;"></i>
+                            </div>
+                            <div class="menu-item" style="border: none;">
+                                <span class="item-name" style="font-size: 12px;">فطير بالسمن البلدي</span>
+                                <span class="item-price" style="font-size: 14px; background: #d35400; color: white;">300 ج</span>
+                            </div>
+                        </div>
+                        <div style="background: #fff3cd; padding: 6px; border-radius: 6px; margin-top: 8px; font-size: 10px; text-align: center; color: #ba4a00; font-weight: 700;">
+                            <i class="fa-solid fa-weight"></i> الوزن: 2.25 كجم
+                        </div>
+                        <div style="background: #e8f5e9; padding: 6px; border-radius: 6px; margin-top: 6px; font-size: 10px; text-align: center; color: #2e7d32; font-weight: 700;">
+                            <i class="fa-solid fa-hand-sparkles"></i> مصنوع يدوياً
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الزبدة والسمنة -->
+            <div class="col-lg-3">
+                <div class="section-card">
+                    <div class="section-header" style="background: linear-gradient(135deg, #f39c12 0%, #d68910 100%);">
+                        <i class="fa-solid fa-butter"></i>
+                        <span>زبدة وسمنة بلدي</span>
+                    </div>
+                    <div class="menu-items">
+                        <div class="subsection" style="border-color: #f39c12;">
+                            <div class="subsection-title" style="color: #d68910;">
+                                <i class="fa-solid fa-droplet"></i> زبدة طازجة
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">جاموسي - كجم</span>
+                                <span class="item-price">350 ج</span>
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">بقري - كجم</span>
+                                <span class="item-price">320 ج</span>
+                            </div>
+                        </div>
+
+                        <div class="subsection" style="border-color: #f39c12;">
+                            <div class="subsection-title" style="color: #d68910;">
+                                <i class="fa-solid fa-jar"></i> سمنة بلدي
+                            </div>
+                            <div class="menu-item">
+                                <span class="item-name">جاموسي - كجم</span>
+                                <span class="item-price">500 ج</span>
+                            </div>
+                            <div class="menu-item">
+                            <span class="item-name">بقري - كجم</span>
+                            <span class="item-price">470 ج</span>
+                        </div>
+                        </div>
+
+                        <div style="background: #d4edda; padding: 8px; border-radius: 8px; margin-top: 8px; font-size: 11px; text-align: center; color: #155724; font-weight: 700;">
+                            <i class="fa-solid fa-certificate"></i> منتج أصلي 100%
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الجبنة والقشطة -->
+            <div class="col-lg-3">
+                <div class="section-card">
+                    <div class="section-header" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);">
+                        <i class="fa-solid fa-cheese"></i>
+                        <span>جبنة وقشطة بلدي</span>
+                    </div>
+                    <div class="menu-items">
+                        <div style="background: #eafaf1; padding: 8px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #27ae60;">
+                            <div style="font-size: 11px; color: #229954; font-weight: 700;">
+                                <i class="fa-solid fa-cow"></i> جبنة بلدي
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">جبنة قريش بخيرها - كجم</span>
+                            <span class="item-price">125 ج</span>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">جبنة قديمة - كجم</span>
+                            <span class="item-price">220 ج</span>
+                        </div>
+
+                        <div style="background: #eafaf1; padding: 8px; border-radius: 8px; margin: 8px 0; border-left: 3px solid #27ae60;">
+                            <div style="font-size: 11px; color: #229954; font-weight: 700;">
+                                <i class="fa-solid fa-bowl-food"></i> قشطة
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">قشطة بلدي بخيرها - كجم</span>
+                            <span class="item-price">330 ج</span>
+                        </div>
+                        <div style="background: #eafaf1; padding: 8px; border-radius: 8px; margin: 8px 0; border-left: 3px solid #27ae60;">
+                            <div style="font-size: 11px; color: #229954; font-weight: 700;">
+                                <i class="fa-solid fa-bowl-food"></i> لبن
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">لبن بلدي بخيره جاموسى - كجم</span>
+                            <span class="item-price">45 ج</span>
+                        </div>
+
+                        <div style="background: #fff3cd; padding: 8px; border-radius: 8px; margin-top: 8px; font-size: 11px; text-align: center; color: #856404; font-weight: 700;">
+                            <i class="fa-solid fa-clock"></i> طازجة
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- العسل والطحينة -->
+            <div class="col-lg-3">
+                <div class="section-card">
+                    <div class="section-header" style="background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);">
+                        <i class="fa-solid fa-honey-pot"></i>
+                        <span>عسل وطحينة</span>
+                    </div>
+                    <div class="menu-items">
+                        <div style="background: #fef5e7; padding: 8px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #e67e22;">
+                            <div style="font-size: 11px; color: #d35400; font-weight: 700;">
+                                <i class="fa-solid fa-honeycomb"></i> عسل طبيعي
+                            </div>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">عسل موالح - كجم</span>
+                            <span class="item-price">230 ج</span>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">عسل برسيم - كجم</span>
+                            <span class="item-price">220 ج</span>
+                        </div>
+                        <div class="menu-item">
+                            <span class="item-name">عسل أسود - كجم</span>
+                            <span class="item-price">80 ج</span>
+                        </div>
+
+                        <div style="background: #e8f5e9; padding: 6px; border-radius: 8px; margin: 8px 0;">
+                            <div class="menu-item">
+                                <span class="item-name">طحينة سمسم - كجم</span>
+                                <span class="item-price">210 ج</span>
+                            </div>
+                        </div>
+
+                        <div style="background: #d1f2eb; padding: 8px; border-radius: 8px; margin-top: 8px; font-size: 11px; text-align: center; color: #0e6655; font-weight: 700;">
+                            <i class="fa-solid fa-leaf"></i> طبيعي 100%
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <i class="fa-solid fa-star"></i>
+        منتجات بلدي طازجة يومياً
+        <i class="fa-solid fa-phone"></i>
+        للطلب: 01515199343
+        <i class="fa-solid fa-star"></i>
+    </div>
+</div>
+
+<!-- Page Navigation -->
+<div class="page-nav">
+    <button class="page-btn active" onclick="showPage(1)">
+        <i class="fa-solid fa-utensils"></i> الأكلات
+    </button>
+    <button class="page-btn" onclick="showPage(2)">
+        <i class="fa-solid fa-cheese"></i> المنتجات البلدي
+    </button>
+</div>
+
+<script>
+    function showPage(pageNum) {
+        // Hide all pages
+        document.getElementById('page1').style.display = 'none';
+        document.getElementById('page2').style.display = 'none';
+
+        // Show selected page
+        document.getElementById('page' + pageNum).style.display = 'flex';
+
+        // Update button states
+        const buttons = document.querySelectorAll('.page-btn');
+        buttons.forEach((btn, index) => {
+            if (index + 1 === pageNum) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

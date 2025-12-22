@@ -22,6 +22,8 @@ import java.util.NoSuchElementException;
 @Service
 @RequiredArgsConstructor
 public class TutorialService {
+
+    private TutorialService tutorialService;
     private final TutorialRepository tutorialRepository;
     private final SectionRepository sectionRepository;
     private final QuizQuestionRepository quizQuestionRepository;
@@ -103,6 +105,7 @@ public class TutorialService {
             TutorialProgress progress = getProgress(user, tutorial);
             progress.setCompleted(true);
             tutorialProgressRepository.save(progress);
+//            tutorialService.markComplete(user, tutorial);
         }
 
         public int submitQuiz (User user, Tutorial tutorial, Map < Long, Integer > answers){

@@ -93,56 +93,208 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
-<section layout:fragment="content" class="container py-5">
+<!--<section layout:fragment="content" class="container py-5">-->
 
-    <h2 class="mb-4 text-center">Available Courses</h2>
+<!--    <h2 class="mb-4 text-center">Available Courses</h2>-->
 
-    <!-- Search -->
-    <form method="get" class="input-group mb-4">
-        <input type="text" name="keyword" th:value="${keyword}"
-               class="form-control" placeholder="Search courses...">
-        <button class="btn btn-primary">Search</button>
+<!--    &lt;!&ndash; Search &ndash;&gt;-->
+<!--    <form method="get" class="input-group mb-4">-->
+<!--        <input type="text" name="keyword" th:value="${keyword}"-->
+<!--               class="form-control" placeholder="Search courses...">-->
+<!--        <button class="btn btn-primary">Search</button>-->
+<!--    </form>-->
+
+<!--    <div class="row">-->
+<!--        <div th:each="course : ${courses}" class="col-md-4 mb-4">-->
+<!--            <div class="card shadow-sm h-100">-->
+<!--                <div class="card-body">-->
+<!--                    <h4 th:text="${course.title}"></h4>-->
+<!--                    <p th:text="${course.description}"></p>-->
+
+<!--                    <span class="badge bg-success"-->
+<!--                          th:text="${course.price == 0 ? 'FREE' : 'EGP ' + course.price}">-->
+<!--                    </span>-->
+
+<!--                    <div class="mt-3">-->
+<!--                        <a th:href="@{/student/course/{id}(id=${course.id})}"-->
+<!--                           class="btn btn-outline-primary">View</a>-->
+
+<!--                        <form th:action="@{/student/enroll/{id}(id=${course.id})}"-->
+<!--                              method="post" class="d-inline">-->
+<!--                            <button class="btn btn-primary">Enroll</button>-->
+<!--                        </form>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Pagination &ndash;&gt;-->
+<!--    <div class="text-center mt-4">-->
+<!--        <a th:if="${currentPage > 0}"-->
+<!--           th:href="@{/student/courses(page=${currentPage-1}, keyword=${keyword})}"-->
+<!--           class="btn btn-secondary">Prev</a>-->
+
+<!--        <span class="mx-2">Page <span th:text="${currentPage+1}"></span> of-->
+<!--            <span th:text="${totalPages}"></span>-->
+<!--        </span>-->
+
+<!--        <a th:if="${currentPage + 1 < totalPages}"-->
+<!--           th:href="@{/student/courses(page=${currentPage+1}, keyword=${keyword})}"-->
+<!--           class="btn btn-secondary">Next</a>-->
+<!--    </div>-->
+
+<!--</section>-->
+
+<section layout:fragment="content" class="container py-5 aminah-animate">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">
+                <i class="fa-solid fa-graduation-cap me-2 text-primary"></i>
+                Aminah Courses
+            </h2>
+            <p class="text-muted mb-0">Learn. Grow. Progress with confidence.</p>
+        </div>
+    </div>
+
+    <!-- Search & Filters -->
+    <form method="get" class="row g-2 mb-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text bg-white">
+                    <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                </span>
+                <input type="text" name="keyword" th:value="${keyword}"
+                       class="form-control"
+                       placeholder="Search courses, skills, instructors...">
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <select class="form-select" name="level">
+                <option value="">All Levels</option>
+                <option>Beginner</option>
+                <option>Intermediate</option>
+                <option>Advanced</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <button class="btn btn-primary w-100">
+                <i class="fa-solid fa-filter me-1"></i> Filter
+            </button>
+        </div>
     </form>
 
+    <!-- Courses Grid -->
     <div class="row">
-        <div th:each="course : ${courses}" class="col-md-4 mb-4">
-            <div class="card shadow-sm h-100">
+        <div th:each="course : ${courses}" class="col-lg-4 col-md-6 mb-4">
+            <div class="card course-card h-100">
+
+                <!-- Course Header -->
                 <div class="card-body">
-                    <h4 th:text="${course.title}"></h4>
-                    <p th:text="${course.description}"></p>
 
-                    <span class="badge bg-success"
-                          th:text="${course.price == 0 ? 'FREE' : 'EGP ' + course.price}">
-                    </span>
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-semibold mb-0" th:text="${course.title}"></h5>
 
-                    <div class="mt-3">
-                        <a th:href="@{/student/course/{id}(id=${course.id})}"
-                           class="btn btn-outline-primary">View</a>
-
-                        <form th:action="@{/student/enroll/{id}(id=${course.id})}"
-                              method="post" class="d-inline">
-                            <button class="btn btn-primary">Enroll</button>
-                        </form>
+                        <span class="badge"
+                              th:classappend="${course.price == 0 ? 'bg-success' : 'bg-primary'}"
+                              th:text="${course.price == 0 ? 'FREE' : 'EGP ' + course.price}">
+                        </span>
                     </div>
+
+                    <p class="text-muted small mb-3"
+                       th:text="${course.description}">
+                        Course description...
+                    </p>
+
+                    <!-- Course Meta -->
+                    <div class="d-flex flex-wrap gap-3 small text-muted mb-3">
+
+<!--                        <span>-->
+<!--                            <i class="fa-regular fa-clock me-1"></i>-->
+<!--                            <span th:text="${course.durationHours + ' hrs'}"></span>-->
+<!--                        </span>-->
+
+                        <span>
+                            <i class="fa-solid fa-layer-group me-1"></i>
+                            <span th:text="${course.level}"></span>
+                        </span>
+
+                        <span>
+                            <i class="fa-solid fa-user-tie me-1"></i>
+                            <span th:text="${course.authorName}"></span>
+                        </span>
+                    </div>
+
+                    <!-- Progress (if enrolled) -->
+<!--                    <div th:if="${course.user.enrolled}" class="mb-3">-->
+                        <div class="progress" style="height: 7px;">
+                            <div class="progress-bar"
+                                 role="progressbar"
+                                 th:style="'width:' + ${course.progress} + '%'"
+                                 th:text="${course.progress + '%'}">
+                            </div>
+                        </div>
+<!--                    </div>-->
+
+                </div>
+
+                <!-- Card Actions -->
+                <div class="card-footer bg-transparent border-0 d-flex gap-2">
+
+                    <a th:href="@{/student/course/{id}(id=${course.id})}"
+                       class="btn btn-outline-primary w-100">
+                        <i class="fa-solid fa-eye me-1"></i> View
+                    </a>
+
+<!--                    <form th:if="${!course.enrolled}"-->
+<!--                          th:action="@{/student/enroll/{id}(id=${course.id})}"-->
+<!--                          method="post" class="w-100">-->
+<!--                        <button class="btn btn-primary w-100">-->
+<!--                            <i class="fa-solid fa-circle-plus me-1"></i>-->
+<!--                            Enroll-->
+<!--                        </button>-->
+<!--                    </form>-->
+
+<!--                    <button th:if="${course.enrolled}"-->
+<!--                            class="btn btn-success w-100" disabled>-->
+<!--                        <i class="fa-solid fa-check me-1"></i> Enrolled-->
+<!--                    </button>-->
+
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Pagination -->
-    <div class="text-center mt-4">
-        <a th:if="${currentPage > 0}"
-           th:href="@{/student/courses(page=${currentPage-1}, keyword=${keyword})}"
-           class="btn btn-secondary">Prev</a>
+    <nav class="pagination-aminah mt-4">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                <a class="page-link"
+                   th:href="@{/student/courses(page=${currentPage-1}, keyword=${keyword})}">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </a>
+            </li>
 
-        <span class="mx-2">Page <span th:text="${currentPage+1}"></span> of
-            <span th:text="${totalPages}"></span>
-        </span>
+            <li class="page-item active">
+                <span class="page-link"
+                      th:text="${currentPage + 1} + ' / ' + ${totalPages}">
+                </span>
+            </li>
 
-        <a th:if="${currentPage + 1 < totalPages}"
-           th:href="@{/student/courses(page=${currentPage+1}, keyword=${keyword})}"
-           class="btn btn-secondary">Next</a>
-    </div>
+            <li class="page-item"
+                th:classappend="${currentPage + 1 >= totalPages ? 'disabled' : ''}">
+                <a class="page-link"
+                   th:href="@{/student/courses(page=${currentPage+1}, keyword=${keyword})}">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
 
 </section>
+
 </html>

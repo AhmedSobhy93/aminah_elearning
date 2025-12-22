@@ -764,3 +764,15 @@ h2, h4, h5 {
 
 
 .course-header h4 i { font-size: 2rem; }
+
+
+.quiz-question {
+    padding: 15px;
+    border-radius: 8px;
+    background: #f9fafb;
+}
+
+.quiz-feedback {
+    font-size: 0.9rem;
+    font-weight: 600;
+}

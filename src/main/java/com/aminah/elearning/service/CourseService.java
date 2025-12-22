@@ -4,9 +4,7 @@ import com.aminah.elearning.model.Course;
 import com.aminah.elearning.model.Section;
 import com.aminah.elearning.model.Tutorial;
 import com.aminah.elearning.model.User;
-import com.aminah.elearning.repository.CourseRepository;
-import com.aminah.elearning.repository.TutorialRepository;
-import com.aminah.elearning.repository.UserRepository;
+import com.aminah.elearning.repository.*;
 import com.aminah.elearning.utils.FileUploadUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,7 +25,7 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final TutorialRepository tutorialRepository;
     private final UserRepository userRepository;
-
+    private final TutorialProgressRepository tutorialProgressRepository;
 
     public Course getCourse(Long id) {
         return courseRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Course not found"));
@@ -55,9 +53,25 @@ public class CourseService {
     }
 
 
-//    public List<Course> getPublishedCourses() {
-//        return courseRepository.findByPublishedTrue();
-//    }
+    public Page<Course> getPublishedCourses(Pageable pageable) {
+        return courseRepository.findByPublishedTrue(pageable);
+    }
+
+
+    public int calculateCourseProgress(User user, Course course) {
+
+        long totalTutorials = course.getSections().stream()
+                .flatMap(s -> s.getTutorials().stream())
+                .count();
+
+        if (totalTutorials == 0) return 0;
+
+        long completed = tutorialProgressRepository
+                .countByUserAndTutorial_Section_Course(user, course);
+
+        return (int) ((completed * 100.0) / totalTutorials);
+    }
+
 //    public Tutorial addTutorial(Long sectionId, Tutorial tutorial, MultipartFile file) throws IOException {
 //        Section course = getCourse(courseId);
 //        String path = FileUploadUtil.saveFile("uploads/tutorials", file);

@@ -1,0 +1,93 @@
+<!--<div th:fragment="modal">-->
+<!--<div class="modal fade" id="modalViewTutorial" tabindex="-1">-->
+<!--    <div class="modal-dialog modal-lg">-->
+<!--        <div class="modal-content rounded-4 shadow-lg border-0">-->
+
+<!--            <div class="modal-header bg-aminah text-white">-->
+<!--                <h5 class="modal-title fw-bold" id="viewTutorialTitle"></h5>-->
+<!--                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>-->
+<!--            </div>-->
+
+<!--            <div class="modal-body">-->
+
+<!--                &lt;!&ndash; File preview &ndash;&gt;-->
+<!--                <div id="viewFileSection" class="d-none">-->
+<!--                    <div id="viewFileContainer" class="mt-2"></div>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Article &ndash;&gt;-->
+<!--                &lt;!&ndash; Article &ndash;&gt;-->
+<!--                <div id="viewArticleSection" class="d-none">-->
+<!--                    <div id="viewArticleContent"-->
+<!--                         class="p-3 bg-light rounded border small"-->
+<!--                         style="overflow:hidden; max-width:100%;">-->
+<!--                    </div>-->
+<!--                </div>-->
+
+
+
+<!--                &lt;!&ndash; Quiz &ndash;&gt;-->
+<!--                <div id="viewQuizSection" class="d-none">-->
+<!--                    <div id="viewQuizQuestionsContainer"></div>-->
+<!--                </div>-->
+
+<!--            </div>-->
+
+<!--            <div class="modal-footer">-->
+<!--                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+<!--            </div>-->
+
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<!--</div>-->
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+
+<!--<div th:fragment="modal">-->
+
+<!--    <div class="modal fade" id="tutorialModal" tabindex="-1">-->
+<!--        <div class="modal-dialog modal-xl">-->
+<!--            <div class="modal-content">-->
+
+<!--                <div class="modal-header">-->
+<!--                    <h5 class="modal-title" id="tutorialModalLabel">Tutorial</h5>-->
+<!--                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>-->
+<!--                </div>-->
+
+<!--                <div class="modal-body" id="tutorialContent">-->
+<!--                    <div class="text-center text-muted">Loading tutorial...</div>-->
+<!--                </div>-->
+
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--</div>-->
+<!--</html>-->
+
+<div th:fragment="modal">
+    <div class="modal" id="tutorialModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tutorialModalTitle"></h5>
+                </div>
+                <div class="modal-body" id="tutorialContent">
+                    <div id="viewFileContainer"></div>
+                    <div id="viewFileSection" class="d-none"></div>
+
+                    <div id="viewArticleContent"></div>
+                    <div id="viewArticleSection" class="d-none"></div>
+
+                    <div id="viewQuizQuestionsContainer"></div>
+                    <div id="viewQuizSection" class="d-none">
+                        <button id="submitQuizBtn">Submit</button>
+                        <div id="quizResult"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -30,9 +30,9 @@ public class Tutorial {
     @JoinColumn(name = "section_id")
     private Section section;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id")
-    private Course course;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "course_id")
+//    private Course course;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -40,8 +40,7 @@ public class Tutorial {
 
     private String status;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
+    @Column(columnDefinition = "TEXT")
     private String articleContent; // ARTICLE content
 
     @OneToMany(mappedBy = "tutorial", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -55,5 +54,10 @@ public class Tutorial {
         quizQuestions.add(question);
         question.setTutorial(this);
     }
+    @Column(nullable = false)
+    private boolean preview = false;
+
+    @Transient
+    private boolean read;
 
 }
