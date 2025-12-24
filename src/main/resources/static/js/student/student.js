@@ -321,171 +321,301 @@
 // });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 document.addEventListener("DOMContentLoaded", () => {
-
-    let tutorialCompleted = false;
-    let currentTutorialId = null;
 
     const offcanvasEl = document.getElementById("tutorialOffcanvas");
     const offcanvasTitle = document.getElementById("offcanvasLabel");
     const offcanvasBody = document.getElementById("offcanvasContent");
 
-    const offcanvas = new bootstrap.Offcanvas(offcanvasEl);
+    // ✅ Stop execution if page has no offcanvas (prevents crashes on other pages)
+    if (!offcanvasEl || !offcanvasBody) {
+        console.warn("Tutorial offcanvas not found on this page");
+        return;
+    }
 
+    let tutorialCompleted = false;
+    let currentTutorialId = null;
+
+    // ✅ Prevent double initialization
+    let offcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
+    if (!offcanvas) {
+        offcanvas = new bootstrap.Offcanvas(offcanvasEl);
+
+    }
     const markCompletedOnce = (id) => {
         if (tutorialCompleted) return;
         tutorialCompleted = true;
+
         console.log("Tutorial completed:", id);
-        if (typeof completeTutorial === "function") completeTutorial(id);
+
+        if (typeof completeTutorial === "function") {
+            completeTutorial(id);
+        }
+
+        // ✅ UPDATE UI IMMEDIATELY
+        markTutorialAsReadInUI(id);
     };
+
+    // const markCompletedOnce = (id) => {
+    //     if (tutorialCompleted) return;
+    //     tutorialCompleted = true;
+    //     console.log("Tutorial completed:", id);
+    //     if (typeof completeTutorial === "function") {
+    //         completeTutorial(id);
+    //     }
+    // };
+
+    function markTutorialAsReadInUI(tutorialId) {
+        const btn = document.querySelector(
+            `.view-tutorial-btn[data-tut-id="${tutorialId}"]`
+        );
+        if (!btn) return;
+
+        const card = btn.closest(".tutorial-card");
+        if (!card) return;
+
+        const badgeContainer = card.querySelector(".small.text-muted");
+        if (!badgeContainer) return;
+
+        badgeContainer.innerHTML = `
+        <span class="badge bg-success">
+            <i class="fa-solid fa-check-circle"></i> Read
+        </span>
+    `;
+
+        card.classList.remove("opacity-50");
+    }
+    // const markCompletedOnce = (id) => {
+    //     if (tutorialCompleted) return;
+    //     tutorialCompleted = true;
+    //
+    //     console.log("Tutorial completed:", id);
+    //
+    //     if (typeof completeTutorial === "function") {
+    //         completeTutorial(id);
+    //     }
+    //
+    //     // ✅ UPDATE UI IMMEDIATELY
+    //     markTutorialAsReadInUI(id);
+    // };
 
     const resetOffcanvas = () => {
         tutorialCompleted = false;
         currentTutorialId = null;
-        offcanvasTitle.textContent = "";
-        ["#viewFileContainer","#viewArticleContent","#viewQuizQuestionsContainer","#quizResult"].forEach(sel => {
+
+        if (offcanvasTitle) offcanvasTitle.textContent = "";
+
+        [
+            "#viewFileContainer",
+            "#viewArticleContent",
+            "#viewQuizQuestionsContainer",
+            "#quizResult"
+        ].forEach(sel => {
             const el = offcanvasBody.querySelector(sel);
             if (el) el.innerHTML = "";
         });
-        ["#viewFileSection","#viewArticleSection","#viewQuizSection"].forEach(sel => {
-            offcanvasBody.querySelector(sel).classList.add("d-none");
+
+        [
+            "#viewFileSection",
+            "#viewArticleSection",
+            "#viewQuizSection"
+        ].forEach(sel => {
+            const el = offcanvasBody.querySelector(sel);
+            if (el) el.classList.add("d-none");
         });
     };
 
-    document.querySelectorAll(".view-tutorial-btn").forEach(btn => {
-        btn.addEventListener("click", async e => {
-            e.preventDefault();
-            resetOffcanvas();
+    // ✅ Event delegation (works even if buttons re-render)
+    document.addEventListener("click", async (e) => {
+        const btn = e.target.closest(".view-tutorial-btn");
+        if (!btn) return;
 
-            currentTutorialId = btn.dataset.tutId;
-            offcanvasTitle.textContent = btn.closest(".tutorial-card").querySelector("b").textContent;
+        e.preventDefault();
+        resetOffcanvas();
+        e.stopPropagation();
 
-            const fileContainer = offcanvasBody.querySelector("#viewFileContainer");
-            fileContainer.innerHTML = `<div class="text-center py-4">
-                <i class="fa-solid fa-spinner fa-spin fa-2x text-primary"></i>
-            </div>`;
+        currentTutorialId = btn.dataset.tutId;
+        if (!currentTutorialId) return;
 
-            try {
-                const res = await fetch(`/student/tutorial/${currentTutorialId}/json`);
-                if (!res.ok) throw new Error("Failed to fetch tutorial");
-                const t = await res.json();
+        if (offcanvasTitle) {
+            offcanvasTitle.textContent =
+                btn.closest(".tutorial-card")?.querySelector("b")?.textContent || "Tutorial";
+        }
 
-                // VIDEO
-                if (t.type === "VIDEO") {
-                    const container = offcanvasBody.querySelector("#viewFileContainer");
-                    container.innerHTML = `<video id="tutorialVideo" class="w-100" controls>
-                        <source src="${t.filePath}" type="video/mp4">
-                    </video>`;
-                    offcanvasBody.querySelector("#viewFileSection").classList.remove("d-none");
+        // Optional: remember active button
+        document.querySelectorAll(".view-tutorial-btn")
+            .forEach(b => b.removeAttribute("data-active"));
+        btn.setAttribute("data-active", "true");
+
+
+        offcanvas.show();
+
+        const fileContainer = offcanvasBody.querySelector("#viewFileContainer");
+        if (fileContainer) {
+            fileContainer.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="fa-solid fa-spinner fa-spin fa-2x text-primary"></i>
+                </div>`;
+        }
+
+        try {
+            const res = await fetch(`/student/tutorial/${currentTutorialId}/json`);
+            if (!res.ok) throw new Error("Failed to fetch tutorial");
+            const t = await res.json();
+
+            /* ================= VIDEO ================= */
+            if (t.type === "VIDEO") {
+                const container = offcanvasBody.querySelector("#viewFileContainer");
+                const section = offcanvasBody.querySelector("#viewFileSection");
+
+                if (container && section) {
+                    container.innerHTML = `
+                        <video id="tutorialVideo" class="w-100" controls
+                               controlsList="nodownload"
+                               disablePictureInPicture>
+                            <source src="${t.filePath}" type="video/mp4">
+                        </video>`;
+                    section.classList.remove("d-none");
 
                     const video = document.getElementById("tutorialVideo");
-                    video.addEventListener("ended", () => markCompletedOnce(t.id), { once: true });
+                    video?.addEventListener("ended", () => markCompletedOnce(t.id), { once: true });
                 }
+            }
 
-                // PDF
-                if (t.type === "PDF") {
-                    const container = offcanvasBody.querySelector("#viewFileContainer");
-                    container.innerHTML = `<embed src="${t.filePath}" type="application/pdf" style="width:100%; height:60vh;">`;
-                    offcanvasBody.querySelector("#viewFileSection").classList.remove("d-none");
-                    // auto-complete after 3s
+            /* ================= PDF ================= */
+            if (t.type === "PDF") {
+                const container = offcanvasBody.querySelector("#viewFileContainer");
+                const section = offcanvasBody.querySelector("#viewFileSection");
+
+                if (container && section) {
+                    container.innerHTML = `
+                        <embed src="${t.filePath}" type="application/pdf"
+                               style="width:100%; height:60vh;">`;
+                    section.classList.remove("d-none");
                     setTimeout(() => markCompletedOnce(t.id), 3000);
                 }
+            }
 
-                // ARTICLE
-                if (t.type === "ARTICLE") {
-                    const article = offcanvasBody.querySelector("#viewArticleContent");
+            /* ================= ARTICLE ================= */
+            if (t.type === "ARTICLE") {
+                const article = offcanvasBody.querySelector("#viewArticleContent");
+                const section = offcanvasBody.querySelector("#viewArticleSection");
+
+                if (article && section) {
                     article.innerHTML = t.articleContent;
-                    offcanvasBody.querySelector("#viewArticleSection").classList.remove("d-none");
+                    section.classList.remove("d-none");
 
-                    const markIfEnd = () => markCompletedOnce(t.id);
-                    article.addEventListener("scroll", () => {
-                        if (article.scrollTop + article.clientHeight >= article.scrollHeight - 5) markIfEnd();
-                    });
-                    // optional: auto-complete after timeout
-                    setTimeout(markIfEnd, 8000);
-                }
-
-                // QUIZ
-                if (t.type === "QUIZ") {
-                    const quizContainer = offcanvasBody.querySelector("#viewQuizQuestionsContainer");
-                    quizContainer.innerHTML = "";
-                    t.quizQuestions.forEach((q,i) => {
-                        const div = document.createElement("div");
-                        div.className = "mb-3 p-3 border rounded";
-                        div.innerHTML = `<strong>Q${i+1}. ${q.question}</strong>
-                            <ul class="list-group mt-2">
-                            ${q.options.map((opt,idx) => `<li class="list-group-item">
-                                <input type="radio" name="q${i}" value="${idx}"> ${String.fromCharCode(65+idx)}. ${opt}
-                            </li>`).join('')}
-                            </ul>
-                            <div class="quiz-feedback mt-1"></div>`;
-                        quizContainer.appendChild(div);
-                    });
-                    offcanvasBody.querySelector("#viewQuizSection").classList.remove("d-none");
-
-                    const submitBtn = offcanvasBody.querySelector("#submitQuizBtn");
-                    const resultDiv = offcanvasBody.querySelector("#quizResult");
-                    const retryBtn = offcanvasBody.querySelector("#retryBtn");
-
-                    submitBtn.onclick = () => {
-                        let score = 0;
-                        t.quizQuestions.forEach((q,i) => {
-                            const sel = offcanvasBody.querySelector(`input[name=q${i}]:checked`);
-                            if (sel && parseInt(sel.value) === q.correctOptionIndex) score++;
-                        });
-                        const total = t.quizQuestions.length;
-                        if (score === total) {
-                            resultDiv.innerHTML = `<div class="alert alert-success">All correct! Tutorial completed.</div>`;
+                    const checkEnd = () => {
+                        if (article.scrollTop + article.clientHeight >= article.scrollHeight - 5) {
                             markCompletedOnce(t.id);
-                        } else {
-                            resultDiv.innerHTML = `<div class="alert alert-warning">Score ${score}/${total}. Try again!</div>`;
-                            retryBtn.classList.remove("d-none");
                         }
                     };
-
-                    retryBtn.onclick = () => {
-                        offcanvasBody.querySelector("#quizForm").reset();
-                        offcanvasBody.querySelectorAll(".quiz-feedback").forEach(f=>f.innerHTML='');
-                        resultDiv.innerHTML = '';
-                        retryBtn.classList.add("d-none");
-                    };
+                    article.addEventListener("scroll", checkEnd);
+                    setTimeout(checkEnd, 8000);
                 }
-
-                offcanvas.show();
-
-            } catch (err) {
-                offcanvasBody.innerHTML = `<div class="alert alert-danger">Failed to load tutorial</div>`;
-                console.error(err);
             }
-        });
+
+            /* ================= QUIZ ================= */
+            if (t.type === "QUIZ") {
+                const quizContainer = offcanvasBody.querySelector("#viewQuizQuestionsContainer");
+                const quizSection = offcanvasBody.querySelector("#viewQuizSection");
+
+                if (!quizContainer || !quizSection) return;
+
+                quizContainer.innerHTML = "";
+
+                t.quizQuestions.forEach((q, i) => {
+                    const div = document.createElement("div");
+                    div.className = "mb-3 p-3 border rounded";
+                    div.innerHTML = `
+                        <strong>Q${i + 1}. ${q.question}</strong>
+                        <ul class="list-group mt-2">
+                            ${q.options.map((opt, idx) => `
+                                <li class="list-group-item">
+                                    <input type="radio" name="q${i}" value="${idx}">
+                                    ${String.fromCharCode(65 + idx)}. ${opt}
+                                </li>`).join("")}
+                        </ul>`;
+                    quizContainer.appendChild(div);
+                });
+
+                quizSection.classList.remove("d-none");
+
+                const submitBtn = offcanvasBody.querySelector("#submitQuizBtn");
+                const resultDiv = offcanvasBody.querySelector("#quizResult");
+
+                submitBtn?.addEventListener("click", () => {
+                    let score = 0;
+                    t.quizQuestions.forEach((q, i) => {
+                        const sel = offcanvasBody.querySelector(`input[name=q${i}]:checked`);
+                        if (sel && +sel.value === q.correctOptionIndex) score++;
+                    });
+
+                    if (resultDiv) {
+                        resultDiv.innerHTML =
+                            score === t.quizQuestions.length
+                                ? `<div class="alert alert-success">All correct! Tutorial completed.</div>`
+                                : `<div class="alert alert-warning">Score ${score}/${t.quizQuestions.length}</div>`;
+                    }
+
+                    if (score === t.quizQuestions.length) {
+                        markCompletedOnce(t.id);
+                    }
+                });
+            }
+
+        } catch (err) {
+            console.error(err);
+            if (offcanvasBody) {
+                offcanvasBody.innerHTML =
+                    `<div class="alert alert-danger">Failed to load tutorial</div>`;
+            }
+        }
     });
 
+// ========================
+//    MARK TUTORIAL COMPLETED
+//    ========================= */
+//
+
+
+async function completeTutorial(tutorialId) {
+
+    console.log("Tutorial completed:", tutorialId);
+
+    const csrf = getCsrf();
+
+    const res = await fetch(`/student/tutorial/${tutorialId}/complete`, {
+        method: "POST",
+        headers: {
+            [csrf.header]: csrf.token,
+            "Content-Type": "application/json"
+        }
+    });
+
+    // const data = await res.json();
+    //
+    // if (data.success) {
+    //     location.reload(); // UI refresh (safe & simple)
+    // }
+}
+    function getCsrf() {
+        return {
+            token: document.querySelector('meta[name="_csrf"]').content,
+            header: document.querySelector('meta[name="_csrf_header"]').content
+        };
+    }
+
+    // ✅ Scoped correctly now
     offcanvasEl.addEventListener("hidden.bs.offcanvas", resetOffcanvas);
+
+
 
 });
 
 
 
-
-
-
-
-
-
-
+// });
 
 
 ///////////////////
@@ -648,11 +778,7 @@ document.addEventListener("DOMContentLoaded", () => {
 //     }
 // }
 //
-// function getCsrf() {
-//     return {
-//         token: document.querySelector('meta[name="_csrf"]').content,
-//         header: document.querySelector('meta[name="_csrf_header"]').content
-//     };
+
 // }
 //
 // /* =========================

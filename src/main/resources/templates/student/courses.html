@@ -232,8 +232,8 @@
                     <!-- Progress (if enrolled) -->
 <!--                    <div th:if="${course.user.enrolled}" class="mb-3">-->
                         <div class="progress" style="height: 7px;">
-                            <div class="progress-bar"
-                                 role="progressbar"
+
+                            <div class="progress-bar bg-success"
                                  th:style="'width:' + ${course.progress} + '%'"
                                  th:text="${course.progress + '%'}">
                             </div>
@@ -296,5 +296,7 @@
     </nav>
 
 </section>
+
+<script th:src="@{/js/student/student.js}"></script>
 
 </html>

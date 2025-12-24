@@ -103,7 +103,7 @@ public class StudentController {
                 CourseEnrollment enrollment = enrollmentService.findEnrollment(user, course.getId());
                 if (enrollment != null) {
                     enrolled = true;
-                    progress = enrollment.getProgressPercentage() != null ? enrollment.getProgressPercentage().intValue() : 0;
+                    progress = courseService.calculateCourseProgress(user, course);
                 }
             }
 
