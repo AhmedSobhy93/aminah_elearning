@@ -1,5 +1,6 @@
 package com.aminah.elearning.controller;
 
+//import com.aminah.elearning.dto.CourseDTOa;
 import com.aminah.elearning.dto.CourseDTO;
 import com.aminah.elearning.dto.QuizQuestionDto;
 import com.aminah.elearning.dto.TutorialDto;
@@ -8,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 //import jakarta.transaction.Transactional;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.aminah.elearning.model.*;
@@ -26,7 +26,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/dr")
@@ -136,18 +135,24 @@ public class DoctorController {
     @GetMapping("/courses/{id}/json")
     @ResponseBody
     public CourseDTO getCourseJson(@PathVariable Long id) {
-
         Course c = courseService.getCourse(id);
+
+        boolean enrolled = false; // compute based on user if needed
+        int durationHours = c.getSections().size();
+        String level = c.getLevel() != null ? c.getLevel().name() : "N/A";
+        int progress = 0; // compute from CourseEnrollment if needed
 
         return new CourseDTO(
                 c.getId(),
                 c.getTitle(),
-                c.getCourseName(),
+                c.getDescription(),
                 c.getPrice(),
-                c.isPublished(),
-                c.getVideoUrl(),
-                c.getDescription()
+                enrolled,
+                durationHours,
+                level,
+                progress
         );
+
     }
 
 
@@ -268,6 +273,7 @@ public class DoctorController {
             @RequestParam TutorialType type,
             @RequestParam(required = false) MultipartFile file,
             @RequestParam(required = false) String articleContent,
+            @RequestParam(required = false) Boolean isPreview,
             @RequestParam(required = false) String quizQuestionsJson,
             @RequestParam(required = false) Long tutorialId,
             RedirectAttributes ra,
@@ -286,6 +292,7 @@ public class DoctorController {
 
             t.setTitle(title);
             t.setType(type);
+            t.setPreview(Boolean.TRUE.equals(isPreview));
 
             // 3️⃣ Handle file uploads
             if ((type == TutorialType.VIDEO || type == TutorialType.PDF) && file != null && !file.isEmpty()) {

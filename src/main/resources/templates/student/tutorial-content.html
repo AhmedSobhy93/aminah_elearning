@@ -1,0 +1,90 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org"-->
+<!--      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"-->
+<!--      layout:decorate="~{layout/base}">-->
+<!--<section layout:fragment="content" class="container py-5">-->
+
+<!--<div th:fragment="content">-->
+
+
+<!--    <input type="hidden" id="tutorialId" th:value="${tutorial.id}"/>-->
+<!--    <h2 th:text="${tutorial.title}" class="mb-4"></h2>-->
+
+<!--    <div th:switch="${tutorial.type}">-->
+
+<!--        &lt;!&ndash; VIDEO &ndash;&gt;-->
+<!--        <div th:case="'VIDEO'">-->
+<!--            <video id="tutorialVideo"-->
+<!--                   controls-->
+<!--                   class="w-100"-->
+<!--                   th:data-tutorial-id="${tutorial.id}">-->
+<!--                <source th:src="@{${tutorial.filePath}}" type="video/mp4"/>-->
+<!--            </video>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; PDF &ndash;&gt;-->
+<!--        <div th:if="${tutorial.type == 'PDF'}"-->
+<!--             class="pdf-container"-->
+<!--             th:data-tutorial-id="${tutorial.id}"-->
+<!--             style="height:600px; overflow-y:auto;">-->
+
+<!--            <iframe th:src="@{${tutorial.filePath}}"-->
+<!--                    style="width:100%; height:100%; border:none;"></iframe>-->
+<!--        </div>-->
+
+
+<!--        &lt;!&ndash; ARTICLE &ndash;&gt;-->
+<!--        <div th:case="'ARTICLE'" id="articleContainer"-->
+<!--             th:data-tutorial-id="${tutorial.id}"-->
+<!--             style="max-height: 500px; overflow-y: auto;">-->
+<!--            <div th:utext="${tutorial.articleContent}"></div>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; QUIZ &ndash;&gt;-->
+<!--        <div th:case="'QUIZ'">-->
+<!--            <form id="quizForm">-->
+<!--                <div th:each="q : ${tutorial.quizQuestions}" th:data-qid="${q.id}">-->
+<!--                    <p th:text="${q.question}"></p>-->
+<!--                    <div th:each="opt, i : ${q.options}">-->
+<!--                        <label>-->
+<!--                            <input type="radio"-->
+<!--                                   th:name="'q_' + ${q.id}"-->
+<!--                                   th:value="${i.index}">-->
+<!--                            <span th:text="${opt}"></span>-->
+<!--                        </label>-->
+<!--                    </div>-->
+<!--                    <div class="quiz-feedback"></div>-->
+<!--                </div>-->
+
+<!--                <button type="button"-->
+<!--                        class="btn btn-primary"-->
+<!--                        th:onclick="'submitQuiz(' + ${tutorial.id} + ')'">-->
+<!--                    Submit Quiz-->
+<!--                </button>-->
+<!--            </form>-->
+
+<!--            <div id="quizResult"></div>-->
+<!--            <button id="retryBtn" class="btn btn-warning d-none" onclick="retryQuiz()">Retry</button>-->
+<!--        </div>-->
+
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Completion Button &ndash;&gt;-->
+<!--    <div class="mt-4">-->
+<!--        <button id="markCompleteBtn"-->
+<!--                th:if="${!progress.completed}"-->
+<!--                class="btn btn-primary">-->
+<!--            Mark as Completed-->
+<!--        </button>-->
+
+<!--        <span th:if="${progress.completed}" class="badge bg-success">-->
+<!--            Completed ✔-->
+<!--        </span>-->
+<!--    </div>-->
+
+<!--    </div>-->
+<!--</section>-->
+
+<!--<script src="/js/student-tutorial.js"></script>-->
+
+<!--</html>-->

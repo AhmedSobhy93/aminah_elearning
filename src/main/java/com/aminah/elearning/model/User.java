@@ -68,26 +68,28 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
-
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"coursesAuthored", "enrollments"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     private String fullName;
-
     private String phoneNumber;
 
     @Column(nullable = false)
@@ -97,11 +99,9 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    // Courses authored by this user
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Course> coursesAuthored = new ArrayList<>();
 
-    // Enrollments of this user
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseEnrollment> enrollments = new ArrayList<>();
 

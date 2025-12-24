@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<!--<section layout:fragment="content" class="container py-5">-->
+<!--    <meta name="_csrf" content="${_csrf.token}">-->
+<!--    <meta name="_csrf_header" content="${_csrf.headerName}">-->
+
+<!--    &lt;!&ndash; Course Info &ndash;&gt;-->
+<!--    <div class="mb-4">-->
+<!--        <h2 th:text="${course.title}" class="mb-2 display-6"></h2>-->
+<!--        <p th:text="${course.description}" class="text-muted"></p>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Course Progress &ndash;&gt;-->
+<!--    <div class="mb-4" th:if="${course.enrolled}">-->
+<!--        <label class="fw-semibold">Course Progress</label>-->
+<!--        <div class="progress shadow-light rounded">-->
+<!--            <div class="progress-bar bg-success" role="progressbar"-->
+<!--                 th:style="'width:' + ${course.progress} + '%;'"-->
+<!--                 th:text="${course.progress} + '%'">-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Sections Accordion &ndash;&gt;-->
+<!--    <div class="accordion" id="sectionsAccordion">-->
+<!--        <div th:each="section, secStat : ${course.sections}" class="accordion-item mb-3 section-card">-->
+
+<!--            &lt;!&ndash; Section Header with progress &ndash;&gt;-->
+<!--            <h2 class="accordion-header" th:id="'heading'+${section.id}">-->
+<!--                <button class="accordion-button d-flex justify-content-between align-items-center"-->
+<!--                        type="button" data-bs-toggle="collapse"-->
+<!--                        th:attr="data-bs-target='#sec'+${section.id}">-->
+<!--                    <span th:text="${section.title}"></span>-->
+<!--                    <span class="small text-muted">-->
+<!--                        <i class="fa-solid fa-circle-check text-success me-1" th:if="${section.progress == 100}"></i>-->
+<!--                        <i class="fa-solid fa-spinner text-warning me-1" th:if="${section.progress > 0 and section.progress < 100}"></i>-->
+<!--                        <i class="fa-solid fa-circle-xmark text-danger me-1" th:if="${section.progress == 0}"></i>-->
+<!--                        <span th:text="${section.progress + '%'}"></span>-->
+<!--                    </span>-->
+<!--                </button>-->
+<!--            </h2>-->
+
+<!--            <div th:id="'sec'+${section.id}"-->
+<!--                 class="accordion-collapse collapse"-->
+<!--                 th:classappend="${secStat.index == 0} ? ' show'">-->
+<!--                <div class="accordion-body">-->
+
+<!--                    &lt;!&ndash; Tutorials List &ndash;&gt;-->
+<!--                    <div th:each="tut : ${section.tutorials}"-->
+<!--                         class="d-flex justify-content-between align-items-center p-3 mb-2 border rounded tutorial-card"-->
+<!--                         th:classappend="${!course.enrolled and !tut.preview} ? ' opacity-50'">-->
+
+<!--                        &lt;!&ndash; Tutorial Info &ndash;&gt;-->
+<!--                        <div class="d-flex align-items-center gap-2">-->
+<!--                            <i class="me-2" th:switch="${tut.type}">-->
+<!--                                <span th:case="'VIDEO'" class="fa-solid fa-play-circle text-primary"></span>-->
+<!--                                <span th:case="'PDF'" class="fa-solid fa-file-pdf text-danger"></span>-->
+<!--                                <span th:case="* " class="fa-solid fa-file text-secondary"></span>-->
+<!--                            </i>-->
+
+<!--                            <div>-->
+<!--                                <b th:text="${tut.title}"></b>-->
+<!--                                <div class="small text-muted">-->
+<!--                <span th:if="${tut.preview}">-->
+<!--                    <i class="fa-solid fa-eye text-success"></i> Preview-->
+<!--                </span>-->
+<!--                                    <span th:if="${!tut.preview and !course.enrolled}">-->
+<!--                    <i class="fa-solid fa-lock text-danger"></i> Locked-->
+<!--                </span>-->
+<!--                                    <span th:if="${tut.read}" class="badge bg-success read-badge">-->
+<!--                    <i class="fa-solid fa-check-circle"></i> Read-->
+<!--                </span>-->
+<!--                                    <span th:if="${!tut.read}" class="badge bg-secondary read-badge">Not Read</span>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+<!--                        &lt;!&ndash; Actions &ndash;&gt;-->
+<!--                        <div>-->
+<!--&lt;!&ndash;                            <button type="button"&ndash;&gt;-->
+<!--&lt;!&ndash;                                    class="btn btn-sm btn-primary view-tutorial-btn"&ndash;&gt;-->
+<!--&lt;!&ndash;                                    th:if="${course.enrolled or tut.preview}"&ndash;&gt;-->
+<!--&lt;!&ndash;                                    th:attr="data-bs-toggle='modal', data-bs-target='#tutorialModal'"&ndash;&gt;-->
+<!--&lt;!&ndash;                                    th:data-tut-id="${tut.id}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                View&ndash;&gt;-->
+<!--&lt;!&ndash;                            </button>&ndash;&gt;-->
+<!--                            <button type="button"-->
+<!--                                    class="btn btn-sm btn-primary view-tutorial-btn"-->
+<!--                                    th:if="${course.enrolled or tut.preview}"-->
+<!--                                    th:data-tut-id="${tut.id}">-->
+<!--                                View-->
+<!--                            </button>-->
+
+
+<!--                            <button class="btn btn-sm btn-secondary" disabled-->
+<!--                                    th:if="${!course.enrolled and !tut.preview}">-->
+<!--                                <i class="fa-solid fa-lock"></i> Locked-->
+<!--                            </button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                </div>-->
+<!--            </div>-->
+
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div class="offcanvas offcanvas-end" tabindex="-1" id="tutorialOffcanvas" aria-labelledby="offcanvasLabel">-->
+<!--        <div class="offcanvas-header">-->
+<!--            <h5 class="offcanvas-title" id="offcanvasLabel">Tutorial</h5>-->
+<!--            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>-->
+<!--        </div>-->
+<!--        <div class="offcanvas-body" id="offcanvasContent">-->
+<!--            <div id="viewFileSection" class="mb-3 d-none">-->
+<!--                <div id="viewFileContainer"></div>-->
+<!--            </div>-->
+<!--            <div id="viewArticleSection" class="mb-3 d-none">-->
+<!--                <div id="viewArticleContent" class="article-content" style="height:60vh; overflow-y:auto;"></div>-->
+<!--            </div>-->
+<!--            <div id="viewQuizSection" class="mb-3 d-none">-->
+<!--                <div id="viewQuizQuestionsContainer"></div>-->
+<!--                <div class="mt-2">-->
+<!--                    <button class="btn btn-primary" id="submitQuizBtn">Submit Quiz</button>-->
+<!--                </div>-->
+<!--                <div id="quizResult" class="mt-2"></div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+
+<!--    <div th:replace="~{student/modals/modalViewTutorial :: modal}"></div>-->
+
+<!--</section>-->
+
+
+<section layout:fragment="content" class="container py-5">
+
+    <div class="section-card aminah-animate">
+
+        <!-- Course Info -->
+        <div class="text-center mb-4">
+            <h2 class="display-6 section-title-gradient"
+                th:text="${course.title}"></h2>
+
+            <p class="text-muted fs-6"
+               th:text="${course.description}"></p>
+        </div>
+
+        <!-- Course Progress -->
+        <div th:if="${course.enrolled}" class="mb-4">
+            <label class="fw-semibold">Course Progress</label>
+            <div class="progress rounded shadow-light">
+                <div class="progress-bar bg-success"
+                     th:style="'width:' + ${course.progress} + '%'"
+                     th:text="${course.progress + '%'}">
+                </div>
+            </div>
+        </div>
+
+        <!-- Sections -->
+        <div class="accordion" id="sectionsAccordion">
+            <div th:each="section, i : ${course.sections}"
+                 class="accordion-item mb-3">
+
+                <h2 class="accordion-header">
+                    <button class="accordion-button"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            th:attr="data-bs-target='#sec'+${section.id}">
+                        <span th:text="${section.title}"></span>
+                        <span class="small text-muted">
+                                                    <i class="fa-solid fa-circle-check text-success me-1" th:if="${section.progress == 100}"></i>
+                                                    <i class="fa-solid fa-spinner text-warning me-1" th:if="${section.progress > 0 and section.progress < 100}"></i>
+                                                    <i class="fa-solid fa-circle-xmark text-danger me-1" th:if="${section.progress == 0}"></i>
+                                                    <span th:text="${section.progress + '%'}"></span>
+                                                </span>
+<!--                        <span class="small text-muted">-->
+<!--                            <span th:text="${section.progress + '%'}"></span>-->
+<!--                        </span>-->
+                    </button>
+                </h2>
+
+                <div class="accordion-collapse collapse"
+                     th:id="'sec'+${section.id}"
+                     th:classappend="${i.index == 0} ? ' show'">
+
+                    <div class="accordion-body">
+<!--                        <div th:each="tut : ${section.tutorials}"-->
+<!--                             class="tutorial-card d-flex justify-content-between align-items-center p-3 mb-2 rounded">-->
+
+<!--                            <div th:each="tut : ${section.tutorials}"-->
+<!--                                 class="d-flex justify-content-between align-items-center p-3 mb-2 border rounded tutorial-card"-->
+<!--                                 th:classappend="${!course.enrolled and !tut.preview} ? ' opacity-50'">-->
+
+<!--                                &lt;!&ndash; Tutorial Info &ndash;&gt;-->
+<!--                                <div class="d-flex align-items-center gap-2">-->
+<!--                                    <i class="me-2 fa-solid"-->
+<!--                                       th:switch="${tut.type}">-->
+<!--                                        <span th:case="'VIDEO'" class="fa-circle-play text-primary"></span>-->
+<!--                                        <span th:case="'PDF'" class="fa-file-pdf text-danger"></span>-->
+<!--                                        <span th:case="*" class="fa-file text-secondary"></span>-->
+<!--                                    </i>-->
+
+
+
+
+<!--                                    <div>-->
+<!--                                        <b th:text="${tut.title}"></b>-->
+<!--                                        <div class="small text-muted">-->
+<!--                                                <span th:if="${tut.preview}">-->
+<!--                                                    <i class="fa-solid fa-eye text-success"></i> Preview-->
+<!--                                                </span>-->
+<!--                                            <span th:if="${!tut.preview and !course.enrolled}">-->
+<!--                                                    <i class="fa-solid fa-lock text-danger"></i> Locked-->
+<!--                                                </span>-->
+<!--                                            <span th:if="${tut.read}" class="badge bg-success read-badge">-->
+<!--                                                    <i class="fa-solid fa-check-circle"></i> Read-->
+<!--                                                </span>-->
+<!--                                            <span th:if="${!tut.read}"-->
+<!--                                                  class="badge bg-secondary read-badge">Not Read</span>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+
+<!--&lt;!&ndash;                                <div>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <strong th:text="${tut.title}"></strong>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                                </div>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                                <button class="btn btn-sm btn-primary view-tutorial-btn"&ndash;&gt;-->
+<!--&lt;!&ndash;                                        th:data-tut-id="${tut.id}"&ndash;&gt;-->
+<!--&lt;!&ndash;                                        th:if="${course.enrolled or tut.preview}">&ndash;&gt;-->
+<!--&lt;!&ndash;                                    View&ndash;&gt;-->
+<!--&lt;!&ndash;                                </button>&ndash;&gt;-->
+
+<!--                                                        <div>-->
+<!--                                &lt;!&ndash;                            <button type="button"&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                    class="btn btn-sm btn-primary view-tutorial-btn"&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                    th:if="${course.enrolled or tut.preview}"&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                    th:attr="data-bs-toggle='modal', data-bs-target='#tutorialModal'"&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                    th:data-tut-id="${tut.id}">&ndash;&gt;-->
+<!--                                &lt;!&ndash;                                View&ndash;&gt;-->
+<!--                                &lt;!&ndash;                            </button>&ndash;&gt;-->
+<!--                                                            <button type="button"-->
+<!--                                                                    class="btn btn-sm btn-primary view-tutorial-btn"-->
+<!--                                                                    th:if="${course.enrolled or tut.preview}"-->
+<!--                                                                    th:data-tut-id="${tut.id}">-->
+<!--                                                                View-->
+<!--                                                            </button>-->
+
+
+<!--                                                            <button class="btn btn-sm btn-secondary" disabled-->
+<!--                                                                    th:if="${!course.enrolled and !tut.preview}">-->
+<!--                                                                <i class="fa-solid fa-lock"></i> Locked-->
+<!--                                                            </button>-->
+<!--                                                        </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+
+                        <div th:each="tut : ${section.tutorials}"
+                             class="tutorial-card d-flex justify-content-between align-items-center p-3 mb-2 border rounded"
+                             th:classappend="${!course.enrolled and !tut.preview} ? 'opacity-50'">
+
+
+
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa-solid fa-circle-play text-primary"
+                                   th:if="${tut.type.name() == 'VIDEO'}"></i>
+                                <i class="fa-solid fa-file-pdf text-danger"
+                                   th:if="${tut.type.name() == 'PDF'}"></i>
+                                <i class="fa-solid fa-question-circle text-warning"
+                                   th:if="${tut.type.name() == 'QUIZ'}"></i>
+                                <i class="fa-solid fa-newspaper text-info"
+                                   th:if="${tut.type.name() == 'ARTICLE'}"></i>
+                                <i class="fa-solid fa-file text-secondary"
+                                   th:if="${tut.type.name() != 'VIDEO'
+           and tut.type.name() != 'PDF'
+           and tut.type.name() != 'QUIZ'
+           and tut.type.name() != 'ARTICLE'}"></i>
+
+
+                                <!-- TITLE + STATUS -->
+                                <div>
+                                    <b th:text="${tut.title}"></b>
+<!--                                    <b th:text="${tut.type}"></b>-->
+
+                                    <div class="small text-muted">
+                                        <span th:if="${tut.read}" class="badge bg-success"><span class="badge bg-success">
+            <i class="fa-solid fa-check-double"></i>
+        </span>Read</span>
+                                        <span th:if="${!tut.read}" class=" badge bg-secondary"><i class="fa-solid fa-check not-read"></i>Not Read</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- VIEW -->
+                            <button type="button"
+                                    class="btn btn-sm btn-primary view-tutorial-btn"
+                                    th:if="${course.enrolled or tut.preview}"
+                                    th:data-tut-id="${tut.id}"
+<!--                                    data-bs-toggle="offcanvas"-->
+<!--                                    data-bs-target="#tutorialOffcanvas">-->
+                                View
+                            </button>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Offcanvas -->
+<!--        <div class="offcanvas offcanvas-end tutorial-offcanvas"-->
+<!--             id="tutorialOffcanvas">-->
+<!--            <div class="offcanvas-header">-->
+<!--                <h5 class="offcanvas-title">Tutorial</h5>-->
+<!--                <button class="btn-close" data-bs-dismiss="offcanvas"></button>-->
+<!--            </div>-->
+
+<!--            <div class="offcanvas-body">-->
+<!--                <div id="viewFileContainer"></div>-->
+<!--                <div id="viewArticleContent"></div>-->
+<!--                <div id="viewQuizQuestionsContainer"></div>-->
+<!--            </div>-->
+<!--        </div>-->
+        <div class="offcanvas offcanvas-end" id="tutorialOffcanvas" tabindex="-1">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasLabel">Tutorial</h5>
+                <button class="btn-close" data-bs-dismiss="offcanvas"></button>
+            </div>
+
+            <div class="offcanvas-body" id="offcanvasContent">
+
+                <div id="viewFileSection" class="d-none">
+                    <div id="viewFileContainer"></div>
+                </div>
+
+                <div id="viewArticleSection" class="d-none">
+                    <div id="viewArticleContent" class="article-box"></div>
+                </div>
+
+                <div id="viewQuizSection" class="d-none">
+                    <div id="viewQuizQuestionsContainer"></div>
+                    <button id="submitQuizBtn" class="btn btn-primary mt-3">Submit</button>
+                    <div id="quizResult" class="mt-2"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+</html>

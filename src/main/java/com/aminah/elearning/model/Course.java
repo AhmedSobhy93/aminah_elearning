@@ -53,6 +53,8 @@ public class Course {
 
     @Transient
     private int progress; // dynamically calculated
+    @Enumerated(EnumType.STRING)
+    private CourseLevel level;
 
     // Relationships
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -65,6 +67,10 @@ public class Course {
 //    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
 //    @OrderBy("orderIndex")
 //    private List<Tutorial> tutorials = new ArrayList<>();
+
+
+    @Transient
+    private boolean enrolled;
 
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)

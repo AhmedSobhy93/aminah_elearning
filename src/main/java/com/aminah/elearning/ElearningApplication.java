@@ -53,6 +53,8 @@ public class ElearningApplication {
             User dr = new User();
             dr.setUsername("drsaber");
             dr.setEmail("dr.saber@aminah.com");
+            dr.setFullName("Dr. Saber");
+            dr.setPhoneNumber("123456789");
             dr.setPassword(encoder.encode("P@ssw0rd"));
             dr.setRole(Role.DR);
             userRepository.save(dr);
@@ -102,6 +104,7 @@ public class ElearningApplication {
                 Course course = new Course();
                 course.setAuthor(dr);
                 course.setTitle("Course Title " + c);
+                course.setLevel(CourseLevel.BEGINNER);
                 course.setCourseName("Course " + c);
                 course.setDescription("This is a unique description for Course #" + c);
                 course.setPrice(200.0 + (c * 40));
@@ -131,7 +134,7 @@ public class ElearningApplication {
 
                         Tutorial tutorial = new Tutorial();
                         tutorial.setSection(section);
-                        tutorial.setCourse(course);
+//                        tutorial.setCourse(course);
                         tutorial.setUser(dr);
                         tutorial.setTitle("Tutorial " + t + " (Section " + s + ", Course " + c + ")");
                         tutorial.setOrderIndex(t);

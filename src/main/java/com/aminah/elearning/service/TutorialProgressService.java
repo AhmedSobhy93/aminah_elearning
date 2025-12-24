@@ -5,29 +5,38 @@ import com.aminah.elearning.repository.CourseEnrollmentRepository;
 import com.aminah.elearning.repository.TutorialProgressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-public class ProgressService {
+public class TutorialProgressService {
 
     private final CourseEnrollmentRepository enrollmentRepo;
-    private final TutorialProgressRepository progressRepo;
+    private final TutorialProgressRepository tutorialProgressRepository;
 
-    public void markTutorialSeen(User user, Tutorial tutorial) {
-        TutorialProgress tp = progressRepo.findByUserAndTutorial(user, tutorial)
-                .orElseGet(() -> new TutorialProgress(user, tutorial, false));
+    @Transactional
+    public void markComplete(User user, Tutorial tutorial) {
 
-        tp.setCompleted(true);
-        progressRepo.save(tp);
+        TutorialProgress progress =
+                tutorialProgressRepository
+                        .findByUserAndTutorial(user, tutorial)
+                        .orElse(new TutorialProgress(user, tutorial, false));
 
-        updateCourseProgress(user, tutorial.getCourse());
+        if (!progress.isCompleted()) {
+            progress.setCompleted(true);
+            progress.setCompletedAt(LocalDateTime.now());
+            tutorialProgressRepository.save(progress);
+        }
     }
+
 
     private void updateCourseProgress(User user, Course course) {
         long total = course.getSections().stream()
                 .flatMap(s -> s.getTutorials().stream()).count();
 
-        long seen = progressRepo.countCompletedTutorials(user.getId(), course.getId());
+        long seen = tutorialProgressRepository.countCompletedTutorials(user.getId(), course.getId());
 
         double percent = (seen * 100.0) / total;
 
