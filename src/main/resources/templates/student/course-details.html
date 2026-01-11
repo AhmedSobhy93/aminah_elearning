@@ -147,6 +147,24 @@
             <p class="text-muted fs-6"
                th:text="${course.description}"></p>
         </div>
+        <!-- Enroll Button (only if NOT enrolled) -->
+        <div th:if="${!course.enrolled}" class="text-center my-4">
+
+            <form th:action="@{/student/enroll/{id}(id=${course.id})}"
+                  method="post">
+
+                <button type="submit"
+                        class="btn btn-lg btn-success px-5 shadow-sm">
+                    <i class="fa-solid fa-circle-plus me-2"></i>
+                    Enroll Now
+                </button>
+
+            </form>
+
+            <p class="text-muted small mt-2">
+                Enroll to unlock all lessons, quizzes, and progress tracking
+            </p>
+        </div>
 
         <!-- Course Progress -->
         <div th:if="${course.enrolled}" class="mb-4">
@@ -354,5 +372,7 @@
         </div>
     </div>
 </section>
-
+<th:block layout:fragment="page-scripts">
+    <script th:src="@{/js/student/student.js}"></script>
+</th:block>
 </html>
