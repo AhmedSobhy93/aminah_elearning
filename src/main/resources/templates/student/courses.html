@@ -172,14 +172,14 @@
             </div>
         </div>
 
-        <div class="col-md-3">
-            <select class="form-select" name="level">
-                <option value="">All Levels</option>
-                <option>Beginner</option>
-                <option>Intermediate</option>
-                <option>Advanced</option>
-            </select>
-        </div>
+            <div class="col-md-3">
+                <select class="form-select" name="level">
+                    <option value="">All Levels</option>
+                    <option>BEGINNER</option>
+                    <option>INTERMEDIATE</option>
+                    <option>EXPERT</option>
+                </select>
+            </div>
 
         <div class="col-md-3">
             <button class="btn btn-primary w-100">
@@ -297,6 +297,7 @@
 
 </section>
 
-<script th:src="@{/js/student/student.js}"></script>
-
+<th:block layout:fragment="page-scripts">
+    <script th:src="@{/js/student/student.js}"></script>
+</th:block>
 </html>

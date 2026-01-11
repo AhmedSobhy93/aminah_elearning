@@ -75,14 +75,76 @@ public class StudentController {
        MY COURSES
        ----------------------------------------------- */
     @GetMapping("/my-courses")
-    public String myCourses(@AuthenticationPrincipal UserDetails userDetails, @RequestParam(defaultValue = "0") int page, Model model) {
+    public String myCourses(
+            @RequestParam(defaultValue = "0") int page,
+            @AuthenticationPrincipal UserDetails userDetails,
+            Model model) {
 
         User user = userService.findByUsername(userDetails.getUsername());
-        Page<CourseEnrollment> enrolled = enrollmentService.getUserEnrollments(user.getId(), page, PAGE_SIZE);
 
-        model.addAttribute("enrolledCourses", enrolled);
+        Page<CourseEnrollment> enrollmentsPage =
+                enrollmentService.getUserEnrollments(user.getId(), page, PAGE_SIZE);
+
+        List<CourseViewDTO> courses = enrollmentsPage.stream().map(enrollment -> {
+
+            Course course = enrollment.getCourse();
+
+            return new CourseViewDTO(
+                    course.getId(),
+                    course.getTitle(),
+                    course.getDescription(),
+                    course.getPrice(),
+                    course.getLevel() != null ? course.getLevel().name() : "N/A",
+                    course.getAuthor() != null ? course.getAuthor().getFullName() : "Unknown",
+                    true, // ✅ ALWAYS enrolled
+                    enrollment.getProgressPercentage().intValue(),
+                    null
+            );
+        }).toList();
+
+        model.addAttribute("courses", courses);
+        model.addAttribute("currentPage", enrollmentsPage.getNumber());
+        model.addAttribute("totalPages", enrollmentsPage.getTotalPages());
+
         return "student/my-courses";
     }
+
+//    @GetMapping("/my-courses")
+//    public String myCourses( @RequestParam(defaultValue = "0") int page,@RequestParam(required = false) String keyword, @AuthenticationPrincipal UserDetails userDetails, Model model) {
+//
+////        User user = userService.findByUsername(userDetails.getUsername());
+////        Page<CourseEnrollment> enrolled = enrollmentService.getUserEnrollments(user.getId(), page, PAGE_SIZE);
+////
+////        model.addAttribute("enrolledCourses", enrolled);
+//
+//        User user = userDetails != null ? userService.findByUsername(userDetails.getUsername()) : null;
+//
+//        Page<CourseEnrollment> coursesPage = enrollmentService.getUserEnrollments(user.getId(), page, PAGE_SIZE);
+//
+//        // Convert to DTOs with enrollment info
+//        List<CourseViewDTO> courses = coursesPage.stream().map(course -> {
+//            boolean enrolled = false;
+//            int progress = 0;
+//
+//            if (user != null) {
+//                CourseEnrollment enrollment =  enrollmentService.findEnrollment(user, course.getId());
+//
+//                if (enrollment != null) {
+//                    enrolled = true;
+//                    progress = courseService.calculateCourseProgress(user, course.getCourse());
+//                }
+//            }
+//
+//            return new CourseViewDTO(course.getId(), course.getTitle(), course.getDescription(), course.getPrice(), course.getLevel() != null ? course.getLevel().name() : "N/A", course.getAuthor() != null ? course.getAuthor().getFullName() : "Unknown", enrolled, progress, null);
+//        }).toList();
+//
+//        model.addAttribute("courses", courses);
+//        model.addAttribute("currentPage", coursesPage.getNumber());
+//        model.addAttribute("totalPages", coursesPage.getTotalPages());
+//        model.addAttribute("keyword", keyword);
+//
+//        return "student/my-courses";
+//    }
 
     /* -----------------------------------------------
        COURSE DETAIL (SECTIONS + TUTORIALS)
