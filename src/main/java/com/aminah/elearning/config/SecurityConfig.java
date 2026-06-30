@@ -6,34 +6,32 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
-    public SecurityConfig(UserService userService, PasswordEncoder passwordEncoder){this.userService=userService;
-        this.passwordEncoder = passwordEncoder;
+    public SecurityConfig(UserService userService) {
+        this.userService = userService;
     }
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
-    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.
                 authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**","/js/**","/images/**","/webfonts/**","/uploads/**","/","/profile/login","/profile/register","/profile/confirm","/verify", "/forgot-password", "/reset-password","/error","/contactus","/about").permitAll()
+                        .requestMatchers("/actuator/health", "/css/**","/js/**","/images/**","/webfonts/**","/","/profile/login","/profile/register","/profile/confirm","/verify", "/forgot-password", "/reset-password","/error","/contactus","/about").permitAll()
+                        .requestMatchers("/payments/callback", "/payments/webhook").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/doctor/**").hasRole("DR")
+                        .requestMatchers("/dr/**").hasRole("DR")
                         .requestMatchers("/student/**").hasRole("STUDENT")
                         .anyRequest().authenticated()
                 )
@@ -42,7 +40,7 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                         .clearAuthentication(true).deleteCookies("JSESSIONID").permitAll())
 
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/uploads/**"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/payments/webhook"))
                 .headers(headers -> headers
                 .frameOptions(frame -> frame.sameOrigin())); // allow same-origin iframe embedding);
         return http.build();
@@ -61,4 +59,3 @@ public class SecurityConfig {
     }
 
    }
-

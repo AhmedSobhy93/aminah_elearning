@@ -16,7 +16,7 @@ public class RegistrationService {
 
     private final UserRepository userRepository;
     private final VerificationTokenRepository tokenRepository;
-    private EmailServiceSendGrid emailServiceSendGrid;
+    private final EmailServiceSendGrid emailServiceSendGrid;
     private final PasswordEncoder passwordEncoder;
 
     public RegistrationService(UserRepository userRepository,
@@ -41,7 +41,12 @@ public class RegistrationService {
         verificationToken.setExpiryDate(LocalDateTime.now().plusHours(24));
         tokenRepository.save(verificationToken);
 
-        emailServiceSendGrid.sendEmail(user.getEmail(), token, appUrl);
+        String confirmationLink = appUrl + "/profile/confirm?token=" + token;
+        emailServiceSendGrid.sendEmail(
+                user.getEmail(),
+                "Confirm your registration - Aminah E-Learning",
+                "Click the link to activate your account: <a href=\"" + confirmationLink + "\">Confirm account</a>"
+        );
     }
 
     public boolean confirmToken(String token) {

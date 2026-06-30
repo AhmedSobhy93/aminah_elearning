@@ -293,6 +293,7 @@ public class DoctorController {
             t.setTitle(title);
             t.setType(type);
             t.setPreview(Boolean.TRUE.equals(isPreview));
+            t.setUser(user);
 
             // 3️⃣ Handle file uploads
             if ((type == TutorialType.VIDEO || type == TutorialType.PDF) && file != null && !file.isEmpty()) {

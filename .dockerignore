@@ -2,9 +2,8 @@ target/
 uploads/
 .idea/
 *.iml
-
+.git/
 .env
 application-local.properties
-
 *.log
 *.tmp

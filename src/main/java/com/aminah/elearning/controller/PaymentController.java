@@ -4,68 +4,111 @@ import com.aminah.elearning.model.Course;
 import com.aminah.elearning.model.CourseEnrollment;
 import com.aminah.elearning.model.Payment;
 import com.aminah.elearning.model.User;
-import com.aminah.elearning.repository.CourseEnrollmentRepository;
-import com.aminah.elearning.repository.CourseRepository;
-import com.aminah.elearning.repository.PaymentRepository;
-import com.aminah.elearning.repository.UserRepository;
+import com.aminah.elearning.service.CourseEnrollmentService;
+import com.aminah.elearning.service.CourseService;
+import com.aminah.elearning.service.PaymentService;
 import com.aminah.elearning.service.PaymobPaymentService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.aminah.elearning.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Map;
 
 @Controller
 @RequestMapping("/payments")
+@RequiredArgsConstructor
 public class PaymentController {
-//
-//    @Autowired private CourseRepository courseRepository;
-//    @Autowired private CourseEnrollmentRepository courseEnrollmentRepository;
-//    @Autowired private PaymentRepository paymentRepository;
-//    @Autowired private UserRepository userRepository;
-//    @Autowired private PaymobPaymentService paymobService;
-//
-//    @GetMapping("/buy/{courseId}")
-//    public String buy(@PathVariable("courseId") Long courseId, Model model) {
-//        Course c = courseRepository.findById(courseId).orElseThrow();
-//        model.addAttribute("course", c);
-//        return "checkout";
-//    }
-//
-//    @PostMapping("/create/{courseId}")
-//    public String createPayment(@PathVariable("courseId") Long courseId, @RequestParam("username") String username, Model model) {
-//        User user = userRepository.findByUsername(username).orElseGet(() -> {
-//            User u = new User();
-//            u.setUsername(username);
-//            u.setPassword("NOPASS");
-//            return userRepository.save(u);
-//        });
-//
-//        Course c = courseRepository.findById(courseId).orElseThrow();
-//        CourseEnrollment e = new CourseEnrollment();
-//        e.setUser(user);
-//        e.setCourse(c);
-//        e.setPaymentStatus("PENDING");
-//        courseEnrollmentRepository.save(e);
-//
-//        Payment p = new Payment();
-//        p.setUser(user);
-//        p.setCourseEnrollment(e);
-//        p.setAmount(c.getPrice());
-//        p.setStatus("PENDING");
-//        p.setGateway("PAYMOB");
-//        paymentRepository.save(p);
-//
-//        String iframeUrl = paymobService.buildIframeUrl(p);
-//        model.addAttribute("iframeUrl", iframeUrl);
-//        model.addAttribute("payment", p);
-//        return "paymob-frame";
-//    }
-//
-//    @PostMapping("/webhook")
-//    @ResponseBody
-//    public String webhook(@RequestBody String payload, @RequestHeader(name="X-Callback-Signature", required=false) String signature) {
-//        boolean ok = paymobService.handleWebhook(payload, signature);
-//        return ok ? "OK" : "FAILED";
-//    }
+
+    private static final String GATEWAY_PAYMOB = "PAYMOB";
+
+    private final CourseService courseService;
+    private final CourseEnrollmentService enrollmentService;
+    private final PaymentService paymentService;
+    private final PaymobPaymentService paymobService;
+    private final UserService userService;
+
+    @GetMapping("/buy/{courseId}")
+    public String buy(@PathVariable Long courseId, Model model) {
+        Course course = courseService.getCourse(courseId);
+        model.addAttribute("course", course);
+        return "checkout";
+    }
+
+    @PostMapping("/create/{courseId}")
+    public String createPayment(
+            @PathVariable Long courseId,
+            @AuthenticationPrincipal UserDetails userDetails,
+            Model model
+    ) {
+        User user = userService.findByUsername(userDetails.getUsername());
+        Course course = courseService.getCourse(courseId);
+        CourseEnrollment enrollment = enrollmentService.enroll(user, course);
+
+        if (course.getPrice() == null || course.getPrice() <= 0) {
+            enrollmentService.markPaid(enrollment.getId());
+            return "redirect:/student/course/" + courseId;
+        }
+
+        if (!paymobService.isConfigured()) {
+            model.addAttribute("course", course);
+            model.addAttribute("error", "Payment gateway is not configured yet.");
+            return "checkout";
+        }
+
+        Payment payment = paymentService.createPayment(user, enrollment, GATEWAY_PAYMOB);
+
+        String token = paymobService.getAuthToken();
+        Integer orderId = paymobService.createOrder(token, course.getPrice(), enrollment.getId());
+        payment.setGatewayOrderId(orderId.toString());
+        paymentService.updatePaymentStatus(payment, "PENDING");
+
+        String paymentKey = paymobService.generatePaymentKey(token, orderId, course.getPrice(), user.getEmail());
+        model.addAttribute("iframeUrl", paymobService.buildIframeUrl(paymentKey));
+        model.addAttribute("payment", payment);
+        return "paymob-frame";
+    }
+
+    @GetMapping("/callback")
+    public String callback(@RequestParam Map<String, String> params) {
+        if (!paymobService.isValidHmac(params)) {
+            return "redirect:/student/my-courses?payment=invalid";
+        }
+
+        if (!"true".equalsIgnoreCase(params.get("success")) || !"false".equalsIgnoreCase(params.get("pending"))) {
+            return "redirect:/student/my-courses?payment=failed";
+        }
+
+        String orderId = params.get("order");
+        Payment payment = paymentService.findByGatewayOrder(GATEWAY_PAYMOB, orderId);
+        paymentService.updatePaymentStatus(payment, "SUCCESS");
+        enrollmentService.markPaid(payment.getCourseEnrollment().getId());
+
+        return "redirect:/student/course/" + payment.getCourseEnrollment().getCourse().getId();
+    }
+
+    @PostMapping("/webhook")
+    @ResponseBody
+    public ResponseEntity<String> webhook(@RequestParam Map<String, String> params) {
+        if (!paymobService.isValidHmac(params)) {
+            return ResponseEntity.status(403).body("INVALID");
+        }
+
+        if ("true".equalsIgnoreCase(params.get("success")) && "false".equalsIgnoreCase(params.get("pending"))) {
+            Payment payment = paymentService.findByGatewayOrder(GATEWAY_PAYMOB, params.get("order"));
+            paymentService.updatePaymentStatus(payment, "SUCCESS");
+            enrollmentService.markPaid(payment.getCourseEnrollment().getId());
+        }
+
+        return ResponseEntity.ok("OK");
+    }
 }

@@ -27,6 +27,7 @@ import java.util.Set;
 
 @Controller
 @RequestMapping("/student")
+@PreAuthorize("hasRole('STUDENT')")
 @RequiredArgsConstructor
 public class StudentController {
 
@@ -164,7 +165,7 @@ public class StudentController {
             if (user != null) {
                 CourseEnrollment enrollment = enrollmentService.findEnrollment(user, course.getId());
                 if (enrollment != null) {
-                    enrolled = true;
+                    enrolled = enrollmentService.hasAccess(user, course.getId());
                     progress = courseService.calculateCourseProgress(user, course);
                 }
             }
@@ -189,9 +190,7 @@ public class StudentController {
         Course course = courseService.getCourse(id);
 
         // ✅ check enrollment
-        boolean enrolled = course.getEnrollments()
-                .stream()
-                .anyMatch(e -> e.getUser().getId().equals(user.getId()));
+        boolean enrolled = enrollmentService.hasAccess(user, course.getId());
 
         course.setEnrolled(enrolled);
 
@@ -341,6 +340,10 @@ public class StudentController {
         Tutorial tutorial = tutorialService.getTutorial(id);
         User user = userService.findByUsername(userDetails.getUsername());
 
+        if (!canViewTutorial(user, tutorial)) {
+            return "student/tutorial-locked :: content";
+        }
+
         model.addAttribute("tutorial", tutorial);
         return "student/tutorials/tutorial-content :: content";
     }
@@ -348,8 +351,15 @@ public class StudentController {
 
     @GetMapping("/tutorial/{id}/json")
     @ResponseBody
-    public TutorialDto getTutorialJson(@PathVariable Long id) {
+    public ResponseEntity<TutorialDto> getTutorialJson(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
         Tutorial t = tutorialService.getTutorial(id);
+        User user = userService.findByUsername(userDetails.getUsername());
+
+        if (!canViewTutorial(user, t)) {
+            return ResponseEntity.status(403).build();
+        }
 
         TutorialDto dto = TutorialDto.from(t); // safely maps basic fields
 
@@ -361,12 +371,12 @@ public class StudentController {
             dto.setQuizQuestions(quizDtos);
         }
         System.out.println(dto);
-        return dto;
+        return ResponseEntity.ok(dto);
     }
     /* ================= MARK COMPLETED ================= */
     @PostMapping("/tutorial/{id}/complete")
     @ResponseBody
-    public Map<String, Object> markCompleted(
+    public ResponseEntity<Map<String, Object>> markCompleted(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails) {
 
@@ -374,21 +384,29 @@ public class StudentController {
         User user = userService.findByUsername(userDetails.getUsername());
         System.out.println("Marking tutorial " + tutorial.getId() + " complete for user " + user.getUsername());
 
-        tutorialService.markComplete(user, tutorial);
+        if (!canCompleteTutorial(user, tutorial)) {
+            return ResponseEntity.status(403).body(Map.of("success", false));
+        }
 
-        return Map.of("success", true);
+        tutorialProgressService.markComplete(user, tutorial);
+
+        return ResponseEntity.ok(Map.of("success", true));
     }
 
     /* ================= SUBMIT QUIZ ================= */
     @PostMapping("/tutorial/{id}/quiz")
     @ResponseBody
-    public Map<String, Object> submitQuiz(
+    public ResponseEntity<Map<String, Object>> submitQuiz(
             @PathVariable Long id,
             @RequestBody Map<Long, Integer> answers, // questionId -> selectedIndex
             @AuthenticationPrincipal UserDetails userDetails) {
 
         Tutorial tutorial = tutorialService.getTutorial(id);
         User user = userService.findByUsername(userDetails.getUsername());
+
+        if (!canCompleteTutorial(user, tutorial)) {
+            return ResponseEntity.status(403).body(Map.of("success", false));
+        }
 
         int correctCount = 0;
         List<Map<String, Object>> results = new ArrayList<>();
@@ -415,12 +433,22 @@ public class StudentController {
             tutorialProgressService.markComplete(user, tutorial);
         }
 
-        return Map.of(
+        return ResponseEntity.ok(Map.of(
                 "passed", passed,
                 "score", correctCount,
                 "total", tutorial.getQuizQuestions().size(),
                 "results", results
-        );
+        ));
+    }
+
+    private boolean canViewTutorial(User user, Tutorial tutorial) {
+        Course course = tutorial.getSection().getCourse();
+        return tutorial.isPreview() || enrollmentService.hasAccess(user, course.getId());
+    }
+
+    private boolean canCompleteTutorial(User user, Tutorial tutorial) {
+        Course course = tutorial.getSection().getCourse();
+        return enrollmentService.hasAccess(user, course.getId());
     }
 
 

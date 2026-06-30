@@ -2,6 +2,7 @@ package com.aminah.elearning.controller;
 
 import com.aminah.elearning.service.S3StorageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/upload")
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "aws.enabled", havingValue = "true")
 public class UploadController {
 
     private final S3StorageService storageService;
@@ -27,4 +29,3 @@ public class UploadController {
         return ResponseEntity.ok(Map.of("uploadUrl", url));
     }
 }
-

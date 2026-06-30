@@ -5,7 +5,6 @@ import com.aminah.elearning.model.User;
 import com.aminah.elearning.model.VerificationToken;
 import com.aminah.elearning.repository.PasswordResetTokenRepository;
 import com.aminah.elearning.repository.VerificationTokenRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,11 +13,16 @@ import java.util.UUID;
 @Service
 public class TokenService {
 
-    @Autowired
-    private VerificationTokenRepository verificationTokenRepository;
+    private final VerificationTokenRepository verificationTokenRepository;
+    private final PasswordResetTokenRepository resetTokenRepository;
 
-    @Autowired
-    private PasswordResetTokenRepository resetTokenRepository;
+    public TokenService(
+            VerificationTokenRepository verificationTokenRepository,
+            PasswordResetTokenRepository resetTokenRepository
+    ) {
+        this.verificationTokenRepository = verificationTokenRepository;
+        this.resetTokenRepository = resetTokenRepository;
+    }
 
     public VerificationToken createVerificationToken(User user) {
         String tokenValue = UUID.randomUUID().toString();

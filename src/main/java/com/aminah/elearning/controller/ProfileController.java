@@ -36,20 +36,25 @@ public class ProfileController {
     private final RegistrationService registrationService;
     private final VerificationTokenRepository verificationTokenRepository;
     private final UserService userService;
-
-    @Value("${app.url:http://localhost:8081}")
-    private String appUrl;
+    private final String appUrl;
     private final AuthenticationManager authenticationManager;
 
-    public ProfileController(UserRepository userRepository, PasswordEncoder passwordEncoder, RegistrationService registrationService, VerificationTokenRepository verificationTokenRepository, UserService userService, AuthenticationManager authenticationManager) {
+    public ProfileController(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            RegistrationService registrationService,
+            VerificationTokenRepository verificationTokenRepository,
+            UserService userService,
+            AuthenticationManager authenticationManager,
+            @Value("${app.url}") String appUrl
+    ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.registrationService = registrationService;
         this.verificationTokenRepository = verificationTokenRepository;
         this.userService = userService;
-
-
         this.authenticationManager = authenticationManager;
+        this.appUrl = appUrl;
     }
     @GetMapping("/profile")
     public String profile(Model model, Principal principal) {

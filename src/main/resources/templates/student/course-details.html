@@ -150,13 +150,26 @@
         <!-- Enroll Button (only if NOT enrolled) -->
         <div th:if="${!course.enrolled}" class="text-center my-4">
 
-            <form th:action="@{/student/enroll/{id}(id=${course.id})}"
+            <form th:if="${course.price == null or course.price <= 0}"
+                  th:action="@{/student/enroll/{id}(id=${course.id})}"
                   method="post">
 
                 <button type="submit"
                         class="btn btn-lg btn-success px-5 shadow-sm">
                     <i class="fa-solid fa-circle-plus me-2"></i>
                     Enroll Now
+                </button>
+
+            </form>
+
+            <form th:if="${course.price != null and course.price > 0}"
+                  th:action="@{/payments/create/{id}(id=${course.id})}"
+                  method="post">
+
+                <button type="submit"
+                        class="btn btn-lg btn-success px-5 shadow-sm">
+                    <i class="fa-solid fa-credit-card me-2"></i>
+                    Pay & Enroll
                 </button>
 
             </form>

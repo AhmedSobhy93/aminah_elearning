@@ -32,5 +32,7 @@ public class Payment {
     /** Payment gateway (PAYMOB, STRIPE, etc.) */
     private String gateway;
 
+    private String gatewayOrderId;
+
     private String courseId;
 }

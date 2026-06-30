@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: aminah-elearning
+    runtime: docker
+    plan: starter
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: APP_URL
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: JPA_DDL_AUTO
+        value: update
+      - key: APP_SEED_ENABLED
+        value: false
+      - key: AWS_ENABLED
+        value: false
+      - key: APP_EMAIL_ENABLED
+        value: false
+      - key: BASIC_AUTH_PASSWORD
+        generateValue: true
+      - key: PAYMOB_API_KEY
+        sync: false
+      - key: PAYMOB_INTEGRATION_ID
+        sync: false
+      - key: PAYMOB_MERCHANT_ID
+        sync: false
+      - key: PAYMOB_HMAC_SECRET
+        sync: false
+      - key: PAYMOB_IFRAME_ID
+        sync: false

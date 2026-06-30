@@ -18,7 +18,7 @@ public class PaymentService {
         Payment payment = new Payment();
         payment.setUser(user);
         payment.setCourseEnrollment(enrollment);
-//        payment.setAmount(enrollment.getPaymentStatus());
+        payment.setAmount(enrollment.getCourse().getPrice());
         payment.setStatus("PENDING");
         payment.setGateway(gateway);
         return paymentRepository.save(payment);
@@ -46,5 +46,10 @@ public class PaymentService {
         // enroll after payment
 //        enrollmentService.enrollUser(user, enrollment.getCourse());
         return payment;
+    }
+
+    public Payment findByGatewayOrder(String gateway, String gatewayOrderId) {
+        return paymentRepository.findByGatewayAndGatewayOrderId(gateway, gatewayOrderId)
+                .orElseThrow(() -> new RuntimeException("Payment not found for gateway order"));
     }
 }

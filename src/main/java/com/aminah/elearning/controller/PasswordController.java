@@ -4,11 +4,9 @@ import com.aminah.elearning.model.PasswordResetToken;
 import com.aminah.elearning.model.User;
 import com.aminah.elearning.repository.PasswordResetTokenRepository;
 import com.aminah.elearning.repository.UserRepository;
-import com.aminah.elearning.service.EmailServiceGmail;
 import com.aminah.elearning.service.EmailServiceSendGrid;
 import com.aminah.elearning.service.TokenService;
-import com.aminah.elearning.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,18 +17,28 @@ import java.util.Optional;
 @Controller
 public class PasswordController {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private TokenService tokenService;
-    @Autowired
-    private EmailServiceSendGrid emailServiceSendGrid;
-    @Autowired
-    private PasswordResetTokenRepository resetTokenRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private UserService userService;
+    private final UserRepository userRepository;
+    private final TokenService tokenService;
+    private final EmailServiceSendGrid emailServiceSendGrid;
+    private final PasswordResetTokenRepository resetTokenRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final String appUrl;
+
+    public PasswordController(
+            UserRepository userRepository,
+            TokenService tokenService,
+            EmailServiceSendGrid emailServiceSendGrid,
+            PasswordResetTokenRepository resetTokenRepository,
+            PasswordEncoder passwordEncoder,
+            @Value("${app.url}") String appUrl
+    ) {
+        this.userRepository = userRepository;
+        this.tokenService = tokenService;
+        this.emailServiceSendGrid = emailServiceSendGrid;
+        this.resetTokenRepository = resetTokenRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.appUrl = appUrl;
+    }
 
     @GetMapping("/forgot-password")
     public String showForgotPasswordForm() {
@@ -48,7 +56,7 @@ public class PasswordController {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("No user with this email"));
 
         PasswordResetToken token = tokenService.createPasswordResetToken(user);
-        String resetLink = "http://localhost:8080/reset-password?token=" + token.getToken();
+        String resetLink = appUrl + "/reset-password?token=" + token.getToken();
         emailServiceSendGrid.sendEmail(user.getEmail(), "Password Reset", "Click: " + resetLink);
 
         model.addAttribute("message", "Reset link sent to your email.");

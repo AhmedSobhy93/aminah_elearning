@@ -2,12 +2,14 @@ package com.aminah.elearning.config;
 
 import com.zaxxer.hikari.HikariDataSource;
 import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
 import java.io.IOException;
 @Configuration
+@ConditionalOnProperty(name = "app.embedded-postgres.enabled", havingValue = "true")
 public class EmbeddedPostgresConfig {
 
     @Bean(destroyMethod = "close")
@@ -28,4 +30,3 @@ public class EmbeddedPostgresConfig {
         return ds;
     }
 }
-

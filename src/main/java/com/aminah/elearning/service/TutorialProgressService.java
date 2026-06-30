@@ -29,6 +29,8 @@ public class TutorialProgressService {
             progress.setCompletedAt(LocalDateTime.now());
             tutorialProgressRepository.save(progress);
         }
+
+        updateCourseProgress(user, tutorial.getSection().getCourse());
     }
 
 
@@ -37,6 +39,10 @@ public class TutorialProgressService {
                 .flatMap(s -> s.getTutorials().stream()).count();
 
         long seen = tutorialProgressRepository.countCompletedTutorials(user.getId(), course.getId());
+
+        if (total == 0) {
+            return;
+        }
 
         double percent = (seen * 100.0) / total;
 

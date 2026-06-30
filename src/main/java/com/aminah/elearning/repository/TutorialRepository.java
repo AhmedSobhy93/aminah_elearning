@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TutorialRepository extends JpaRepository<Tutorial, Long> {
@@ -19,6 +20,8 @@ public interface TutorialRepository extends JpaRepository<Tutorial, Long> {
 
 
     List<Tutorial> findByType(TutorialType type);
+
+    Optional<Tutorial> findByFilePath(String filePath);
 
 //    @Query("SELECT t FROM Tutorial t WHERE t.section.course.id = :courseId ORDER BY t.section.orderIndex, t.orderIndex")
 //    List<Tutorial> getTutorialsByCourse(Long courseId);
