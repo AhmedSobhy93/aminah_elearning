@@ -6,6 +6,7 @@ import com.aminah.elearning.model.User;
 import com.aminah.elearning.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -51,5 +52,22 @@ public class PaymentService {
     public Payment findByGatewayOrder(String gateway, String gatewayOrderId) {
         return paymentRepository.findByGatewayAndGatewayOrderId(gateway, gatewayOrderId)
                 .orElseThrow(() -> new RuntimeException("Payment not found for gateway order"));
+    }
+
+    @Transactional
+    public Payment completeGatewayPayment(String gateway, String gatewayOrderId) {
+        Payment payment = findByGatewayOrder(gateway, gatewayOrderId);
+
+        if (!"SUCCESS".equalsIgnoreCase(payment.getStatus())) {
+            payment.setStatus("SUCCESS");
+            paymentRepository.save(payment);
+        }
+
+        CourseEnrollment enrollment = payment.getCourseEnrollment();
+        if (enrollment != null && !"SUCCESS".equalsIgnoreCase(enrollment.getPaymentStatus())) {
+            enrollmentService.markPaid(enrollment.getId());
+        }
+
+        return payment;
     }
 }

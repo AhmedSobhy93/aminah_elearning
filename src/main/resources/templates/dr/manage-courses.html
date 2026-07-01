@@ -403,8 +403,17 @@
             </div>
         </div>
 
+        <div th:if="${#lists.isEmpty(courses)}" class="text-center bg-white border rounded p-5 shadow-sm">
+            <i class="fas fa-book-medical text-primary fs-1 mb-3"></i>
+            <h4 class="fw-semibold">No courses yet</h4>
+            <p class="text-muted mb-3">Create your first course to start organizing sections, tutorials, quizzes, and student enrollments.</p>
+            <button class="btn btn-primary" type="button" onclick="document.getElementById('btnCreateCourse')?.click()">
+                <i class="fas fa-plus-circle me-1"></i> Create Course
+            </button>
+        </div>
+
         <!-- Pagination -->
-        <nav aria-label="Course navigation" class="mt-4">
+        <nav aria-label="Course navigation" class="mt-4" th:if="${coursesPage.totalPages > 0}">
             <ul class="pagination pagination-aminah justify-content-center">
 
                 <!-- Previous -->

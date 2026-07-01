@@ -269,8 +269,14 @@
         </div>
     </div>
 
+    <div th:if="${#lists.isEmpty(courses)}" class="text-center bg-white border rounded p-5 shadow-sm">
+        <i class="fa-solid fa-book-medical text-primary fs-1 mb-3"></i>
+        <h4 class="fw-semibold">No courses found</h4>
+        <p class="text-muted mb-0">Try a different search term or check back when new medical courses are published.</p>
+    </div>
+
     <!-- Pagination -->
-    <nav class="pagination-aminah mt-4">
+    <nav class="pagination-aminah mt-4" th:if="${totalPages > 0}">
         <ul class="pagination">
             <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
                 <a class="page-link"

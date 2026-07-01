@@ -9,7 +9,7 @@
 
 <div th:if="${success}">
     <h3>Password reset successfully!</h3>
-    <a th:href="@{/login}">Go to Login</a>
+    <a th:href="@{/profile/login}">Go to Login</a>
 </div>
 <div th:if="${!success}">
     <h3>Invalid or expired reset token.</h3>

@@ -1,21 +1,17 @@
 <nav th:fragment="navbar" class="navbar navbar-expand-lg shadow-sm" style="background-color: #2CA6A4;">
     <div class="container">
-        <!-- Brand -->
         <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
-            <img th:src="@{/images/logo.png}" height="40" class="me-2 rounded-circle shadow-sm">
+            <img th:src="@{/images/logo.png}" height="40" class="me-2 rounded-circle shadow-sm" alt="Aminah Logo">
             Aminah Hospital eLearning
         </a>
 
-        <!-- Toggler -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+                aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Navbar links -->
         <div class="collapse navbar-collapse" id="navMenu">
             <ul class="navbar-nav ms-auto align-items-center">
-
-                <!-- Admin Links -->
                 <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                     <a class="nav-link" th:href="@{/admin/users}">
                         <i class="fas fa-users me-1"></i> Manage Users
@@ -27,14 +23,12 @@
                     </a>
                 </li>
 
-                <!-- Doctor Links -->
                 <li class="nav-item" sec:authorize="hasRole('DR')">
                     <a class="nav-link" th:href="@{/dr/courses}">
                         <i class="fas fa-chalkboard-teacher me-1"></i> My Courses
                     </a>
                 </li>
 
-                <!-- Student Links -->
                 <li class="nav-item" sec:authorize="hasRole('STUDENT')">
                     <a class="nav-link" th:href="@{/student/courses}">
                         <i class="fas fa-book-open me-1"></i> Available Courses
@@ -46,7 +40,6 @@
                     </a>
                 </li>
 
-                <!-- Public Links -->
                 <li class="nav-item" sec:authorize="!hasRole('ADMIN')">
                     <a class="nav-link" th:href="@{/about}">
                         <i class="fas fa-info-circle me-1"></i> About Us
@@ -58,7 +51,6 @@
                     </a>
                 </li>
 
-                <!-- Account Dropdown -->
                 <li class="nav-item dropdown ms-2">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="fas fa-user-circle me-1"></i> Account
@@ -66,7 +58,7 @@
                     <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                         <li sec:authorize="isAuthenticated()">
                             <a class="dropdown-item" th:href="@{/profile/profile}">
-                                👋 Hello, <strong sec:authentication="name"></strong>
+                                Hello, <strong sec:authentication="name"></strong>
                             </a>
                         </li>
                         <li sec:authorize="isAuthenticated()">

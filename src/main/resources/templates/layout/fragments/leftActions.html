@@ -11,8 +11,8 @@
             <i class="fas fa-book"></i>
         </button>
 
-        <button class="action-btn" data-label="Admin" sec:authorize="hasRole('ADMIN')"
-                th:onclick="|window.location='@{/admin}'|">
+        <button class="action-btn" data-label="Users" sec:authorize="hasRole('ADMIN')"
+                th:onclick="|window.location='@{/admin/users}'|">
             <i class="fas fa-cog"></i>
         </button>
 
@@ -31,10 +31,11 @@
     <div id="floatingHelpPanel">
         <h5 class="mb-3">Quick Help</h5>
         <div class="list-group small">
-            <a href="#" class="list-group-item list-group-item-action">Dashboard Guide</a>
-            <a href="#" class="list-group-item list-group-item-action">Managing Courses</a>
-            <a href="#" class="list-group-item list-group-item-action">Profile Settings</a>
-            <a href="#" class="list-group-item list-group-item-action">Contact Support</a>
+            <a th:href="@{/}" class="list-group-item list-group-item-action">Dashboard</a>
+            <a th:href="@{/student/courses}" sec:authorize="hasRole('STUDENT')" class="list-group-item list-group-item-action">Browse Courses</a>
+            <a th:href="@{/dr/courses}" sec:authorize="hasRole('DR')" class="list-group-item list-group-item-action">Manage Courses</a>
+            <a th:href="@{/admin/users}" sec:authorize="hasRole('ADMIN')" class="list-group-item list-group-item-action">Manage Users</a>
+            <a th:href="@{/contact}" class="list-group-item list-group-item-action">Contact Support</a>
         </div>
     </div>
 

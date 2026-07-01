@@ -51,16 +51,16 @@
 
                             <div class="d-grid gap-2">
                                 <a th:if="${!enrolled}" th:href="@{/courses/{id}(id=${course.id})/enroll}" class="btn btn-primary rounded-pill">
-                                    <i class="bi bi-play-circle"></i> Enroll Now
+                                    <i class="fas fa-play-circle"></i> Enroll Now
                                 </a>
 
                                 <a th:if="${enrolled}" th:href="@{/course/{id}/content(id=${course.id})}" class="btn btn-success rounded-pill">
-                                    <i class="bi bi-journal-text"></i> Continue Learning
+                                    <i class="fas fa-book-open"></i> Continue Learning
                                 </a>
 
                                 <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
                                    th:href="@{/admin/courses/manage/{id}(id=${course.id})}" class="btn btn-warning rounded-pill">
-                                    <i class="bi bi-gear"></i> Manage Course
+                                    <i class="fas fa-cog"></i> Manage Course
                                 </a>
                             </div>
                         </div>
@@ -106,10 +106,10 @@
                             <!-- Course Navigation -->
                             <div class="d-flex justify-content-between mt-4">
                                 <a th:href="@{/course/{id}/previous(id=${course.id})}" class="btn btn-outline-secondary rounded-pill">
-                                    <i class="bi bi-arrow-left"></i> Previous
+                                    <i class="fas fa-arrow-left"></i> Previous
                                 </a>
                                 <a th:href="@{/course/{id}/next(id=${course.id})}" class="btn btn-outline-secondary rounded-pill">
-                                    Next <i class="bi bi-arrow-right"></i>
+                                    Next <i class="fas fa-arrow-right"></i>
                                 </a>
                             </div>
 

@@ -3,7 +3,7 @@ services:
     name: aminah-elearning
     runtime: docker
     plan: starter
-    healthCheckPath: /actuator/health
+    healthCheckPath: /actuator/health/readiness
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: production
@@ -19,6 +19,16 @@ services:
         value: update
       - key: APP_SEED_ENABLED
         value: false
+      - key: APP_BOOTSTRAP_ADMIN_ENABLED
+        value: false
+      - key: APP_BOOTSTRAP_ADMIN_USERNAME
+        sync: false
+      - key: APP_BOOTSTRAP_ADMIN_EMAIL
+        sync: false
+      - key: APP_BOOTSTRAP_ADMIN_PASSWORD
+        sync: false
+      - key: APP_BOOTSTRAP_ADMIN_FULL_NAME
+        sync: false
       - key: AWS_ENABLED
         value: false
       - key: APP_EMAIL_ENABLED

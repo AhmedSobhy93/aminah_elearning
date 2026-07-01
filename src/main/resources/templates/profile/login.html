@@ -4,12 +4,12 @@
       layout:decorate="~{layout/base}">
 <section layout:fragment="content">
     <span th:if="${message}">
-    <h1 style="text-align: center; padding-bottom:200px;color: #4B5563;" th:text="${message}"></h1>
+        <h1 style="text-align: center; padding-bottom:200px;color: #4B5563;" th:text="${message}"></h1>
     </span>
     <div th:if="${error}" class="alert alert-danger mt-3" th:text="${error}"></div>
     <div class="auth-container">
         <div class="auth-card">
-            <div class="profile-icon">👤</div>
+            <div class="profile-icon"><i class="fas fa-user-circle"></i></div>
             <h3>Login</h3>
             <form th:action="@{/profile/login}" method="post">
                 <input type="text" name="username" placeholder="Username" required />
@@ -20,10 +20,7 @@
                 <a th:href="@{/forgot-password}">Forgot password?</a><br/>
                 Don't have an account? <a th:href="@{/profile/register}">Register</a>
             </p>
-            <p class="text-danger" th:text="${error}"></p>
         </div>
     </div>
 </section>
 </html>
-
-

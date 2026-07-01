@@ -89,9 +89,7 @@ public class PaymentController {
         }
 
         String orderId = params.get("order");
-        Payment payment = paymentService.findByGatewayOrder(GATEWAY_PAYMOB, orderId);
-        paymentService.updatePaymentStatus(payment, "SUCCESS");
-        enrollmentService.markPaid(payment.getCourseEnrollment().getId());
+        Payment payment = paymentService.completeGatewayPayment(GATEWAY_PAYMOB, orderId);
 
         return "redirect:/student/course/" + payment.getCourseEnrollment().getCourse().getId();
     }
@@ -104,9 +102,7 @@ public class PaymentController {
         }
 
         if ("true".equalsIgnoreCase(params.get("success")) && "false".equalsIgnoreCase(params.get("pending"))) {
-            Payment payment = paymentService.findByGatewayOrder(GATEWAY_PAYMOB, params.get("order"));
-            paymentService.updatePaymentStatus(payment, "SUCCESS");
-            enrollmentService.markPaid(payment.getCourseEnrollment().getId());
+            paymentService.completeGatewayPayment(GATEWAY_PAYMOB, params.get("order"));
         }
 
         return ResponseEntity.ok("OK");

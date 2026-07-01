@@ -16,6 +16,7 @@ public class CertificateService {
     public boolean canGenerate(User user, Long courseId) {
         return enrollmentRepo.findByUserAndCourse(user, new Course(courseId))
                 .map(CourseEnrollment::getCompleted)
+                .map(Boolean.TRUE::equals)
                 .orElse(false);
     }
 }
