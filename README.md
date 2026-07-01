@@ -63,7 +63,7 @@ APP_BOOTSTRAP_ADMIN_PASSWORD=change-this-long-random-password
 APP_BOOTSTRAP_ADMIN_FULL_NAME=Initial Administrator
 ```
 
-The bootstrap runs only when no `ADMIN` user exists. After the account is created and login is verified, set `APP_BOOTSTRAP_ADMIN_ENABLED=false` and remove the password variable from the cloud dashboard.
+The bootstrap password must be at least 12 characters. The bootstrap runs only when no `ADMIN` user exists. After the account is created and login is verified, set `APP_BOOTSTRAP_ADMIN_ENABLED=false` and remove the password variable from the cloud dashboard.
 
 ## Learning Flow Strategy
 
@@ -141,7 +141,8 @@ Required environment variables:
 - `SPRING_PROFILES_ACTIVE=production`
 - `APP_URL`
 - `DATABASE_URL` or `JDBC_DATABASE_URL`
-- `BASIC_AUTH_PASSWORD`
+
+`BASIC_AUTH_USER` and `BASIC_AUTH_PASSWORD` are optional Spring Boot fallback credentials. They are not used for Aminah form login at `/profile/login`; real admin access is created with `APP_BOOTSTRAP_ADMIN_*`.
 
 Production startup validates the launch configuration. The app fails fast when:
 
