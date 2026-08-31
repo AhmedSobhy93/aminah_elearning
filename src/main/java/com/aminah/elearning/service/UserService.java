@@ -10,9 +10,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
+import java.util.Locale;
 
 
 @Service
@@ -40,13 +43,25 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    public User userUpdate(User updatedUser) {
-        User existingUser = userRepository.findById(updatedUser.getId())
+    @Transactional
+    public User userUpdate(String authenticatedUsername, User updatedUser) {
+        User existingUser = userRepository.findByUsername(authenticatedUsername)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        if (!StringUtils.hasText(updatedUser.getEmail())) {
+            throw new IllegalArgumentException("Email is required");
+        }
+        String normalizedEmail = updatedUser.getEmail().trim().toLowerCase(Locale.ROOT);
+        userRepository.findByEmail(normalizedEmail)
+                .filter(other -> !other.getId().equals(existingUser.getId()))
+                .ifPresent(other -> {
+                    throw new IllegalArgumentException("Email is already in use");
+                });
         existingUser.setFullName(updatedUser.getFullName());
-        existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
-        existingUser.setEmail(updatedUser.getEmail());
+        if (StringUtils.hasText(updatedUser.getPassword())) {
+            existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
+        existingUser.setEmail(normalizedEmail);
         return userRepository.save(existingUser);
     }
 

@@ -67,13 +67,13 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
-    @GetMapping("/users/delete/{id}")
+    @PostMapping("/users/delete/{id}")
     public String deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return "redirect:/admin/users";
     }
 
-    @GetMapping("/users/enable/{id}")
+    @PostMapping("/users/enable/{id}")
     public String enableUser(@PathVariable Long id) {
         userService.enableUser(id);
         return "redirect:/admin/users";

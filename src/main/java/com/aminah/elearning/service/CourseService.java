@@ -31,6 +31,11 @@ public class CourseService {
         return courseRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Course not found"));
     }
 
+    public Course getPublishedCourse(Long id) {
+        return courseRepository.findByIdAndPublishedTrue(id)
+                .orElseThrow(() -> new NoSuchElementException("Published course not found"));
+    }
+
     public Course saveCourse(Course c) {
         return courseRepository.save(c);
     }
@@ -44,6 +49,15 @@ public class CourseService {
         Pageable pageable = PageRequest.of(page, size);
         if (keyword == null || keyword.isEmpty()) return courseRepository.findAll(pageable);
         return courseRepository.findCourseByCourseNameContainsIgnoreCase(keyword, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Course> getPublishedCourses(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        if (keyword == null || keyword.isBlank()) {
+            return courseRepository.findByPublishedTrue(pageable);
+        }
+        return courseRepository.findByCourseNameContainingIgnoreCaseAndPublishedTrue(keyword, pageable);
     }
 
     public Course createCourse(Course course, User user) {

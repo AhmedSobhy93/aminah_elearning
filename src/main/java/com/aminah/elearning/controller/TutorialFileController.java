@@ -70,6 +70,10 @@ public class TutorialFileController {
         if (user.getRole() == Role.DR) {
             return ownsTutorial(user, tutorial);
         }
+        if (tutorial.getSection() == null || tutorial.getSection().getCourse() == null
+                || !tutorial.getSection().getCourse().isPublished()) {
+            return false;
+        }
         if (tutorial.isPreview()) {
             return true;
         }

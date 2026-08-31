@@ -24,7 +24,7 @@ public class HomeController {
 
     @GetMapping({"/", "/index"})
     public String index(Model model) {
-        var page = courseRepository.findAll();
+        var page = courseRepository.findByPublishedTrue();
         model.addAttribute("courses", page);
         return "index";
     }

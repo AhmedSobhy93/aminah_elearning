@@ -21,6 +21,7 @@ import java.util.UUID;
 @ConditionalOnProperty(name = "aws.enabled", havingValue = "true")
 public class S3StorageService {
     private static final long MAX_PDF_SIZE_BYTES = 50L * 1024 * 1024;
+    private static final long MAX_VIDEO_SIZE_BYTES = 500L * 1024 * 1024;
 
     private final S3Client s3Client;
     private final S3Presigner presigner;
@@ -56,7 +57,10 @@ public class S3StorageService {
     /* ------------------------------------------------------
        PRESIGNED URL FOR VIDEO UPLOAD (AWS SDK v2)
        ------------------------------------------------------ */
-    public String generatePresignedVideoUploadUrl(Long courseId, String filename) {
+    public String generatePresignedVideoUploadUrl(Long courseId, String filename, long contentLength) {
+        if (contentLength <= 0 || contentLength > MAX_VIDEO_SIZE_BYTES) {
+            throw new IllegalArgumentException("Video file is too large");
+        }
         String safeFilename = buildSafeFilename(filename, ".mp4");
 
         String key = baseFolder + "/courses/" + courseId + "/videos/" +
@@ -66,6 +70,7 @@ public class S3StorageService {
                 .bucket(bucket)
                 .key(key)
                 .contentType("video/mp4")
+                .contentLength(contentLength)
                 .build();
 
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()

@@ -3,6 +3,7 @@ package com.aminah.elearning.controller;
 import com.aminah.elearning.dto.CourseViewDTO;
 import com.aminah.elearning.dto.QuizQuestionDto;
 import com.aminah.elearning.dto.TutorialDto;
+import com.aminah.elearning.dto.StudentTutorialDto;
 import com.aminah.elearning.model.*;
 import com.aminah.elearning.repository.*;
 import com.aminah.elearning.service.*;
@@ -66,7 +67,7 @@ public class StudentController {
     public String enrollCourse(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
 
         User user = userService.findByUsername(userDetails.getUsername());
-        Course course = courseService.getCourse(id);
+        Course course = courseService.getPublishedCourse(id);
 
         enrollmentService.enroll(user, course);
         return "redirect:/student/course/" + id;
@@ -155,7 +156,7 @@ public class StudentController {
 
         User user = userDetails != null ? userService.findByUsername(userDetails.getUsername()) : null;
 
-        Page<Course> coursesPage = courseService.getCourses(keyword, page, PAGE_SIZE);
+        Page<Course> coursesPage = courseService.getPublishedCourses(keyword, page, PAGE_SIZE);
 
         // Convert to DTOs with enrollment info
         List<CourseViewDTO> courses = coursesPage.stream().map(course -> {
@@ -187,7 +188,7 @@ public class StudentController {
                                 Model model) {
 
         User user = userService.findByUsername(userDetails.getUsername());
-        Course course = courseService.getCourse(id);
+        Course course = courseService.getPublishedCourse(id);
 
         // ✅ check enrollment
         boolean enrolled = enrollmentService.hasAccess(user, course.getId());
@@ -351,7 +352,7 @@ public class StudentController {
 
     @GetMapping("/tutorial/{id}/json")
     @ResponseBody
-    public ResponseEntity<TutorialDto> getTutorialJson(
+    public ResponseEntity<StudentTutorialDto> getTutorialJson(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails) {
         Tutorial t = tutorialService.getTutorial(id);
@@ -361,17 +362,7 @@ public class StudentController {
             return ResponseEntity.status(403).build();
         }
 
-        TutorialDto dto = TutorialDto.from(t); // safely maps basic fields
-
-        // Map quiz questions if type is QUIZ
-        if (t.getType() == TutorialType.QUIZ && t.getQuizQuestions() != null) {
-            List<QuizQuestionDto> quizDtos = t.getQuizQuestions().stream()
-                    .map(QuizQuestionDto::from) // convert entity -> DTO
-                    .toList();
-            dto.setQuizQuestions(quizDtos);
-        }
-        System.out.println(dto);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(StudentTutorialDto.from(t));
     }
     /* ================= MARK COMPLETED ================= */
     @PostMapping("/tutorial/{id}/complete")
@@ -382,7 +373,10 @@ public class StudentController {
 
         Tutorial tutorial = tutorialService.getTutorial(id);
         User user = userService.findByUsername(userDetails.getUsername());
-        System.out.println("Marking tutorial " + tutorial.getId() + " complete for user " + user.getUsername());
+
+        if (tutorial.getType() == TutorialType.QUIZ) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Submit the quiz to complete it"));
+        }
 
         if (!canCompleteTutorial(user, tutorial)) {
             return ResponseEntity.status(403).body(Map.of("success", false));
@@ -409,8 +403,6 @@ public class StudentController {
         }
 
         int correctCount = 0;
-        List<Map<String, Object>> results = new ArrayList<>();
-
         for (QuizQuestion q : tutorial.getQuizQuestions()) {
             Integer selectedIndex = answers.get(q.getId());
 
@@ -419,12 +411,6 @@ public class StudentController {
 
             if (correct) correctCount++;
 
-            results.add(Map.of(
-                    "questionId", q.getId(),
-                    "correct", correct,
-                    "correctIndex", q.getCorrectOptionIndex(),
-                    "correctAnswer", q.getOptions().get(q.getCorrectOptionIndex())
-            ));
         }
 
         boolean passed = correctCount == tutorial.getQuizQuestions().size();
@@ -436,19 +422,18 @@ public class StudentController {
         return ResponseEntity.ok(Map.of(
                 "passed", passed,
                 "score", correctCount,
-                "total", tutorial.getQuizQuestions().size(),
-                "results", results
+                "total", tutorial.getQuizQuestions().size()
         ));
     }
 
     private boolean canViewTutorial(User user, Tutorial tutorial) {
         Course course = tutorial.getSection().getCourse();
-        return tutorial.isPreview() || enrollmentService.hasAccess(user, course.getId());
+        return course.isPublished() && (tutorial.isPreview() || enrollmentService.hasAccess(user, course.getId()));
     }
 
     private boolean canCompleteTutorial(User user, Tutorial tutorial) {
         Course course = tutorial.getSection().getCourse();
-        return enrollmentService.hasAccess(user, course.getId());
+        return course.isPublished() && enrollmentService.hasAccess(user, course.getId());
     }
 
 

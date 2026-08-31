@@ -234,10 +234,14 @@
                         <div class="progress" style="height: 7px;">
 
                             <div class="progress-bar bg-success"
+                                 role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                                 aria-label="Course progress"
+                                 th:attr="aria-valuenow=${course.progress}"
                                  th:style="'width:' + ${course.progress} + '%'"
-                                 th:text="${course.progress + '%'}">
+                                 >
                             </div>
                         </div>
+                        <span class="visually-hidden" th:text="${'Course progress: ' + course.progress + '%'}"></span>
 <!--                    </div>-->
 
                 </div>

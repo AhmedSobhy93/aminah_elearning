@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
@@ -24,5 +25,12 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     Page<Course> findByPublishedTrue(Pageable pageable);
 
-}
+    List<Course> findByPublishedTrue();
 
+    Optional<Course> findByIdAndPublishedTrue(Long id);
+
+    Optional<Course> findByIdAndAuthorUsername(Long id, String username);
+
+    Page<Course> findByCourseNameContainingIgnoreCaseAndPublishedTrue(String keyword, Pageable pageable);
+
+}

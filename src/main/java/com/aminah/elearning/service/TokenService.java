@@ -6,6 +6,7 @@ import com.aminah.elearning.model.VerificationToken;
 import com.aminah.elearning.repository.PasswordResetTokenRepository;
 import com.aminah.elearning.repository.VerificationTokenRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -33,7 +34,9 @@ public class TokenService {
         return verificationTokenRepository.save(token);
     }
 
+    @Transactional
     public PasswordResetToken createPasswordResetToken(User user) {
+        resetTokenRepository.deleteByUser(user);
         String tokenValue = UUID.randomUUID().toString();
         PasswordResetToken token = new PasswordResetToken();
         token.setToken(tokenValue);

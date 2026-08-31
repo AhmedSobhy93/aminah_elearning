@@ -4,8 +4,10 @@ import com.aminah.elearning.model.PasswordResetToken;
 import com.aminah.elearning.model.User;
 import com.aminah.elearning.repository.PasswordResetTokenRepository;
 import com.aminah.elearning.repository.UserRepository;
-import com.aminah.elearning.service.EmailServiceSendGrid;
+import com.aminah.elearning.service.EmailService;
 import com.aminah.elearning.service.TokenService;
+import com.aminah.elearning.service.RequestThrottleService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -19,24 +21,27 @@ public class PasswordController {
 
     private final UserRepository userRepository;
     private final TokenService tokenService;
-    private final EmailServiceSendGrid emailServiceSendGrid;
+    private final EmailService emailService;
     private final PasswordResetTokenRepository resetTokenRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RequestThrottleService throttle;
     private final String appUrl;
 
     public PasswordController(
             UserRepository userRepository,
             TokenService tokenService,
-            EmailServiceSendGrid emailServiceSendGrid,
+            EmailService emailService,
             PasswordResetTokenRepository resetTokenRepository,
             PasswordEncoder passwordEncoder,
+            RequestThrottleService throttle,
             @Value("${app.url}") String appUrl
     ) {
         this.userRepository = userRepository;
         this.tokenService = tokenService;
-        this.emailServiceSendGrid = emailServiceSendGrid;
+        this.emailService = emailService;
         this.resetTokenRepository = resetTokenRepository;
         this.passwordEncoder = passwordEncoder;
+        this.throttle = throttle;
         this.appUrl = appUrl;
     }
 
@@ -46,20 +51,21 @@ public class PasswordController {
     }
 
     @PostMapping("/forgot-password")
-    public String processForgotPassword(@RequestParam("email") String email, Model model) {
-//        try {
-//            userService.createPasswordResetToken(email);
-//            model.addAttribute("message", "Password reset link sent to your email.");
-//        } catch (Exception e) {
-//            model.addAttribute("error", "Email not found.");
-//        }
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("No user with this email"));
+    public String processForgotPassword(
+            @RequestParam("email") String email,
+            HttpServletRequest request,
+            Model model
+    ) {
+        String normalizedEmail = email.trim().toLowerCase();
+        if (throttle.allow("password-reset", request.getRemoteAddr() + "|" + normalizedEmail, 3, java.time.Duration.ofMinutes(15))) {
+            userRepository.findByEmail(normalizedEmail).ifPresent(user -> {
+                PasswordResetToken token = tokenService.createPasswordResetToken(user);
+                String resetLink = appUrl + "/reset-password?token=" + token.getToken();
+                emailService.sendEmail(user.getEmail(), "Password Reset", "Click: " + resetLink);
+            });
+        }
 
-        PasswordResetToken token = tokenService.createPasswordResetToken(user);
-        String resetLink = appUrl + "/reset-password?token=" + token.getToken();
-        emailServiceSendGrid.sendEmail(user.getEmail(), "Password Reset", "Click: " + resetLink);
-
-        model.addAttribute("message", "Reset link sent to your email.");
+        model.addAttribute("message", "If an account exists for this email, a reset link has been sent.");
         return "profile/forgot-password";
     }
 

@@ -31,7 +31,11 @@
             <td th:text="${enrollment.course.price}"></td>
             <td>
                 <div class="progress">
-                    <div class="progress-bar" th:style="'width:' + ${enrollment.progressPercentage} + '%'"></div>
+                    <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                         aria-label="Student course progress"
+                         th:attr="aria-valuenow=${enrollment.progressPercentage}"
+                         th:style="'width:' + ${enrollment.progressPercentage} + '%'"
+                         th:text="${enrollment.progressPercentage + '%'}"></div>
                 </div>
             </td>
             <td th:text="${enrollment.completed ? 'Yes' : 'No'}"></td>

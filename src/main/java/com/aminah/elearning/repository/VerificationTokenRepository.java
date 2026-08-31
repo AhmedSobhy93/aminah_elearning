@@ -1,6 +1,7 @@
 package com.aminah.elearning.repository;
 
 import com.aminah.elearning.model.VerificationToken;
+import com.aminah.elearning.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,4 +13,6 @@ public interface VerificationTokenRepository extends JpaRepository<VerificationT
     Optional<VerificationToken> findById(Long id);
 
     Optional<VerificationToken> findByToken(String token);
+
+    void deleteByUser(User user);
 }

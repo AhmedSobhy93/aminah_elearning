@@ -1,6 +1,7 @@
 package com.aminah.elearning.repository;
 
 import com.aminah.elearning.model.PasswordResetToken;
+import com.aminah.elearning.model.User;
 //import org.springframework.data.jpa.repository.JpaRepository;
 //import org.springframework.data.mongodb.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,5 @@ import java.util.Optional;
 @Repository
 public interface PasswordResetTokenRepository extends JpaRepository<PasswordResetToken,Long> {
     Optional<PasswordResetToken> findByToken(String token);
+    void deleteByUser(User user);
 }

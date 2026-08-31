@@ -23,6 +23,8 @@ public interface TutorialRepository extends JpaRepository<Tutorial, Long> {
 
     Optional<Tutorial> findByFilePath(String filePath);
 
+    Optional<Tutorial> findByIdAndSectionCourseAuthorUsername(Long id, String username);
+
 //    @Query("SELECT t FROM Tutorial t WHERE t.section.course.id = :courseId ORDER BY t.section.orderIndex, t.orderIndex")
 //    List<Tutorial> getTutorialsByCourse(Long courseId);
 

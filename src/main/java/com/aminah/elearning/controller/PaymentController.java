@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 
@@ -39,7 +41,7 @@ public class PaymentController {
 
     @GetMapping("/buy/{courseId}")
     public String buy(@PathVariable Long courseId, Model model) {
-        Course course = courseService.getCourse(courseId);
+        Course course = courseService.getPublishedCourse(courseId);
         model.addAttribute("course", course);
         return "checkout";
     }
@@ -51,7 +53,7 @@ public class PaymentController {
             Model model
     ) {
         User user = userService.findByUsername(userDetails.getUsername());
-        Course course = courseService.getCourse(courseId);
+        Course course = courseService.getPublishedCourse(courseId);
         CourseEnrollment enrollment = enrollmentService.enroll(user, course);
 
         if (course.getPrice() == null || course.getPrice() <= 0) {
@@ -67,10 +69,18 @@ public class PaymentController {
 
         Payment payment = paymentService.createPayment(user, enrollment, GATEWAY_PAYMOB);
 
+        if ("SUCCESS".equalsIgnoreCase(payment.getStatus())) {
+            return "redirect:/student/course/" + courseId;
+        }
+
         String token = paymobService.getAuthToken();
-        Integer orderId = paymobService.createOrder(token, course.getPrice(), enrollment.getId());
-        payment.setGatewayOrderId(orderId.toString());
-        paymentService.updatePaymentStatus(payment, "PENDING");
+        Integer orderId;
+        if (StringUtils.hasText(payment.getGatewayOrderId())) {
+            orderId = Integer.valueOf(payment.getGatewayOrderId());
+        } else {
+            orderId = paymobService.createOrder(token, course.getPrice(), enrollment.getId());
+            paymentService.assignGatewayOrder(payment, orderId.toString());
+        }
 
         String paymentKey = paymobService.generatePaymentKey(token, orderId, course.getPrice(), user.getEmail());
         model.addAttribute("iframeUrl", paymobService.buildIframeUrl(paymentKey));
@@ -84,25 +94,42 @@ public class PaymentController {
             return "redirect:/student/my-courses?payment=invalid";
         }
 
-        if (!"true".equalsIgnoreCase(params.get("success")) || !"false".equalsIgnoreCase(params.get("pending"))) {
+        if (!paymobService.isSuccessful(params)) {
             return "redirect:/student/my-courses?payment=failed";
         }
 
-        String orderId = params.get("order");
-        Payment payment = paymentService.completeGatewayPayment(GATEWAY_PAYMOB, orderId);
-
-        return "redirect:/student/course/" + payment.getCourseEnrollment().getCourse().getId();
+        return "redirect:/student/my-courses?payment=processing";
     }
 
     @PostMapping("/webhook")
     @ResponseBody
-    public ResponseEntity<String> webhook(@RequestParam Map<String, String> params) {
+    public ResponseEntity<String> webhook(
+            @RequestParam("hmac") String hmac,
+            @RequestBody Map<String, Object> payload
+    ) {
+        Map<String, String> params = paymobService.normalizeWebhook(payload, hmac);
         if (!paymobService.isValidHmac(params)) {
             return ResponseEntity.status(403).body("INVALID");
         }
 
-        if ("true".equalsIgnoreCase(params.get("success")) && "false".equalsIgnoreCase(params.get("pending"))) {
+        Payment payment;
+        try {
+            payment = paymentService.findByGatewayOrder(GATEWAY_PAYMOB, params.get("order"));
+        } catch (RuntimeException ex) {
+            return ResponseEntity.notFound().build();
+        }
+        if (!paymobService.matchesPayment(params, payment)) {
+            return ResponseEntity.unprocessableEntity().body("MISMATCH");
+        }
+
+        if (paymobService.isSuccessful(params)) {
             paymentService.completeGatewayPayment(GATEWAY_PAYMOB, params.get("order"));
+        } else if (paymobService.isTerminalFailure(params)) {
+            paymentService.failGatewayPayment(
+                    GATEWAY_PAYMOB,
+                    params.get("order"),
+                    paymobService.failureStatus(params)
+            );
         }
 
         return ResponseEntity.ok("OK");

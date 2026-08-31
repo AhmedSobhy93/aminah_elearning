@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +42,7 @@ public class DoctorController {
     private final StorageService storageService;
     private final UserRepository userRepository;
     private final CourseEnrollmentService courseEnrollmentService;
+    private final DoctorContentAuthorizationService contentAuthorization;
     private static final int COURSES_PER_PAGE = 2;
     private static final int SECTIONS_PER_PAGE = 5;
     private static final int TUTORIALS_PER_PAGE = 5;
@@ -83,7 +85,13 @@ public class DoctorController {
             var doctor = userRepository.findByUsername(principal.getName())
                     .orElseThrow();
 
+            // The create form is intentionally insert-only. Never allow a submitted entity id
+            // or relationship graph to turn this endpoint into an update/ownership transfer.
+            course.setId(null);
+            course.setCreatedAt(null);
             course.setAuthor(doctor);
+            course.setEnrollments(new ArrayList<>());
+            course.setSections(new ArrayList<>());
             courseService.saveCourse(course);
             ra.addFlashAttribute("success", "Course created successfully");
         } catch (Exception e) {
@@ -97,7 +105,9 @@ public class DoctorController {
      * ---------------------------------------------------- */
     @PostMapping("/courses/delete/{id}")
     public String deleteCourse(@PathVariable Long id,
+                               Principal principal,
                                RedirectAttributes ra) {
+        contentAuthorization.requireOwnedCourse(id, principal.getName());
         try {
             courseService.deleteCourse(id);
             ra.addFlashAttribute("success", "Course deleted");
@@ -111,11 +121,11 @@ public class DoctorController {
     public String editCourse(
             @PathVariable Long id,
             @ModelAttribute Course formCourse,
+            Principal principal,
             RedirectAttributes ra
     ) {
+        Course c = contentAuthorization.requireOwnedCourse(id, principal.getName());
         try {
-            Course c = courseService.getCourse(id);
-
             c.setTitle(formCourse.getTitle());
             c.setCourseName(formCourse.getCourseName());
             c.setPrice(formCourse.getPrice());
@@ -134,8 +144,8 @@ public class DoctorController {
 
     @GetMapping("/courses/{id}/json")
     @ResponseBody
-    public CourseDTO getCourseJson(@PathVariable Long id) {
-        Course c = courseService.getCourse(id);
+    public CourseDTO getCourseJson(@PathVariable Long id, Principal principal) {
+        Course c = contentAuthorization.requireOwnedCourse(id, principal.getName());
 
         boolean enrolled = false; // compute based on user if needed
         int durationHours = c.getSections().size();
@@ -161,8 +171,8 @@ public class DoctorController {
      *   PUBLISH / UNPUBLISH COURSE
      * ---------------------------------------------------- */
     @PostMapping("/courses/{id}/publish")
-    public String publishCourse(@PathVariable Long id) {
-        Course c = courseService.getCourse(id);
+    public String publishCourse(@PathVariable Long id, Principal principal) {
+        Course c = contentAuthorization.requireOwnedCourse(id, principal.getName());
         c.setPublished(!c.isPublished());
         courseService.saveCourse(c);
         return "redirect:/dr/courses";
@@ -177,9 +187,10 @@ public class DoctorController {
     @PostMapping("/courses/{courseId}/sections/add")
     public String addSection(@PathVariable Long courseId,
                              @RequestParam String title,
-                             @RequestParam(required = false) String description
+                             @RequestParam(required = false) String description,
+                             Principal principal
     ) {
-        Course course = courseService.getCourse(courseId);
+        Course course = contentAuthorization.requireOwnedCourse(courseId, principal.getName());
         Section section = new Section();
         section.setTitle(title);
         section.setDescription(description);
@@ -191,7 +202,8 @@ public class DoctorController {
 
     // Delete Section
     @PostMapping("/sections/delete/{id}")
-    public String deleteSection(@PathVariable Long id) {
+    public String deleteSection(@PathVariable Long id, Principal principal) {
+        contentAuthorization.requireOwnedSection(id, principal.getName());
         sectionService.delete(id);
         return "redirect:/dr/courses/";
     }
@@ -201,9 +213,10 @@ public class DoctorController {
     public String editSection(
             @PathVariable Long id,
             @RequestParam String title,
-            @RequestParam(required = false) String description
+            @RequestParam(required = false) String description,
+            Principal principal
     ) {
-        Section section = sectionService.getSection(id);
+        Section section = contentAuthorization.requireOwnedSection(id, principal.getName());
 
         section.setTitle(title);
         section.setDescription(description);
@@ -217,8 +230,9 @@ public class DoctorController {
     @GetMapping("/courses/{courseId}/sections-fragment")
     public String sectionsFragment(@PathVariable Long courseId,
                                    @RequestParam(defaultValue = "1") int page,
+                                   Principal principal,
                                    Model model) {
-        Course course = courseService.getCourse(courseId);
+        Course course = contentAuthorization.requireOwnedCourse(courseId, principal.getName());
         List<Section> allSections = course.getSections(); // all sections
 
         int totalSections = allSections.size();
@@ -245,9 +259,11 @@ public class DoctorController {
     @GetMapping("/sections/{sectionId}/tutorials-fragment")
     public String tutorialsFragment(@PathVariable Long sectionId,
                                     @RequestParam(defaultValue = "1") Integer page,
+                                    Principal principal,
                                     Model model) {
 
         if (page < 1) page = 1;
+        contentAuthorization.requireOwnedSection(sectionId, principal.getName());
 
         Page<Tutorial> tutorialsPage = tutorialService.getTutorialsForSection(sectionId, page - 1, 5);
 
@@ -287,8 +303,15 @@ public class DoctorController {
             var user = userRepository.findByUsername(principal.getName())
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
+            Section targetSection = contentAuthorization.requireOwnedSection(sectionId, principal.getName());
+
             // 2️⃣ Either create new or load existing tutorial
-            Tutorial t = (tutorialId != null) ? tutorialService.getTutorial(tutorialId) : new Tutorial();
+            Tutorial t = (tutorialId != null)
+                    ? contentAuthorization.requireOwnedTutorial(tutorialId, principal.getName())
+                    : new Tutorial();
+            if (tutorialId != null && t.getSection() != null && !t.getSection().getId().equals(targetSection.getId())) {
+                throw new IllegalArgumentException("Existing tutorials cannot be moved between sections");
+            }
 
             t.setTitle(title);
             t.setType(type);
@@ -327,6 +350,8 @@ public class DoctorController {
             ra.addFlashAttribute("success", "Tutorial saved successfully");
             resp.put("success", true);
             resp.put("tutorialId", saved.getId());
+        } catch (AccessDeniedException e) {
+            throw e;
         } catch (Exception e) {
             resp.put("success", false);
             resp.put("message", e.getMessage());
@@ -341,7 +366,8 @@ public class DoctorController {
 
     @PostMapping("/tutorial/{id}/delete-json")
     @ResponseBody
-    public Map<String, Object> deleteTutorialJson(@PathVariable Long id) {
+    public Map<String, Object> deleteTutorialJson(@PathVariable Long id, Principal principal) {
+        contentAuthorization.requireOwnedTutorial(id, principal.getName());
         Map<String, Object> response = new HashMap<>();
         try {
             tutorialService.delete(id);
@@ -359,8 +385,8 @@ public class DoctorController {
 
     @GetMapping("/tutorial/{id}/json")
     @ResponseBody
-    public TutorialDto getTutorialJson(@PathVariable Long id) {
-        Tutorial t = tutorialService.getTutorial(id);
+    public TutorialDto getTutorialJson(@PathVariable Long id, Principal principal) {
+        Tutorial t = contentAuthorization.requireOwnedTutorial(id, principal.getName());
 
         TutorialDto dto = TutorialDto.from(t); // safely maps basic fields
 
@@ -385,11 +411,11 @@ public class DoctorController {
             @RequestParam String question,
             @RequestParam List<String> options,
             @RequestParam String answer,
+            Principal principal,
             RedirectAttributes ra
     ) {
+        Tutorial t = contentAuthorization.requireOwnedTutorial(tutorialId, principal.getName());
         try {
-            Tutorial t = tutorialService.getTutorial(tutorialId);
-
             QuizQuestion q = new QuizQuestion();
             q.setQuestion(question);
             q.setOptions(options);
@@ -407,7 +433,8 @@ public class DoctorController {
     }
 
     @PostMapping("/quiz/{id}/delete")
-    public String deleteQuizQuestion(@PathVariable Long id, RedirectAttributes ra) {
+    public String deleteQuizQuestion(@PathVariable Long id, Principal principal, RedirectAttributes ra) {
+        contentAuthorization.requireOwnedQuizQuestion(id, principal.getName());
         try {
             quizService.delete(id);
             ra.addFlashAttribute("success", "Quiz question removed");
@@ -425,7 +452,9 @@ public class DoctorController {
     @GetMapping("/courses/{courseId}/students-fragment")
     public String getStudentsFragment(@PathVariable Long courseId,
                                       @RequestParam(defaultValue = "0") int page,
+                                      Principal principal,
                                       Model model) {
+        contentAuthorization.requireOwnedCourse(courseId, principal.getName());
         try {
             if (page < 0) page = 0;   // 🔥 Fix the 500 error
 
@@ -446,9 +475,13 @@ public class DoctorController {
     /// ///////////Order INdex
     @PostMapping("/sections/reorder")
     @ResponseBody
-    public String reorderSections(@RequestBody List<Long> sectionIds) {
+    @Transactional
+    public String reorderSections(@RequestBody List<Long> sectionIds, Principal principal) {
+        List<Section> sections = contentAuthorization.requireOwnedSections(sectionIds, principal.getName());
+        Map<Long, Section> byId = new HashMap<>();
+        sections.forEach(section -> byId.put(section.getId(), section));
         for (int i = 0; i < sectionIds.size(); i++) {
-            Section s = sectionService.getSection(sectionIds.get(i));
+            Section s = byId.get(sectionIds.get(i));
             s.setOrderIndex(i);
             sectionService.save(s);
         }
@@ -457,9 +490,13 @@ public class DoctorController {
 
     @PostMapping("/tutorials/reorder")
     @ResponseBody
-    public String reorderTutorials(@RequestBody List<Long> tutorialIds) {
+    @Transactional
+    public String reorderTutorials(@RequestBody List<Long> tutorialIds, Principal principal) {
+        List<Tutorial> tutorials = contentAuthorization.requireOwnedTutorials(tutorialIds, principal.getName());
+        Map<Long, Tutorial> byId = new HashMap<>();
+        tutorials.forEach(tutorial -> byId.put(tutorial.getId(), tutorial));
         for (int i = 0; i < tutorialIds.size(); i++) {
-            Tutorial t = tutorialService.getTutorial(tutorialIds.get(i));
+            Tutorial t = byId.get(tutorialIds.get(i));
             t.setOrderIndex(i);
             tutorialService.save(t);
         }

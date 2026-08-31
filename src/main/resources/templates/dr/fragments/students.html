@@ -26,6 +26,9 @@
             <td>
                 <div class="progress glass-progress">
                     <div class="progress-bar bg-info"
+                         role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                         aria-label="Student course progress"
+                         th:attr="aria-valuenow=${s.progressPercentage}"
                          th:style="'width:' + ${s.progressPercentage} + '%'">
                     </div>
                 </div>

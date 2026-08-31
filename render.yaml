@@ -4,6 +4,10 @@ services:
     runtime: docker
     plan: starter
     healthCheckPath: /actuator/health/readiness
+    disk:
+      name: aminah-uploads
+      mountPath: /app/uploads
+      sizeGB: 5
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: production
@@ -16,7 +20,9 @@ services:
       - key: DATABASE_PASSWORD
         sync: false
       - key: JPA_DDL_AUTO
-        value: update
+        value: validate
+      - key: FLYWAY_ENABLED
+        value: true
       - key: APP_SEED_ENABLED
         value: false
       - key: APP_BOOTSTRAP_ADMIN_ENABLED
@@ -31,10 +37,10 @@ services:
         sync: false
       - key: AWS_ENABLED
         value: false
+      - key: PAYMOB_ENABLED
+        value: false
       - key: APP_EMAIL_ENABLED
         value: false
-      - key: BASIC_AUTH_PASSWORD
-        generateValue: true
       - key: PAYMOB_API_KEY
         sync: false
       - key: PAYMOB_INTEGRATION_ID

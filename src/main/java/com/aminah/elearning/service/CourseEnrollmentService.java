@@ -43,6 +43,16 @@ public class CourseEnrollmentService {
         return enrollmentRepository.save(ce);
     }
 
+    public CourseEnrollment markPaymentStatus(Long enrollmentId, String status) {
+        CourseEnrollment enrollment = enrollmentRepository.findById(enrollmentId).orElseThrow();
+        enrollment.setPaymentStatus(status);
+        return enrollmentRepository.save(enrollment);
+    }
+
+    public CourseEnrollment findForUpdate(Long enrollmentId) {
+        return enrollmentRepository.findForUpdateById(enrollmentId).orElseThrow();
+    }
+
     public Page<CourseEnrollment> getEnrollmentsForCourse(Long id, int page, int size) {
         return enrollmentRepository.findByCourseId(id, PageRequest.of(page, size));
     }

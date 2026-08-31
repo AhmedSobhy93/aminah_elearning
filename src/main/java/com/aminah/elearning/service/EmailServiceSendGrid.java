@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
-public class EmailServiceSendGrid {
+public class EmailServiceSendGrid implements EmailService {
 
     private final boolean emailEnabled;
     private final String provider;
@@ -28,15 +28,20 @@ public class EmailServiceSendGrid {
         this.fromEmail = fromEmail;
     }
 
-    public String sendEmail(String to, String subject, String body) {
+    @Override
+    public EmailResult sendEmail(String to, String subject, String body) {
+        String providerName = "sendgrid";
         if (!emailEnabled) {
-            return "Email disabled";
+            return EmailResult.skipped(providerName, "Email disabled");
         }
         if (!"sendgrid".equalsIgnoreCase(provider)) {
-            return "Email provider is not SendGrid";
+            return EmailResult.skipped(providerName, "Email provider is not SendGrid");
         }
         if (!StringUtils.hasText(sendGridApiKey) || !StringUtils.hasText(fromEmail)) {
-            return "SendGrid email is not configured";
+            return EmailResult.skipped(providerName, "SendGrid email is not configured");
+        }
+        if (!StringUtils.hasText(to)) {
+            return EmailResult.skipped(providerName, "Recipient email is missing");
         }
 
         Email from = new Email(fromEmail);
@@ -53,10 +58,13 @@ public class EmailServiceSendGrid {
             request.setBody(mail.build());
 
             Response response = sg.api(request);
-            return "Status: " + response.getStatusCode() +
-                    " | Body: " + response.getBody();
+            boolean success = response.getStatusCode() >= 200 && response.getStatusCode() < 300;
+            if (success) {
+                return EmailResult.sent(providerName, "Accepted by SendGrid", response.getStatusCode());
+            }
+            return EmailResult.failed(providerName, "SendGrid returned non-success status", response.getStatusCode());
         } catch (Exception e) {
-            return "Error sending email: " + e.getMessage();
+            return EmailResult.failed(providerName, "Error sending email: " + e.getMessage(), null);
         }
     }
 }

@@ -22,8 +22,20 @@ This is the shared checklist for turning the current Spring Boot Thymeleaf proje
 - Phase 14 added idempotent Paymob success handling and deterministic certificate issuance at the service layer.
 - Phase 15 added production launch configuration validation for required deployment variables and enabled integrations.
 - Phase 16 verified the Render deployment smoke baseline and documented the remaining redeploy/readiness checks.
+- Phase 17 hardened public registration, confirmation resend, and forgot-password privacy.
+- Phase 18 normalized email delivery behind a structured sender interface and added payment/certificate notifications.
+- Release hardening now enforces administrator and doctor ownership boundaries, published-course student access, inert article/quiz rendering, answer-free student quiz DTOs, server-side grading, bounded authentication throttles, and webhook-only payment activation.
+- Paymob events now bind signed order/amount/currency/integration/merchant values, serialize state changes with a database lock, preserve pending checkout retries, and make refund/void revocation monotonic.
+- The Render blueprint now uses Flyway with JPA validation and mounts persistent upload storage at `/app/uploads`.
 
 ## Current Blocker
+
+Current deploy blocker/risk is operational rather than code compile:
+
+- Render now starts the app and connects to PostgreSQL.
+- First admin bootstrap can fail if the configured username/email already exists as a non-admin user.
+- Use a unique bootstrap username/email or intentionally fix the existing database row.
+- Disable bootstrap after the first admin login succeeds.
 
 No current local build blocker. Maven succeeds when run with the Windows root trust store:
 
@@ -99,12 +111,12 @@ mvn spring-boot:run
 
 ## Phase 7: Email
 
-1. SendGrid is the selected production provider for account confirmation and password reset emails.
+1. SendGrid is the selected production provider for account confirmation, password reset, payment receipt, and certificate-issued emails.
 2. SendGrid credentials and sender address are loaded through environment variables only.
 3. Dev keeps email disabled by default so registration/reset flows do not fail when no provider is configured.
 4. Account confirmation links now point to `/profile/confirm`.
 5. Gmail SMTP wiring remains available but is not the active production sender.
-6. Payment receipt and certificate emails remain future hardening work.
+6. Receipt page/PDF and provider delivery QA remain future hardening work.
 
 ## Phase 8: UI And Medical Product Polish
 
@@ -181,10 +193,182 @@ mvn spring-boot:run
 6. Redeploy the latest repository commit, then re-check `/actuator/health/readiness` and `/actuator/health/liveness`.
 7. Full browser QA for admin, doctor, student, payment, email, and file flows remains future work.
 
+## Feature Inventory
+
+### Implemented Or Partially Implemented
+
+- Public site: home, about, contact.
+- Authentication: login, registration, email confirmation tokens, password reset tokens.
+- Admin: user list/detail/edit/enable/delete, course list/detail review.
+- Doctor: course CRUD, sections, tutorials, quiz questions, reorder, publish, student progress fragments.
+- Student: browse/search courses, enroll, course detail, tutorial view, quiz submission, progress.
+- Payment: Paymob iframe checkout, HMAC callback/webhook, idempotent success completion.
+- Email: SendGrid production sender, Gmail/SMTP support kept as optional.
+- File storage: local protected uploads and optional S3 upload configuration.
+- Certificates: deterministic service-level certificate issuance for completed enrollments.
+- Deployment: Docker, Render/Railway descriptors, health checks, production config validator.
+
+### Not Yet Complete
+
+- SMS provider for registration/OTP/password reset notifications.
+- Production-grade registration UX with resend confirmation, expired token recovery, and duplicate account handling.
+- Doctor/admin creation flow for production users with password setup/reset.
+- Certificate download/PDF page.
+- Payment invoice/receipt page.
+- Paymob sandbox/live end-to-end test run with real IDs.
+- S3 signed/private download behavior for paid course files.
+- Structured audit logs for admin/doctor/payment actions.
+- Auth rate limiting, password policy, CSRF mutation hardening, and admin GET-mutation cleanup.
+- Browser end-to-end QA automation.
+- Observability beyond health checks.
+
+## Configuration Roadmap
+
+### Core Production
+
+- `SPRING_PROFILES_ACTIVE=production`
+- `APP_URL=https://<active-render-url-or-custom-domain>`
+- `DATABASE_URL` or `JDBC_DATABASE_URL`
+- `JPA_DDL_AUTO=update` only for first shared schema creation, then `validate`
+- `FLYWAY_ENABLED=true` after baseline strategy is confirmed
+
+### First Admin
+
+- `APP_BOOTSTRAP_ADMIN_ENABLED=true`
+- `APP_BOOTSTRAP_ADMIN_USERNAME`
+- `APP_BOOTSTRAP_ADMIN_EMAIL`
+- `APP_BOOTSTRAP_ADMIN_PASSWORD` with at least 12 characters
+- `APP_BOOTSTRAP_ADMIN_FULL_NAME`
+- Set `APP_BOOTSTRAP_ADMIN_ENABLED=false` and remove the password after successful login.
+
+### Email
+
+- `APP_EMAIL_ENABLED=true`
+- `APP_EMAIL_PROVIDER=sendgrid`
+- `APP_EMAIL_FROM`
+- `SENDGRID_API_KEY`
+- Keep `MAIL_*` SMTP values optional unless Gmail/SMTP is intentionally selected later.
+
+### SMS Future Provider
+
+Add SMS behind a provider abstraction with startup disabled by default:
+
+- `SMS_ENABLED=false`
+- `SMS_PROVIDER=twilio` or selected regional provider
+- `SMS_FROM`
+- Provider-specific account ID/key/token variables
+- Optional message templates for registration, password reset, and payment notification
+
+Recommended first SMS use cases:
+
+1. Registration welcome/verification notification.
+2. Password reset notification.
+3. Payment success notification.
+4. Certificate issued notification.
+
+### Payment
+
+- `PAYMOB_API_KEY`
+- `PAYMOB_INTEGRATION_ID`
+- `PAYMOB_MERCHANT_ID`
+- `PAYMOB_HMAC_SECRET`
+- `PAYMOB_IFRAME_ID`
+- `APP_URL` must match the live callback base URL.
+- Add separate sandbox/live notes once Paymob live credentials are available.
+
+### Storage
+
+- `AWS_ENABLED=false` by default
+- `AWS_S3_BUCKET`
+- `AWS_S3_FOLDER`
+- Future signed delivery will need S3 region/credentials or platform IAM strategy documented before implementation.
+
+## Future Phases
+
+## Phase 17: Production Account And Registration Hardening
+
+1. Public registration now creates `STUDENT` accounts only.
+2. Registration detects duplicate username/email before saving.
+3. Inactive users can request a fresh confirmation link.
+4. Forgot-password uses a generic response to avoid email enumeration.
+5. Focused tests cover registration duplicates, role enforcement, resend confirmation, and reset privacy.
+6. Admin/doctor invite or creation workflow remains future work.
+
+## Phase 18: Email Notification Completion
+
+1. Registration, password reset, payment receipts, and certificate notifications now use the `EmailService` abstraction.
+2. SendGrid delivery now returns structured `EmailResult` values for sent, skipped, and failed outcomes.
+3. Payment receipt email is sent only when a gateway payment first transitions to `SUCCESS`, so callback/webhook replays do not resend.
+4. Certificate-issued email is sent only when a completed enrollment is first marked `certificateIssued`.
+5. SendGrid sender/domain verification steps are documented in `README.md`.
+6. A retry queue, receipt page, and certificate PDF/download UX remain future work.
+
+## Phase 19: SMS Notification Foundation
+
+1. Add `SmsService` interface and disabled-by-default no-op implementation.
+2. Add provider configuration model for Twilio or chosen SMS provider.
+3. Add production validator rules only when `SMS_ENABLED=true`.
+4. Add SMS notifications for registration and password reset first.
+5. Add docs for SMS env vars and provider setup.
+
+## Phase 20: Paymob Sandbox And Receipt QA
+
+1. Verify real Paymob sandbox iframe ID, integration ID, merchant ID, API key, and HMAC secret.
+2. Run paid-course checkout end to end on Render.
+3. Verify callback and webhook both mark payment once.
+4. Add receipt page or payment history entry for students.
+5. Document sandbox-to-live switch procedure.
+
+## Phase 21: Certificate UX And PDF
+
+1. Add student certificate route visible only for completed paid/free enrollments.
+2. Generate certificate PDF or printable HTML with deterministic certificate number.
+3. Add doctor/admin verification lookup by certificate number.
+4. Send certificate email when issued.
+5. Add tests for unauthorized and incomplete-course access.
+
+## Phase 22: File Delivery And S3 Production Hardening
+
+1. Verify local protected download authorization for admin, doctor owner, preview, and paid student.
+2. Add S3 private object strategy and signed URLs or proxy streaming.
+3. Document max file sizes and allowed content types.
+4. Add malware scanning/manual moderation decision if required for public uploads.
+5. Add storage integration tests where feasible without live AWS.
+
+## Phase 23: Security Hardening
+
+1. Add password complexity and breached/common password policy.
+2. Add rate limiting for login, registration, forgot-password, and Paymob webhook.
+3. Convert admin GET mutation routes to POST with CSRF.
+4. Review CSRF ignores and keep only webhook-safe exceptions.
+5. Add security tests for role access and mutation protection.
+
+## Phase 24: Controller Cleanup And Maintainability
+
+1. Remove legacy commented duplicate controller blocks after confirming active routes.
+2. Split oversized `StudentController` and `DoctorController` only along existing feature boundaries.
+3. Replace ad hoc runtime exceptions with user-safe errors where they affect UX.
+4. Keep URLs stable unless redirects are added.
+5. Add focused tests before and after cleanup.
+
+## Phase 25: Browser End-To-End QA
+
+1. Add smoke scripts for login, admin user page, doctor course creation, student browse/enroll, and health checks.
+2. Add Render smoke verification commands.
+3. Add manual QA checklist for Paymob, SendGrid, SMS, and S3 live integrations.
+4. Consider Playwright only after key flows stabilize.
+
+## Phase 26: Observability And Audit
+
+1. Add request correlation ID logging.
+2. Add audit events for admin user changes, doctor course changes, payment success/failure, and certificate issuance.
+3. Add operational dashboard checklist using Render logs and uptime monitor.
+4. Add alerting runbook for failed deploys, DB connection errors, payment callback failures, and email/SMS provider errors.
+
 ## Immediate Next Steps
 
-1. Push the latest local Phase 13-16 changes to GitHub.
-2. Redeploy the Render service from the latest commit.
-3. Re-check `/actuator/health/readiness` and `/actuator/health/liveness`.
-4. Verify first-admin login and disable bootstrap variables afterward.
-5. Continue manual browser QA for course browsing and checkout callbacks.
+1. Fix the existing Render admin bootstrap conflict by using a unique bootstrap username/email or intentionally updating the existing DB row.
+2. Set `APP_URL` to the active Render URL or configured custom domain.
+3. Verify `/profile/login`, `/actuator/health`, `/actuator/health/readiness`, and `/actuator/health/liveness`.
+4. Login as admin, create or enable doctor/student accounts, then disable bootstrap.
+5. Start Phase 19 before adding SMS or certificate PDF/download UX features.

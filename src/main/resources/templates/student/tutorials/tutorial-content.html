@@ -17,7 +17,7 @@
 
     <!-- ARTICLE -->
     <div th:if="${tutorial.type.name() == 'ARTICLE'}">
-        <div class="article-content" th:utext="${tutorial.articleContent}"></div>
+        <div class="article-content" style="white-space: pre-wrap" th:text="${tutorial.articleContent}"></div>
 
         <button class="btn btn-success mt-4"
                 th:onclick="|completeTutorial(${tutorial.id})|">

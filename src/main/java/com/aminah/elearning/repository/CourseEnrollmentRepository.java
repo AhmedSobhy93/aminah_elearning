@@ -7,11 +7,13 @@ import com.aminah.elearning.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import jakarta.persistence.LockModeType;
 
 @Repository
 public interface CourseEnrollmentRepository extends JpaRepository<CourseEnrollment, Long> {
@@ -38,4 +40,8 @@ public interface CourseEnrollmentRepository extends JpaRepository<CourseEnrollme
     Optional<CourseEnrollment> findByUserAndCourse(User user, Course course);
 
     Optional<CourseEnrollment> findByUserIdAndCourseId(Long userId, Long courseId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select e from CourseEnrollment e where e.id = :id")
+    Optional<CourseEnrollment> findForUpdateById(Long id);
 }

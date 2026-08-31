@@ -9,6 +9,7 @@ import com.aminah.elearning.repository.UserRepository;
 import com.aminah.elearning.repository.VerificationTokenRepository;
 import com.aminah.elearning.service.RegistrationService;
 import com.aminah.elearning.service.UserService;
+import com.aminah.elearning.service.RequestThrottleService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +26,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Locale;
 import java.util.Optional;
 
 
@@ -38,6 +40,7 @@ public class ProfileController {
     private final UserService userService;
     private final String appUrl;
     private final AuthenticationManager authenticationManager;
+    private final RequestThrottleService throttle;
 
     public ProfileController(
             UserRepository userRepository,
@@ -46,6 +49,7 @@ public class ProfileController {
             VerificationTokenRepository verificationTokenRepository,
             UserService userService,
             AuthenticationManager authenticationManager,
+            RequestThrottleService throttle,
             @Value("${app.url}") String appUrl
     ) {
         this.userRepository = userRepository;
@@ -54,6 +58,7 @@ public class ProfileController {
         this.verificationTokenRepository = verificationTokenRepository;
         this.userService = userService;
         this.authenticationManager = authenticationManager;
+        this.throttle = throttle;
         this.appUrl = appUrl;
     }
     @GetMapping("/profile")
@@ -94,12 +99,25 @@ public class ProfileController {
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute User user, Model model) {
+    public String register(@ModelAttribute User user, HttpServletRequest request, Model model) {
+        java.time.Duration window = java.time.Duration.ofMinutes(15);
+        boolean ipAllowed = throttle.allow("registration-ip", request.getRemoteAddr(), 5, window);
+        if (!ipAllowed) {
+            model.addAttribute("message", "If registration can be completed, a confirmation email will be sent.");
+            return "profile/login";
+        }
+        if (!throttle.allow("registration-email", user.getEmail(), 3, window)) {
+            model.addAttribute("message", "If registration can be completed, a confirmation email will be sent.");
+            return "profile/login";
+        }
         try{
             registrationService.register(user, appUrl);
             model.addAttribute("message", "Check your email for confirmation link!");
             return "profile/login";
         }catch (DuplicateUserException e){
+            model.addAttribute("message", "If registration can be completed, a confirmation email will be sent.");
+            return "profile/login";
+        }catch (IllegalArgumentException e){
             model.addAttribute("error", e.getMessage());
             return "profile/register";
         }catch (Exception e){
@@ -109,10 +127,28 @@ public class ProfileController {
 
     }
 
-    @PostMapping("/update")
-    public String update(@ModelAttribute User user, Model model) {
+    @PostMapping("/resend-confirmation")
+    public String resendConfirmation(@RequestParam("email") String email, HttpServletRequest request, Model model) {
+        java.time.Duration window = java.time.Duration.ofMinutes(15);
+        String normalizedEmail = email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
+        if (!throttle.allow("confirmation-resend-ip", request.getRemoteAddr(), 3, window)) {
+            model.addAttribute("message", "If an inactive account exists for this email, a new confirmation link has been sent.");
+            model.addAttribute("user", new User());
+            return "profile/register";
+        }
+        if (throttle.allow("confirmation-resend-email", normalizedEmail, 3, window)) {
+            registrationService.resendConfirmation(normalizedEmail, appUrl);
+        }
+        model.addAttribute("message", "If an inactive account exists for this email, a new confirmation link has been sent.");
+        model.addAttribute("user", new User());
+        return "profile/register";
+    }
 
-        userService.userUpdate(user);
+    @PostMapping("/update")
+    public String update(@ModelAttribute User user, Principal principal, Model model) {
+
+        User saved = userService.userUpdate(principal.getName(), user);
+        model.addAttribute("user", saved);
         model.addAttribute("message", "Profile Updated Successfully!");
         return "profile/profile";
     }

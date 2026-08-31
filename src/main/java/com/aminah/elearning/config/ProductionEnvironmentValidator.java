@@ -55,8 +55,8 @@ public class ProductionEnvironmentValidator implements ApplicationRunner {
 
         String scheme = uri.getScheme();
         String host = uri.getHost();
-        if (!("https".equalsIgnoreCase(scheme) || "http".equalsIgnoreCase(scheme)) || !StringUtils.hasText(host)) {
-            errors.add("APP_URL must be an absolute http(s) URL");
+        if (!"https".equalsIgnoreCase(scheme) || !StringUtils.hasText(host)) {
+            errors.add("APP_URL must be an absolute HTTPS URL");
             return;
         }
 
@@ -96,6 +96,14 @@ public class ProductionEnvironmentValidator implements ApplicationRunner {
 
         if (environment.getProperty("aws.enabled", Boolean.class, false)) {
             require(errors, "aws.s3.bucket", "AWS_S3_BUCKET must be set when AWS_ENABLED=true");
+        }
+
+        if (environment.getProperty("paymob.enabled", Boolean.class, false)) {
+            require(errors, "paymob.api.key", "PAYMOB_API_KEY must be set when PAYMOB_ENABLED=true");
+            require(errors, "paymob.integration.id", "PAYMOB_INTEGRATION_ID must be set when PAYMOB_ENABLED=true");
+            require(errors, "paymob.merchant.id", "PAYMOB_MERCHANT_ID must be set when PAYMOB_ENABLED=true");
+            require(errors, "paymob.hmac", "PAYMOB_HMAC_SECRET must be set when PAYMOB_ENABLED=true");
+            require(errors, "paymob.iframe.id", "PAYMOB_IFRAME_ID must be set when PAYMOB_ENABLED=true");
         }
     }
 

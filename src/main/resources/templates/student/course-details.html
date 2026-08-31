@@ -184,6 +184,9 @@
             <label class="fw-semibold">Course Progress</label>
             <div class="progress rounded shadow-light">
                 <div class="progress-bar bg-success"
+                     role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                     aria-label="Course progress"
+                     th:attr="aria-valuenow=${course.progress}"
                      th:style="'width:' + ${course.progress} + '%'"
                      th:text="${course.progress + '%'}">
                 </div>

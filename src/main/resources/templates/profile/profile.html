@@ -23,11 +23,9 @@
 
                     <!-- Update Form -->
                     <form th:action="@{/profile/update}" method="post" th:object="${user}">
-                        <input type="hidden" th:field="*{id}" />
-
                         <div class="mb-3 input-icon">
                             <i class="fas fa-user"></i>
-                            <input type="text" class="form-control" placeholder="Username" th:field="*{username}" required>
+                            <input type="text" class="form-control" placeholder="Username" th:value="*{username}" disabled>
                         </div>
 
                         <div class="mb-3 input-icon">

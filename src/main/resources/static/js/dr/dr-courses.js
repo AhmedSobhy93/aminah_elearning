@@ -1038,37 +1038,72 @@ document.addEventListener("DOMContentLoaded", () => {
     ------------------------------------------------------------------------ */
     const renderQuizQuestions = () => {
         const container = document.getElementById("quizQuestionsContainer");
-        container.innerHTML = "";
+        container.replaceChildren();
 
         quizQuestions.forEach((q, i) => {
             const card = document.createElement("div");
             card.className = "border rounded p-2 mb-2";
 
-            const opts = q.options.map((opt, idx) => `
-                <div class="input-group mb-1">
-                    <input type="text" 
-                           class="form-control opt" 
-                           data-q="${i}" data-idx="${idx}" value="${opt}">
-                    <button class="btn btn-danger btn-del-opt" data-q="${i}" data-idx="${idx}">✕</button>
-                </div>`).join("");
+            const header = document.createElement("div");
+            header.className = "d-flex justify-content-between";
+            const title = document.createElement("strong");
+            title.textContent = `Question ${i + 1}`;
+            const remove = document.createElement("button");
+            remove.type = "button";
+            remove.className = "btn btn-sm btn-danger btn-del-q";
+            remove.dataset.index = String(i);
+            remove.textContent = "Remove";
+            header.append(title, remove);
 
-            card.innerHTML = `
-                <div class="d-flex justify-content-between">
-                    <strong>Question ${i + 1}</strong>
-                    <button class="btn btn-sm btn-danger btn-del-q" data-index="${i}">Remove</button>
-                </div>
-                <input class="form-control qtext mt-2" data-q="${i}" value="${q.question}">
-                <div class="mt-2"><strong>Options:</strong></div>
-                ${opts}
-                <button class="btn btn-sm btn-secondary btn-add-opt" data-q="${i}">+ Option</button>
-                <label class="mt-2">Correct Answer</label>
-                <select class="form-select correct" data-q="${i}">
-                    ${q.options.map((_, idx) =>
-                `<option value="${idx}" ${idx === q.correctOptionIndex ? "selected" : ""}>
-                            Option ${idx + 1}
-                        </option>`).join("")}
-                </select>
-            `;
+            const questionInput = document.createElement("input");
+            questionInput.className = "form-control qtext mt-2";
+            questionInput.dataset.q = String(i);
+            questionInput.value = q.question;
+            card.append(header, questionInput);
+
+            const optionsLabel = document.createElement("div");
+            optionsLabel.className = "mt-2 fw-bold";
+            optionsLabel.textContent = "Options:";
+            card.appendChild(optionsLabel);
+
+            q.options.forEach((opt, idx) => {
+                const group = document.createElement("div");
+                group.className = "input-group mb-1";
+                const input = document.createElement("input");
+                input.type = "text";
+                input.className = "form-control opt";
+                input.dataset.q = String(i);
+                input.dataset.idx = String(idx);
+                input.value = opt;
+                const deleteOption = document.createElement("button");
+                deleteOption.type = "button";
+                deleteOption.className = "btn btn-danger btn-del-opt";
+                deleteOption.dataset.q = String(i);
+                deleteOption.dataset.idx = String(idx);
+                deleteOption.textContent = "✕";
+                group.append(input, deleteOption);
+                card.appendChild(group);
+            });
+
+            const addOption = document.createElement("button");
+            addOption.type = "button";
+            addOption.className = "btn btn-sm btn-secondary btn-add-opt";
+            addOption.dataset.q = String(i);
+            addOption.textContent = "+ Option";
+            const correctLabel = document.createElement("label");
+            correctLabel.className = "mt-2";
+            correctLabel.textContent = "Correct Answer";
+            const select = document.createElement("select");
+            select.className = "form-select correct";
+            select.dataset.q = String(i);
+            q.options.forEach((_, idx) => {
+                const option = document.createElement("option");
+                option.value = String(idx);
+                option.selected = idx === q.correctOptionIndex;
+                option.textContent = `Option ${idx + 1}`;
+                select.appendChild(option);
+            });
+            card.append(addOption, correctLabel, select);
 
             container.appendChild(card);
         });
@@ -1140,7 +1175,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (t.type === "ARTICLE") {
-            document.getElementById("viewArticleContent").innerHTML = t.articleContent;
+            const article = document.getElementById("viewArticleContent");
+            article.textContent = t.articleContent;
+            article.style.whiteSpace = "pre-wrap";
             document.getElementById("viewArticleSection").classList.remove("d-none");
         }
 
@@ -1152,16 +1189,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 const div = document.createElement("div");
                 div.className = "mb-3 p-3 border rounded";
 
-                div.innerHTML = `
-                    <strong>Q${i + 1}. ${q.question}</strong>
-                    <ul class="list-group mt-2">
-                        ${q.options.map((opt, idx) =>
-                    `<li class="list-group-item ${idx === q.correctOptionIndex ? 'list-group-item-success' : ''}">
-                                ${String.fromCharCode(65 + idx)}. ${opt}
-                            </li>`
-                ).join("")}
-                    </ul>
-                `;
+                const heading = document.createElement("strong");
+                heading.textContent = `Q${i + 1}. ${q.question}`;
+                const list = document.createElement("ul");
+                list.className = "list-group mt-2";
+                q.options.forEach((opt, idx) => {
+                    const item = document.createElement("li");
+                    item.className = `list-group-item${idx === q.correctOptionIndex ? " list-group-item-success" : ""}`;
+                    item.textContent = `${String.fromCharCode(65 + idx)}. ${opt}`;
+                    list.appendChild(item);
+                });
+                div.append(heading, list);
 
                 box.appendChild(div);
             });

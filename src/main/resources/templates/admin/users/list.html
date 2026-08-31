@@ -54,13 +54,19 @@
                         <a th:href="@{'/admin/users/edit/' + ${u.id}}"
                            class="btn btn-warning btn-md me-1 mb-1" title="Edit">Edit <i class="fas fa-pen"></i></a>
 
-                        <a th:href="@{'/admin/users/delete/' + ${u.id}}"
-                           onclick="return confirm('Are you sure?')"
-                           class="btn btn-danger btn-md me-1 mb-1" title="Delete">Delete <i class="fas fa-trash"></i></a>
+                        <form th:action="@{'/admin/users/delete/' + ${u.id}}" method="post" class="d-inline"
+                              onsubmit="return confirm('Are you sure?')">
+                            <button type="submit" class="btn btn-danger btn-md me-1 mb-1" title="Delete">
+                                Delete <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
 
-                        <a th:if="${!u.enabled}"
-                           th:href="@{'/admin/users/enable/' + ${u.id}}"
-                           class="btn btn-success btn-md me-1 mb-1" title="Enable">Enable <i class="fas fa-check-circle"></i></a>
+                        <form th:if="${!u.enabled}" th:action="@{'/admin/users/enable/' + ${u.id}}"
+                              method="post" class="d-inline">
+                            <button type="submit" class="btn btn-success btn-md me-1 mb-1" title="Enable">
+                                Enable <i class="fas fa-check-circle"></i>
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 </tbody>

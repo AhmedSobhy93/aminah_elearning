@@ -12,15 +12,18 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
     private final UserService userService;
+    private final LoginRateLimitFilter loginRateLimitFilter;
 
-    public SecurityConfig(UserService userService) {
+    public SecurityConfig(UserService userService, LoginRateLimitFilter loginRateLimitFilter) {
         this.userService = userService;
+        this.loginRateLimitFilter = loginRateLimitFilter;
     }
 
     @Bean
@@ -28,9 +31,12 @@ public class SecurityConfig {
 
         http.
                 authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/actuator/health/**", "/css/**","/js/**","/images/**","/webfonts/**","/","/profile/login","/profile/register","/profile/confirm","/verify", "/forgot-password", "/reset-password","/error","/contactus","/about").permitAll()
+                        .requestMatchers("/actuator/health/**", "/css/**","/js/**","/images/**","/webfonts/**","/","/profile/login","/profile/register","/profile/resend-confirmation","/profile/confirm","/verify", "/forgot-password", "/reset-password","/error","/contactus","/about").permitAll()
                         .requestMatchers("/payments/callback", "/payments/webhook").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/users/**").hasRole("ADMIN")
+                        .requestMatchers("/api/upload/**").hasRole("DR")
+                        .requestMatchers("/payments/buy/**", "/payments/create/**").hasRole("STUDENT")
                         .requestMatchers("/dr/**").hasRole("DR")
                         .requestMatchers("/student/**").hasRole("STUDENT")
                         .anyRequest().authenticated()
@@ -41,6 +47,7 @@ public class SecurityConfig {
                         .clearAuthentication(true).deleteCookies("JSESSIONID").permitAll())
 
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/payments/webhook"))
+                .addFilterBefore(loginRateLimitFilter, UsernamePasswordAuthenticationFilter.class)
                 .headers(headers -> headers
                 .frameOptions(frame -> frame.sameOrigin())); // allow same-origin iframe embedding);
         return http.build();

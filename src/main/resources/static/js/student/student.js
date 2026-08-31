@@ -502,7 +502,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const section = offcanvasBody.querySelector("#viewArticleSection");
 
                 if (article && section) {
-                    article.innerHTML = t.articleContent;
+                    article.textContent = t.articleContent;
+                    article.style.whiteSpace = "pre-wrap";
                     section.classList.remove("d-none");
 
                     const checkEnd = () => {
@@ -527,15 +528,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 t.quizQuestions.forEach((q, i) => {
                     const div = document.createElement("div");
                     div.className = "mb-3 p-3 border rounded";
-                    div.innerHTML = `
-                        <strong>Q${i + 1}. ${q.question}</strong>
-                        <ul class="list-group mt-2">
-                            ${q.options.map((opt, idx) => `
-                                <li class="list-group-item">
-                                    <input type="radio" name="q${i}" value="${idx}">
-                                    ${String.fromCharCode(65 + idx)}. ${opt}
-                                </li>`).join("")}
-                        </ul>`;
+                    const heading = document.createElement("strong");
+                    heading.textContent = `Q${i + 1}. ${q.question}`;
+                    const list = document.createElement("ul");
+                    list.className = "list-group mt-2";
+                    q.options.forEach((opt, idx) => {
+                        const item = document.createElement("li");
+                        item.className = "list-group-item";
+                        const radio = document.createElement("input");
+                        radio.type = "radio";
+                        radio.name = `q${i}`;
+                        radio.value = String(idx);
+                        const label = document.createElement("span");
+                        label.textContent = ` ${String.fromCharCode(65 + idx)}. ${opt}`;
+                        item.append(radio, label);
+                        list.appendChild(item);
+                    });
+                    div.append(heading, list);
                     quizContainer.appendChild(div);
                 });
 
@@ -544,22 +553,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 const submitBtn = offcanvasBody.querySelector("#submitQuizBtn");
                 const resultDiv = offcanvasBody.querySelector("#quizResult");
 
-                submitBtn?.addEventListener("click", () => {
-                    let score = 0;
+                submitBtn?.addEventListener("click", async () => {
+                    const answers = {};
                     t.quizQuestions.forEach((q, i) => {
                         const sel = offcanvasBody.querySelector(`input[name=q${i}]:checked`);
-                        if (sel && +sel.value === q.correctOptionIndex) score++;
+                        if (sel) answers[q.id] = Number(sel.value);
                     });
-
+                    const csrf = getCsrf();
+                    const response = await fetch(`/student/tutorial/${t.id}/quiz`, {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json", [csrf.header]: csrf.token},
+                        body: JSON.stringify(answers)
+                    });
+                    if (!response.ok) throw new Error("Quiz submission failed");
+                    const result = await response.json();
                     if (resultDiv) {
-                        resultDiv.innerHTML =
-                            score === t.quizQuestions.length
-                                ? `<div class="alert alert-success">All correct! Tutorial completed.</div>`
-                                : `<div class="alert alert-warning">Score ${score}/${t.quizQuestions.length}</div>`;
-                    }
-
-                    if (score === t.quizQuestions.length) {
-                        markCompletedOnce(t.id);
+                        resultDiv.textContent = result.passed
+                            ? "All correct! Tutorial completed."
+                            : `Score ${result.score}/${result.total}`;
+                        resultDiv.className = result.passed ? "alert alert-success" : "alert alert-warning";
                     }
                 });
             }
