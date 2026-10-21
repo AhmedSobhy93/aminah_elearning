@@ -173,7 +173,7 @@ If Render runs `yarn` or looks for `package.json`, the service is configured as 
 Required environment variables:
 
 - `SPRING_PROFILES_ACTIVE=production`
-- `APP_URL`
+- `APP_URL` (Render can use its automatic `RENDER_EXTERNAL_URL` fallback)
 - `DATABASE_URL` or `JDBC_DATABASE_URL`
 - `FLYWAY_ENABLED=true`
 - `JPA_DDL_AUTO=validate`
@@ -182,7 +182,7 @@ Required environment variables:
 
 Production startup validates the launch configuration. The app fails fast when:
 
-- `APP_URL` is missing, invalid, or still points to localhost.
+- The effective app URL (`APP_URL`, or Render's `RENDER_EXTERNAL_URL` fallback) is missing, invalid, or still points to localhost.
 - No PostgreSQL JDBC URL can be resolved from `DATABASE_URL` or `JDBC_DATABASE_URL`.
 - Embedded PostgreSQL or demo seed data is enabled.
 - Email is enabled without `APP_EMAIL_FROM`, or SendGrid email is enabled without `SENDGRID_API_KEY`.
@@ -332,11 +332,23 @@ Sources checked 2026-10-21: [Render free limits](https://render.com/docs/free), 
 - Paymob remains disabled until test merchant settings are added and the sandbox suite passes. Use the existing Paymob variables and callback/webhook instructions above; no real charges are authorized by this setup.
 - On a new database, add the approved unique `APP_BOOTSTRAP_ADMIN_*` identity securely, enable bootstrap for the initial creation, verify login, then disable bootstrap and remove the bootstrap password. Never silently promote an existing identity.
 
+### Free preview with Backblaze deferred
+
+The user authorized a temporary Render + Neon preview on 2026-10-21. Select **`render-preview.yaml`**, branch `codex/finalize-elearning`, for a separate `aminah-elearning-preview` service. It specifies Free compute in Oregon, no Render database or disk, production security, Flyway and schema validation, and disables object storage, email, Paymob, demo seeding, and admin bootstrap. Enter only the isolated Neon JDBC URL, username, and password as secure Render environment values. `APP_URL` can be set explicitly; otherwise production uses Render's assigned HTTPS `RENDER_EXTERNAL_URL`, documented in [Render's default variables](https://render.com/docs/environment-variables).
+
+`APP_PREVIEW_ENABLED=true` displays a shared notice that uploaded files are temporary, email and paid checkout are unavailable, and only test data should be used. The flag defaults to false and does not alter authorization. Neon stores database records; local PDF/video bytes can disappear on restart or redeployment, leaving references without files. This preview does not satisfy durable-media, email, payment, or full-launch acceptance. Registration still requires confirmation, so new accounts cannot complete confirmation while email is disabled. No default or seeded login is created; first-admin setup remains a separate secure step.
+
+The original `render-free.yaml` remains the durable-storage candidate. Configure and verify private storage and enabled providers before removing preview limitations. Keep the previously failed Starter service suspended with its disk preserved. Do not deploy `render.yaml`, activate paid resources, or change existing database/service data for this preview.
+
 ### Cloud release gates
 
 Local tests of storage routing/signing are not provider tests. Before launch verify actual bucket upload/readback, private anonymous denial, cross-role/unenrolled denial, MP4 playback/range seeking including signed-link expiry recovery, upload survival after Render redeployment, database migration/backup restoration, resource limits/cold start, SendGrid delivery, and Paymob sandbox success/failure/replay/refund handling. Paid provisioning or overages require explicit approval; do not select a paid fallback automatically.
 
 ### Strict $0 account setup
+
+Project work lives at `D:\aminah elearning`; the former Documents path on C: is a Windows junction to that directory, not a second project copy. Use `D:\aminah elearning\aminah_elearning-github` for repository commands, the existing `qa-runtime`/`release-qa` folders on D: for disposable runtime work, and `D:\aminah elearning\artifacts\launch-evidence` for browser evidence. On 2026-10-21, all 28 existing evidence images were moved there and verified by SHA-256; `move-manifest.json` records their original paths and checksums. The source request is preserved at `D:\aminah elearning\artifacts\source-request.txt`. Codex-managed application files and shared installed tools are separate from these project files.
+
+On 2026-10-21, the user explicitly authorized suspension of the failed Starter service `aminah-elearning` (`srv-dbce1vnf3r2c739ohmcg`). Render now reports it suspended, and its existing 5 GB `/app/uploads` disk remains attached; no service, disk, database, or file was deleted. This is separate from the unsubmitted `aminah-free-launch` Blueprint using `render-free.yaml`. The workspace is Hobby with a verified $0 monthly build-pipeline spend limit; a pre-existing payment method remains unchanged, so free compute does not establish an account-wide zero-charge guarantee. [Render billing guidance](https://render.com/docs/faq) separates compute, storage, and usage charges. A full launch with durable files still requires private storage, sender configuration, and the remaining live acceptance checks; the separate preview defers those provider steps.
 
 For the user's no-billing/no-upgrade requirement, use an account-confirmed free PostgreSQL project and a private S3-compatible bucket without payment activation. Backblaze B2 is the current storage candidate: its S3 signup advertises no credit card required and its published allowance includes the first 10 GB. Verify the actual account's upload/download/API caps before launch; stop if setup requires payment or exceeds free allowances. R2 remains an optional compatible backend, not an instruction to activate billing.
 

@@ -2,6 +2,7 @@ package com.aminah.elearning.config;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.env.MockEnvironment;
+import org.springframework.core.io.support.ResourcePropertySource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,6 +13,33 @@ class ProductionEnvironmentValidatorTest {
         ProductionEnvironmentValidator validator = new ProductionEnvironmentValidator(baseEnvironment());
 
         assertThat(validator.validate()).isEmpty();
+    }
+
+    @Test
+    void acceptsRenderAssignedHttpsUrlFromProductionProperties() throws Exception {
+        var properties = new ResourcePropertySource("classpath:application-production.properties");
+        var environment = baseEnvironment()
+                .withProperty("app.url", properties.getProperty("app.url").toString())
+                .withProperty("RENDER_EXTERNAL_URL", "https://aminah-preview.onrender.com");
+
+        assertThat(environment.getProperty("app.url")).isEqualTo("https://aminah-preview.onrender.com");
+        assertThat(new ProductionEnvironmentValidator(environment).validate()).isEmpty();
+
+        environment.withProperty("RENDER_EXTERNAL_URL", "http://localhost:8080");
+        assertThat(new ProductionEnvironmentValidator(environment).validate())
+                .contains("APP_URL must be an absolute HTTPS URL");
+    }
+
+    @Test
+    void explicitAppUrlTakesPrecedenceOverRenderAssignedUrl() throws Exception {
+        var properties = new ResourcePropertySource("classpath:application-production.properties");
+        var environment = baseEnvironment()
+                .withProperty("app.url", properties.getProperty("app.url").toString())
+                .withProperty("APP_URL", "https://learning.example.com")
+                .withProperty("RENDER_EXTERNAL_URL", "https://aminah-preview.onrender.com");
+
+        assertThat(environment.getProperty("app.url")).isEqualTo("https://learning.example.com");
+        assertThat(new ProductionEnvironmentValidator(environment).validate()).isEmpty();
     }
 
     @Test

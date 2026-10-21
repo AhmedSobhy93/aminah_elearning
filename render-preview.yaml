@@ -1,0 +1,45 @@
+# Temporary preview: Neon data persists; uploaded files on Render do not.
+# No Render database, paid compute, disk, email, payments, or object storage.
+services:
+  - type: web
+    name: aminah-elearning-preview
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: codex/finalize-elearning
+    autoDeployTrigger: "off"
+    healthCheckPath: /actuator/health/readiness
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: APP_PREVIEW_ENABLED
+        value: "true"
+      # APP_URL defaults to Render's assigned HTTPS RENDER_EXTERNAL_URL.
+      - key: JDBC_DATABASE_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: JPA_DDL_AUTO
+        value: validate
+      - key: FLYWAY_ENABLED
+        value: "true"
+      - key: APP_SEED_ENABLED
+        value: "false"
+      - key: EMBEDDED_POSTGRES_ENABLED
+        value: "false"
+      - key: APP_BOOTSTRAP_ADMIN_ENABLED
+        value: "false"
+      - key: AWS_ENABLED
+        value: "false"
+      - key: APP_EMAIL_ENABLED
+        value: "false"
+      - key: PAYMOB_ENABLED
+        value: "false"
+      - key: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+        value: "5"
+      - key: SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE
+        value: "1"
+      - key: JAVA_TOOL_OPTIONS
+        value: -XX:MaxRAMPercentage=50.0 -XX:InitialRAMPercentage=10.0 -XX:+ExitOnOutOfMemoryError
