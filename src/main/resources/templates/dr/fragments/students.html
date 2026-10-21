@@ -2,7 +2,7 @@
 
 <div th:fragment="students-list (studentsPage, students, courseId)">
 
-    <table class="table glass-table text-white align-middle">
+    <div class="table-responsive"><table class="table table-striped align-middle">
         <thead>
         <tr>
             <th>Student</th>
@@ -36,7 +36,7 @@
             </td>
 
             <td>
-                <span th:class="${s.completed} ? 'badge glass-badge-success' : 'badge glass-badge-warning' "
+                <span th:class="${s.completed} ? 'badge bg-success' : 'badge bg-warning text-dark' "
                       th:text="${s.completed ? 'Completed' : 'In Progress'}">
                 </span>
             </td>
@@ -45,14 +45,14 @@
         </tr>
 
         <tr th:if="${#lists.isEmpty(students)}">
-            <td colspan="5" class="text-center text-white-50">
+            <td colspan="5" class="text-center text-muted">
                 <i class="fas fa-info-circle me-1"></i>No enrolled students yet.
             </td>
         </tr>
 
         </tbody>
 
-    </table>
+    </table></div>
     <nav th:if="${studentsPage.totalPages > 1}" class="mt-3">
         <ul class="pagination pagination-aminah justify-content-center">
 

@@ -75,6 +75,43 @@ class PasswordControllerTest {
         );
     }
 
+    @Test
+    void invalidOrReusedResetLinkShowsRecoveryInsteadOfServerError() {
+        UserRepository users = mock(UserRepository.class);
+        PasswordResetTokenRepository tokens = mock(PasswordResetTokenRepository.class);
+        PasswordController controller = new PasswordController(users, mock(TokenService.class),
+                mock(EmailService.class), tokens, mock(PasswordEncoder.class),
+                mock(RequestThrottleService.class), "https://aminah.example.com");
+        Model model = new ConcurrentModel();
+        assertThat(controller.resetPassword("used-token", "new-password", model)).isEqualTo("profile/reset-password");
+        assertThat(model.getAttribute("error").toString()).contains("invalid or has already been used");
+        assertThat(model.getAttribute("token")).isEqualTo("used-token");
+        verify(users, never()).save(any());
+        verify(tokens, never()).delete(any());
+    }
+
+    @Test
+    void successfulResetSuppliesTheResultTemplatesSuccessFlag() {
+        UserRepository users = mock(UserRepository.class);
+        PasswordResetTokenRepository tokens = mock(PasswordResetTokenRepository.class);
+        PasswordEncoder encoder = mock(PasswordEncoder.class);
+        PasswordController controller = new PasswordController(users, mock(TokenService.class),
+                mock(EmailService.class), tokens, encoder, mock(RequestThrottleService.class),
+                "https://aminah.example.com");
+        User user = new User(7L);
+        PasswordResetToken token = new PasswordResetToken();
+        token.setUser(user);
+        token.setExpiryDate(java.time.LocalDateTime.now().plusMinutes(15));
+        when(tokens.findByToken("valid-token")).thenReturn(Optional.of(token));
+        when(users.findById(7L)).thenReturn(Optional.of(user));
+        when(encoder.encode("new-password")).thenReturn("encoded-password");
+        Model model = new ConcurrentModel();
+        assertThat(controller.resetPassword("valid-token", "new-password", model)).isEqualTo("profile/reset-result");
+        assertThat(model.getAttribute("success")).isEqualTo(true);
+        assertThat(user.getPassword()).isEqualTo("encoded-password");
+        verify(tokens).delete(token);
+    }
+
     private PasswordController controller(
             UserRepository userRepository,
             TokenService tokenService,

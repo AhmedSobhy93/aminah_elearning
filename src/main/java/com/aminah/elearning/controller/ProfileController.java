@@ -147,7 +147,19 @@ public class ProfileController {
     @PostMapping("/update")
     public String update(@ModelAttribute User user, Principal principal, Model model) {
 
-        User saved = userService.userUpdate(principal.getName(), user);
+        User saved;
+        try {
+            saved = userService.userUpdate(principal.getName(), user);
+        } catch (IllegalArgumentException ex) {
+            User existing = userService.findByUsername(principal.getName());
+            user.setId(existing.getId());
+            user.setUsername(existing.getUsername());
+            user.setRole(existing.getRole());
+            user.setPassword(null);
+            model.addAttribute("user", user);
+            model.addAttribute("error", ex.getMessage());
+            return "profile/profile";
+        }
         model.addAttribute("user", saved);
         model.addAttribute("message", "Profile Updated Successfully!");
         return "profile/profile";

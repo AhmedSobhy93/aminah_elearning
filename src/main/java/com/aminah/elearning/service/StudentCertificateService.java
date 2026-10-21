@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.HtmlUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -21,17 +23,20 @@ public class StudentCertificateService {
                 enrollmentRepo.findByUserIdAndCourseId(userId, courseId)
                         .orElseThrow(() -> new RuntimeException("Not enrolled"));
 
-        return Boolean.TRUE.equals(e.getCompleted());
+        return Boolean.TRUE.equals(e.getCompleted()) && "SUCCESS".equals(e.getPaymentStatus());
     }
 
     @Transactional
     public String generateCertificate(Long userId, Long courseId) {
         CourseEnrollment enrollment =
-                enrollmentRepo.findByUserIdAndCourseId(userId, courseId)
-                        .orElseThrow(() -> new RuntimeException("Not enrolled"));
+                enrollmentRepo.findForUpdateByUserIdAndCourseId(userId, courseId)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Enrollment is required"));
 
+        if (!"SUCCESS".equals(enrollment.getPaymentStatus())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Active enrollment is required");
+        }
         if (!Boolean.TRUE.equals(enrollment.getCompleted())) {
-            throw new IllegalStateException("Course is not completed yet");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Course is not completed yet");
         }
         if (enrollment.getUser() == null || enrollment.getUser().getId() == null
                 || enrollment.getCourse() == null || enrollment.getCourse().getId() == null
@@ -48,6 +53,24 @@ public class StudentCertificateService {
 
         return certificateNumber;
     }
+
+    @Transactional(readOnly = true)
+    public CertificateDetails getCertificate(Long userId, Long courseId) {
+        CourseEnrollment enrollment = enrollmentRepo.findByUserIdAndCourseId(userId, courseId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Enrollment is required"));
+        if (!Boolean.TRUE.equals(enrollment.getCompleted()) || !"SUCCESS".equals(enrollment.getPaymentStatus())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Complete an active enrollment first");
+        }
+        String title = StringUtils.hasText(enrollment.getCourse().getTitle())
+                ? enrollment.getCourse().getTitle() : enrollment.getCourse().getCourseName();
+        String name = StringUtils.hasText(enrollment.getUser().getFullName())
+                ? enrollment.getUser().getFullName() : enrollment.getUser().getUsername();
+        return new CertificateDetails(courseId, name, title, certificateNumber(enrollment),
+                Boolean.TRUE.equals(enrollment.getCertificateIssued()));
+    }
+
+    public record CertificateDetails(Long courseId, String studentName, String courseTitle,
+                                     String number, boolean issued) { }
 
     private String certificateNumber(CourseEnrollment enrollment) {
         return "CERT-" + enrollment.getUser().getId()

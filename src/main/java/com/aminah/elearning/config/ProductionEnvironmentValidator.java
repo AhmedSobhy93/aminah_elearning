@@ -27,12 +27,24 @@ public class ProductionEnvironmentValidator implements ApplicationRunner {
         }
     }
 
+    @org.springframework.context.annotation.Bean
+    org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer productionSchemaGuard() {
+        return properties -> {
+            List<String> errors = new ArrayList<>();
+            requireSafeSchemaManagement(errors);
+            if (!errors.isEmpty()) {
+                throw new IllegalStateException("Unsafe production schema configuration: " + String.join("; ", errors));
+            }
+        };
+    }
+
     List<String> validate() {
         List<String> errors = new ArrayList<>();
 
         requirePublicAppUrl(errors);
         requireManagedPostgres(errors);
         requireDisabledDevData(errors);
+        requireSafeSchemaManagement(errors);
         requireEnabledIntegrationSecrets(errors);
 
         return errors;
@@ -83,6 +95,15 @@ public class ProductionEnvironmentValidator implements ApplicationRunner {
         }
         if (environment.getProperty("app.seed.enabled", Boolean.class, false)) {
             errors.add("APP_SEED_ENABLED must be false in production");
+        }
+    }
+
+    private void requireSafeSchemaManagement(List<String> errors) {
+        if (!"validate".equalsIgnoreCase(property("spring.jpa.hibernate.ddl-auto", "validate"))) {
+            errors.add("JPA_DDL_AUTO must be validate in production");
+        }
+        if (!environment.getProperty("spring.flyway.enabled", Boolean.class, true)) {
+            errors.add("FLYWAY_ENABLED must be true in production");
         }
     }
 

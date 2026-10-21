@@ -10,11 +10,12 @@
     <div class="d-flex justify-content-center">
         <div class="card shadow p-4 rounded-4" style="width: 420px;">
 
+            <p th:if="${error}" th:text="${error}" class="alert alert-danger" role="alert"></p>
             <form th:action="@{'/admin/users/update/' + ${user.id}}"
                   th:object="${user}" method="post" class="form-card">
 
                 <div class="mb-3">
-                    <label>Username</label>
+                    <label for="username">Username</label>
                     <div class="input-icon">
                         <i class="fas fa-user"></i>
                         <input type="text" th:field="*{username}" class="form-control" readonly>
@@ -22,7 +23,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label>Full Name</label>
+                    <label for="fullName">Full Name</label>
                     <div class="input-icon">
                         <i class="fas fa-id-card"></i>
                         <input type="text" th:field="*{fullName}" class="form-control" required>
@@ -30,7 +31,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label>Email</label>
+                    <label for="email">Email</label>
                     <div class="input-icon">
                         <i class="fas fa-envelope"></i>
                         <input type="email" th:field="*{email}" class="form-control" required>
@@ -38,7 +39,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label>Role</label>
+                    <label for="role">Role</label>
                     <select th:field="*{role}" class="form-select">
                         <option value="ADMIN">ADMIN</option>
                         <option value="DR">DR</option>
@@ -47,7 +48,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label>Status</label>
+                    <label for="enabled">Status</label>
                     <select th:field="*{enabled}" class="form-select">
                         <option value="true">Active</option>
                         <option value="false">Inactive</option>

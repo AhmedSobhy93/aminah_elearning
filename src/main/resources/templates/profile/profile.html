@@ -21,26 +21,28 @@
                         <p class="text-muted" th:text="${user.role}"></p>
                     </div>
 
+                    <p th:if="${message}" th:text="${message}" class="alert alert-success" role="status"></p>
+                    <p th:if="${error}" th:text="${error}" class="alert alert-danger" role="alert"></p>
                     <!-- Update Form -->
                     <form th:action="@{/profile/update}" method="post" th:object="${user}">
                         <div class="mb-3 input-icon">
                             <i class="fas fa-user"></i>
-                            <input type="text" class="form-control" placeholder="Username" th:value="*{username}" disabled>
+                            <input type="text" class="form-control" aria-label="Username" placeholder="Username" th:value="*{username}" disabled>
                         </div>
 
                         <div class="mb-3 input-icon">
                             <i class="fas fa-id-card"></i>
-                            <input type="text" class="form-control" placeholder="Full Name" th:field="*{fullName}">
+                            <input type="text" class="form-control" aria-label="Full name" placeholder="Full Name" th:field="*{fullName}">
                         </div>
 
                         <div class="mb-3 input-icon">
                             <i class="fas fa-envelope"></i>
-                            <input type="email" class="form-control" placeholder="Email" th:field="*{email}" required>
+                            <input type="email" class="form-control" aria-label="Email" placeholder="Email" th:field="*{email}" required>
                         </div>
 
                         <div class="mb-3 input-icon">
                             <i class="fas fa-lock"></i>
-                            <input type="password" class="form-control" placeholder="New Password" name="password">
+                            <input type="password" class="form-control" aria-label="New password (optional)" autocomplete="new-password" placeholder="New Password" name="password">
                         </div>
 
                         <div class="d-grid mb-3">

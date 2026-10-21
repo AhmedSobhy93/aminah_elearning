@@ -1,9 +1,10 @@
-<!--<!DOCTYPE html>-->
-<html xmlns:th="http://www.thymeleaf.org"
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text="${pageTitle} ?: 'Aminah eLearning'">Aminah eLearning</title>
 
     <!-- Local CSS -->
@@ -26,7 +27,7 @@
 <!-- Header -->
 <div th:replace="~{'layout/fragments/header' :: navbar}"></div>
 
-<div class="d-flex flex-grow-1">
+<div class="d-flex flex-grow-1 app-content">
     <!-- Sidebar -->
 <!--    <div th:replace="~{'layout/fragments/sidebar' :: sidebar}"></div>-->
     <!-- Floating Action Bar -->

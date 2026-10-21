@@ -39,6 +39,7 @@ public class AdminController {
             Model model) {
 
         int pageSize = 10; // 10 users per page
+        page = Math.max(1, page);
         Page<User> usersPage = userService.getUsers(PageRequest.of(page - 1, pageSize));
 
         model.addAttribute("users", usersPage.getContent());
@@ -62,8 +63,16 @@ public class AdminController {
     }
 
     @PostMapping("/users/update/{id}")
-    public String updateUser(@PathVariable Long id, @ModelAttribute("user") User updatedUser) {
-        userService.updateUser(id, updatedUser);
+    public String updateUser(@PathVariable Long id, @ModelAttribute("user") User updatedUser, Model model) {
+        try {
+            userService.updateUser(id, updatedUser);
+        } catch (IllegalArgumentException ex) {
+            updatedUser.setId(id);
+            updatedUser.setUsername(userService.getUserById(id).getUsername());
+            model.addAttribute("user", updatedUser);
+            model.addAttribute("error", ex.getMessage());
+            return "admin/users/user-edit";
+        }
         return "redirect:/admin/users";
     }
 
@@ -83,10 +92,10 @@ public class AdminController {
 
 
     @GetMapping("/courses")
-    public String list(Model model,@RequestParam(name = "page", defaultValue = "1") int page) {
+    public String list(Model model,@RequestParam(name = "page", defaultValue = "0") int page) {
 
-        Page<Course> courses=courseService.getCourses("", page, 5);
-        model.addAttribute("totalPages", page);
+        Page<Course> courses=courseService.getCourses("", Math.max(0, page), 5);
+        model.addAttribute("totalPages", courses.getTotalPages());
 
         model.addAttribute("courses", courses);
         return "admin/course-list";

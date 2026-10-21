@@ -320,6 +320,8 @@
 
     <!-- Main Container with horizontal padding -->
     <div class="container-lg px-4">
+        <p th:if="${success}" th:text="${success}" class="alert alert-success" role="status"></p>
+        <p th:if="${error}" th:text="${error}" class="alert alert-danger" role="alert"></p>
 
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap p-3 rounded shadow-sm bg-white position-relative">
@@ -334,7 +336,7 @@
 
             <!-- Create Course Button -->
             <button class="action-btn shadow-sm mt-3 mt-md-0 position-relative"
-                    data-label="New Course" id="btnCreateCourse" style="z-index:1001;">
+                    data-label="New Course" title="New Course" aria-label="New Course" id="btnCreateCourse" style="z-index:1001;">
                 <i class="fas fa-plus-circle"></i>
             </button>
         </div>
@@ -373,19 +375,19 @@
 
                     <!-- Actions -->
                     <div class="d-flex gap-2 flex-wrap">
-                        <button class=" action-btn btn-add-section" data-label="Add Section"
+                        <button class=" action-btn btn-add-section" data-label="Add Section" title="Add Section" aria-label="Add Section"
                                 th:data-course-id="${course.id}" >
                             <i class="fas fa-layer-group"></i>
                         </button>
-                        <button class="action-btn btn-sm" data-label="Show Enrolled Students"
+                        <button class="action-btn btn-sm" data-label="Show Enrolled Students" title="Show Enrolled Students" aria-label="Show Enrolled Students"
                                 th:onclick="'showEnrollments(' + ${course.id} + ')'">
                             <i class="fas fa-users"></i>
                         </button>
-                        <button class="action-btn btnEditCourse" data-label="Edit Course"
+                        <button class="action-btn btnEditCourse" data-label="Edit Course" title="Edit Course" aria-label="Edit Course"
                                 th:data-course-id="${course.id}" >
                             <i class="fas fa-pen"></i>
                         </button>
-                        <button class="action-btn  btn-delete-course" data-label="Delete Course"
+                        <button class="action-btn  btn-delete-course" data-label="Delete Course" title="Delete Course" aria-label="Delete Course"
                                 th:data-course-id="${course.id}" >
                             <i class="fas fa-trash"></i>
                         </button>

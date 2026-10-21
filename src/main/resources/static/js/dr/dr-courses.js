@@ -728,10 +728,42 @@ document.addEventListener("DOMContentLoaded", () => {
         ...headers,
         [csrf.header]: csrf.token
     });
+    const showError = message => {
+        const modal = document.querySelector(".modal.show .modal-body");
+        const host = modal || document.querySelector("section[layout\\:fragment], main, section");
+        if (!host) return;
+        let notice = host.querySelector(".authoring-error");
+        if (!notice) {
+            notice = document.createElement("p");
+            notice.className = "alert alert-danger authoring-error";
+            notice.setAttribute("role", "alert");
+            host.prepend(notice);
+        }
+        notice.textContent = message;
+    };
+    window.addEventListener("unhandledrejection", event => {
+        showError("The action failed. Your form is still available; please retry or reload the page.");
+        event.preventDefault();
+    });
 
     /* ------------------------------------------------------------------------
        Bootstrap modals
     ------------------------------------------------------------------------ */
+    document.querySelectorAll(".modal").forEach(modal => {
+        document.body.appendChild(modal);
+        const title = modal.querySelector(".modal-title");
+        if (title) {
+            title.id ||= `${modal.id}-title`;
+            modal.setAttribute("aria-labelledby", title.id);
+        }
+        modal.querySelectorAll(".btn-close").forEach(button => button.setAttribute("aria-label", "Close dialog"));
+        let opener;
+        modal.addEventListener("show.bs.modal", () => { opener = document.activeElement; });
+        modal.addEventListener("hidden.bs.modal", () => {
+            modal.querySelectorAll(".authoring-error").forEach(notice => notice.remove());
+            if (opener?.isConnected) opener.focus();
+        });
+    });
     const modals = {
         createCourse: new bootstrap.Modal("#modalCreateCourse"),
         deleteCourse: new bootstrap.Modal("#deleteCourseModal"),
@@ -746,8 +778,12 @@ document.addEventListener("DOMContentLoaded", () => {
     /* ------------------------------------------------------------------------
        Helpers
     ------------------------------------------------------------------------ */
-    const fetchHTML = (url) => fetch(url).then(r => r.text());
-    const fetchJSON = (url) => fetch(url).then(r => r.json());
+    const checked = async response => {
+        if (!response.ok) throw new Error("The request could not be saved. Please retry.");
+        return response;
+    };
+    const fetchHTML = (url) => fetch(url).then(checked).then(r => r.text());
+    const fetchJSON = (url) => fetch(url).then(checked).then(r => r.json());
 
     const post = (url, body) => {
         const headers = {};
@@ -755,9 +791,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return fetch(url, {
             method: "POST",
-            body,
+            body: typeof body === "string" ? new URLSearchParams(body) : body,
             headers // NO Content-Type here
-        });
+        }).then(checked);
     };
 
 
@@ -786,12 +822,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const form = e.target;
         const courseId = form.dataset.courseId;
         const url = courseId ? `/dr/courses/edit/${courseId}` : `/dr/courses/create`;
-        const fd = new FormData(form);
-        fd.append("_csrf", csrf.token);
-
-        await fetch(url, { method: "POST", body: fd });
-        modals.createCourse.hide();
-        location.reload();
+        form.action = url;
+        form.method = "post";
+        let token = form.querySelector('[name="_csrf"]');
+        if (!token) {
+            token = document.createElement("input");
+            token.type = "hidden";
+            token.name = "_csrf";
+            form.appendChild(token);
+        }
+        token.value = csrf.token;
+        form.submit();
     });
 
     // Delegated - Edit course
@@ -804,7 +845,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const form = document.getElementById("formCreateCourse");
         form.dataset.courseId = course.id;
-        form.title.value = course.title;
+        form.elements.namedItem("title").value = course.title;
         form.courseName.value = course.courseName;
         form.price.value = course.price;
         form.published.value = course.published;
@@ -930,6 +971,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("tutorialSectionId").value = btn.dataset.sectionId;
         document.getElementById("tutorialId").value = "";
         document.getElementById("tutorialTypeSelect").value = "";
+        showTutorialType("");
 
         quizQuestions.length = 0;
         renderQuizQuestions();
@@ -945,10 +987,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const t = await fetchJSON(`/dr/tutorial/${btn.dataset.id}/json`);
         const form = document.getElementById("tutorialForm");
 
+        form.reset();
         document.getElementById("tutorialTitle").value = t.title;
         document.getElementById("tutorialSectionId").value = t.sectionId;
         document.getElementById("tutorialId").value = t.id;
         document.getElementById("tutorialTypeSelect").value = t.type;
+        form.elements.namedItem("isPreview").value = String(t.preview);
+        form.elements.namedItem("orderIndex").value = t.orderIndex;
+        document.getElementById("tutorialArticle").value = t.articleContent ?? "";
+        quizQuestions.length = 0;
+        renderQuizQuestions();
 
         showTutorialType(t.type);
 
@@ -991,11 +1039,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 modals.addTutorial.hide();
                 loadTutorials(sectionId);
             } else {
-                alert("Error saving tutorial: " + resp.message);
+                showError("Error saving tutorial: " + resp.message);
             }
         } catch (err) {
             console.error(err);
-            alert("Failed to save tutorial");
+            showError("Failed to save tutorial. Please retry.");
         }
     });
 
@@ -1011,7 +1059,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("deleteTutorialForm")?.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const id = deleteTutorialId.value;
+        const id = document.getElementById("deleteTutorialId").value;
         await post(`/dr/tutorial/${id}/delete-json`, `id=${id}`);
         modals.deleteTutorial.hide();
         location.reload();
@@ -1059,6 +1107,7 @@ document.addEventListener("DOMContentLoaded", () => {
             questionInput.className = "form-control qtext mt-2";
             questionInput.dataset.q = String(i);
             questionInput.value = q.question;
+            questionInput.setAttribute("aria-label", `Question ${i + 1}`);
             card.append(header, questionInput);
 
             const optionsLabel = document.createElement("div");
@@ -1075,6 +1124,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 input.dataset.q = String(i);
                 input.dataset.idx = String(idx);
                 input.value = opt;
+                input.setAttribute("aria-label", `Question ${i + 1}, option ${idx + 1}`);
                 const deleteOption = document.createElement("button");
                 deleteOption.type = "button";
                 deleteOption.className = "btn btn-danger btn-del-opt";
@@ -1096,6 +1146,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const select = document.createElement("select");
             select.className = "form-select correct";
             select.dataset.q = String(i);
+            select.setAttribute("aria-label", `Correct answer for question ${i + 1}`);
             q.options.forEach((_, idx) => {
                 const option = document.createElement("option");
                 option.value = String(idx);

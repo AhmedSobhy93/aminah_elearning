@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Request unavailable | Aminah E-Learning</title>
+    <style>body{margin:0;padding:2rem 1rem;background:#f3f7f8;color:#173d43;font:1rem/1.6 system-ui,sans-serif}main{max-width:36rem;margin:8vh auto;padding:2rem;background:white;border-top:4px solid #176b69;border-radius:.7rem}a{color:#115957}a:focus-visible{outline:3px solid #8b4a00;outline-offset:4px}</style>
+</head>
+<body><main>
+    <p>Aminah E-Learning</p>
+    <h1 th:text="${status == 403 ? 'Access unavailable' : (status == 404 ? 'Page not found' : 'We could not complete that request')}">Request unavailable</h1>
+    <p th:text="${status == 403 ? 'Your account does not have access to this page. Check that you are signed in with the correct role.' : 'Please return to the previous page and try again. If the problem continues, contact your course administrator.'}"></p>
+    <p><a th:href="@{/}">Return home</a> · <a th:href="@{/profile/login}">Sign in</a></p>
+</main></body>
+</html>

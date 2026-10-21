@@ -23,6 +23,7 @@ public class TutorialDto {
     private LocalDateTime uploadedAt; // <--- add this
     private List<QuizQuestionDto> quizQuestions; // for QUIZ
     private Long sectionId;
+    private boolean preview;
 
     public static TutorialDto from(Tutorial t) {
         TutorialDto dto = new TutorialDto();
@@ -35,6 +36,7 @@ public class TutorialDto {
         dto.setArticleContent(t.getArticleContent() != null ? t.getArticleContent() : "");
         dto.setUploadedAt(t.getUploadedAt() != null ? t.getUploadedAt() : LocalDateTime.now());
         dto.setSectionId(t.getSection().getId());
+        dto.setPreview(t.isPreview());
         // Map quiz questions safely
         List<QuizQuestionDto> quizDtos = new ArrayList<>();
         if (t.getQuizQuestions() != null) {

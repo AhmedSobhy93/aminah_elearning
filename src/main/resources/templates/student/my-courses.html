@@ -65,34 +65,8 @@
         </div>
     </div>
 
-    <!-- Search & Filters -->
-    <form method="get" class="row g-2 mb-4">
-        <div class="col-md-6">
-            <div class="input-group">
-                <span class="input-group-text bg-white">
-                    <i class="fa-solid fa-magnifying-glass text-muted"></i>
-                </span>
-                <input type="text" name="keyword" th:value="${keyword}"
-                       class="form-control"
-                       placeholder="Search courses, skills, instructors...">
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <select class="form-select" name="level">
-                <option value="">All Levels</option>
-                <option>BEGINNER</option>
-                <option>INTERMEDIATE</option>
-                <option>EXPERT</option>
-            </select>
-        </div>
-
-        <div class="col-md-3">
-            <button class="btn btn-primary w-100">
-                <i class="fa-solid fa-filter me-1"></i> Filter
-            </button>
-        </div>
-    </form>
+    <p th:if="${param.payment != null}" class="alert alert-info" role="status">Payment status is being checked. Paid content unlocks only after the payment provider confirms it. Open the course to retry a failed payment.</p>
+    <p><a th:href="@{/student/courses}">Browse available courses</a></p>
 
     <!-- Courses Grid -->
     <div class="row">
@@ -116,6 +90,9 @@
                         Course description...
                     </p>
 
+                    <p th:if="${enrollmentStatuses[course.id] != 'SUCCESS'}" class="alert alert-warning small" role="status">
+                        <span th:text="${'Payment: ' + enrollmentStatuses[course.id]}"></span>. Content remains locked until payment is confirmed.
+                    </p>
                     <!-- Course Meta -->
                     <div class="d-flex flex-wrap gap-3 small text-muted mb-3">
 
@@ -152,6 +129,9 @@
 
                 </div>
 
+                <a th:if="${certificateCourseIds.contains(course.id)}"
+                   th:href="@{/student/certificates/{id}(id=${course.id})}"
+                   class="btn btn-success mx-3 mb-2">View certificate</a>
                 <!-- Card Actions -->
                 <div class="card-footer bg-transparent border-0 d-flex gap-2">
 

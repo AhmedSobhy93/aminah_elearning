@@ -2,10 +2,12 @@ package com.aminah.elearning.service;
 
 import com.aminah.elearning.model.TutorialType;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,6 +15,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Optional;
 
 @Service
 public class StorageService {
@@ -22,8 +25,10 @@ public class StorageService {
     private static final Set<String> VIDEO_CONTENT_TYPES = Set.of("video/mp4", "application/mp4");
 
     private final Path rootUpload = Paths.get("uploads");
+    private final ObjectProvider<PrivateObjectStorageService> objectStorage;
 
-    public StorageService() throws IOException {
+    public StorageService(ObjectProvider<PrivateObjectStorageService> objectStorage) throws IOException {
+        this.objectStorage = objectStorage;
         Files.createDirectories(rootUpload);
     }
 
@@ -42,16 +47,28 @@ public class StorageService {
                 .resolve(folder)
                 .normalize();
 
-        Files.createDirectories(targetDir);
-
         String fileName = buildSafeFileName(file.getOriginalFilename(), type);
         Path targetPath = targetDir.resolve(fileName).normalize();
         if (!targetPath.startsWith(targetDir)) {
             throw new IllegalArgumentException("Invalid upload path");
         }
 
-        Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-        return "/" + rootUpload + "/" + doctorId + "/" + courseId + "/" + folder + "/" + fileName;
+        String filePath = "/uploads/" + doctorId + "/" + courseId + "/" + folder + "/" + fileName;
+        PrivateObjectStorageService remote = objectStorage.getIfAvailable();
+        if (remote != null) {
+            remote.store(filePath, file);
+        } else {
+            Files.createDirectories(targetDir);
+            try (var input = file.getInputStream()) {
+                Files.copy(input, targetPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+        return filePath;
+    }
+
+    public Optional<URI> getPrivateDownloadUrl(String filePath) {
+        PrivateObjectStorageService remote = objectStorage.getIfAvailable();
+        return remote == null ? Optional.empty() : Optional.of(remote.downloadUrl(filePath));
     }
 
     public Path getFilePath(String relativePath) throws IOException {

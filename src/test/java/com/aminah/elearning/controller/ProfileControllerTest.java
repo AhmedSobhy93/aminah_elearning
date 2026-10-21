@@ -19,6 +19,27 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ProfileControllerTest {
+    @Test
+    void duplicateProfileEmailReturnsFormBoundToAuthenticatedIdentity() {
+        UserService users = mock(UserService.class);
+        User submitted = new User(999L);
+        submitted.setRole(com.aminah.elearning.model.Role.ADMIN);
+        submitted.setPassword("submitted-password");
+        User existing = new User(7L);
+        existing.setUsername("student");
+        existing.setRole(com.aminah.elearning.model.Role.STUDENT);
+        when(users.userUpdate("student", submitted)).thenThrow(new IllegalArgumentException("Email is already in use"));
+        when(users.findByUsername("student")).thenReturn(existing);
+        ProfileController controller = new ProfileController(mock(UserRepository.class), mock(PasswordEncoder.class),
+                mock(RegistrationService.class), mock(VerificationTokenRepository.class), users,
+                mock(AuthenticationManager.class), mock(RequestThrottleService.class), "http://localhost:8080");
+        Model model = new org.springframework.ui.ConcurrentModel();
+        assertThat(controller.update(submitted, () -> "student", model)).isEqualTo("profile/profile");
+        assertThat(model.getAttribute("error")).isEqualTo("Email is already in use");
+        assertThat(submitted.getId()).isEqualTo(7L);
+        assertThat(submitted.getRole()).isEqualTo(com.aminah.elearning.model.Role.STUDENT);
+        assertThat(submitted.getPassword()).isNull();
+    }
 
     @Test
     void registrationIpLimitCannotBeBypassedWithFreshEmails() {

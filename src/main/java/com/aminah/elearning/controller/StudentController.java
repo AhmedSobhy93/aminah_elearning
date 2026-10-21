@@ -105,6 +105,12 @@ public class StudentController {
         }).toList();
 
         model.addAttribute("courses", courses);
+        model.addAttribute("certificateCourseIds", enrollmentsPage.stream()
+                .filter(e -> Boolean.TRUE.equals(e.getCompleted()) && "SUCCESS".equals(e.getPaymentStatus()))
+                .map(e -> e.getCourse().getId()).collect(java.util.stream.Collectors.toSet()));
+        model.addAttribute("enrollmentStatuses", enrollmentsPage.stream().collect(
+                java.util.stream.Collectors.toMap(e -> e.getCourse().getId(),
+                        e -> e.getPaymentStatus() == null ? "PENDING" : e.getPaymentStatus())));
         model.addAttribute("currentPage", enrollmentsPage.getNumber());
         model.addAttribute("totalPages", enrollmentsPage.getTotalPages());
 

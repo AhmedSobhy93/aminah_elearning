@@ -152,7 +152,7 @@ public class DoctorController {
         String level = c.getLevel() != null ? c.getLevel().name() : "N/A";
         int progress = 0; // compute from CourseEnrollment if needed
 
-        return new CourseDTO(
+        CourseDTO dto = new CourseDTO(
                 c.getId(),
                 c.getTitle(),
                 c.getDescription(),
@@ -162,6 +162,10 @@ public class DoctorController {
                 level,
                 progress
         );
+        dto.setCourseName(c.getCourseName());
+        dto.setPublished(c.isPublished());
+        dto.setVideoUrl(c.getVideoUrl());
+        return dto;
 
     }
 
@@ -205,7 +209,7 @@ public class DoctorController {
     public String deleteSection(@PathVariable Long id, Principal principal) {
         contentAuthorization.requireOwnedSection(id, principal.getName());
         sectionService.delete(id);
-        return "redirect:/dr/courses/";
+        return "redirect:/dr/courses";
     }
 
     // Edit Section
@@ -292,11 +296,11 @@ public class DoctorController {
             @RequestParam(required = false) Boolean isPreview,
             @RequestParam(required = false) String quizQuestionsJson,
             @RequestParam(required = false) Long tutorialId,
+            @RequestParam(defaultValue = "0") int orderIndex,
             RedirectAttributes ra,
             Principal principal
     ) {
         Map<String, Object> resp = new HashMap<>();
-        System.out.println("quizQuestionsJson = " + quizQuestionsJson);
 
         try {
             // 1️⃣ Find user
@@ -311,6 +315,27 @@ public class DoctorController {
                     : new Tutorial();
             if (tutorialId != null && t.getSection() != null && !t.getSection().getId().equals(targetSection.getId())) {
                 throw new IllegalArgumentException("Existing tutorials cannot be moved between sections");
+            }
+
+            if (title == null || title.isBlank() || orderIndex < 0) {
+                throw new IllegalArgumentException("A tutorial title and non-negative order are required");
+            }
+            List<QuizQuestionDto> quizDtos = List.of();
+            if (type == TutorialType.QUIZ) {
+                quizDtos = objectMapper.readValue(quizQuestionsJson == null ? "[]" : quizQuestionsJson,
+                        new TypeReference<List<QuizQuestionDto>>() { });
+                if (quizDtos == null || quizDtos.isEmpty() || quizDtos.stream().anyMatch(q ->
+                        q == null || q.getQuestion() == null || q.getQuestion().isBlank()
+                        || q.getOptions() == null || q.getOptions().size() < 2
+                        || q.getOptions().stream().anyMatch(o -> o == null || o.isBlank())
+                        || q.getCorrectOptionIndex() < 0 || q.getCorrectOptionIndex() >= q.getOptions().size())) {
+                    throw new IllegalArgumentException("Each quiz needs a question, two options, and a valid correct answer");
+                }
+            }
+            boolean fileType = type == TutorialType.VIDEO || type == TutorialType.PDF;
+            if (fileType && (file == null || file.isEmpty())
+                    && (t.getType() != type || t.getFilePath() == null || t.getFilePath().isBlank())) {
+                throw new IllegalArgumentException("Upload a file for this tutorial type");
             }
 
             t.setTitle(title);
@@ -331,15 +356,12 @@ public class DoctorController {
             }
 
             Tutorial saved = tutorialService.addTutorialToSection(sectionId, t);
+            saved.setOrderIndex(orderIndex);
 
             // Update quiz questions on managed entity
 
             if (type == TutorialType.QUIZ && quizQuestionsJson != null && !quizQuestionsJson.isBlank()) {
-                List<QuizQuestionDto> quizDtos = objectMapper.readValue(
-                        quizQuestionsJson, new TypeReference<List<QuizQuestionDto>>() {
-                        }
-                );
-
+                saved.getQuizQuestions().clear();
                 for (QuizQuestionDto dto : quizDtos) {
                     QuizQuestion q = dto.toEntity(saved);  // ✅ link to persisted tutorial
                     saved.addQuizQuestion(q);
@@ -353,9 +375,11 @@ public class DoctorController {
         } catch (AccessDeniedException e) {
             throw e;
         } catch (Exception e) {
+            if (org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive()) {
+                org.springframework.transaction.interceptor.TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            }
             resp.put("success", false);
             resp.put("message", e.getMessage());
-            e.printStackTrace();
             ra.addFlashAttribute("error", "Error saving tutorial: " + e.getMessage());
         }
 
@@ -397,7 +421,6 @@ public class DoctorController {
                     .toList();
             dto.setQuizQuestions(quizDtos);
         }
-        System.out.println(dto);
         return dto;
     }
 

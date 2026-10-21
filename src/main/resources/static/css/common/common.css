@@ -1194,3 +1194,27 @@ body {
     background-color: #6b7280 !important;
     color: #fff !important;
 }
+
+/* Keyboard focus and responsive defaults shared by role journeys. */
+:focus-visible { outline: 3px solid #8b4a00; outline-offset: 3px; }
+main { min-width: 0; }
+img, video, iframe { max-width: 100%; }
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+@media (max-width: 576px) {
+    .navbar-brand { white-space: normal; font-size: 1rem; max-width: 78%; }
+    .auth-card { width: 100%; padding: 1.5rem; }
+}
+
+/* Shared medical palette: white navigation/button text meets AA contrast. */
+:root { --primary: #176b69; --primary-dark: #104f4d; --nav-bg: #176b69; --footer-bg: #176b69; }
+.btn-primary, .btn-aminah { background: var(--primary); color: #fff; border-color: var(--primary); }
+.btn-primary:hover, .btn-aminah:hover { background: var(--primary-dark); color: #fff; }
+.ftr-footer { background: var(--footer-bg); }
+.ftr-footer_logo_text span, .ftr-copyright a { color: #ffe1a0; }
+.navbar .nav-link:hover, .navbar-brand:hover { color: #ffe1a0 !important; }
+.app-content, .app-content > main, .app-content > section { min-width: 0; }
+.app-content > main, .app-content > section { flex: 1 1 auto; width: 100%; }
+/* Native titles and accessible names replace off-screen custom tooltips. */
+.action-btn::after { display: none !important; }

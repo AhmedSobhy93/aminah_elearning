@@ -32,7 +32,7 @@ public class TutorialService {
 
     @Transactional
     public Page<Tutorial> getTutorialsForSection(Long sectionId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("uploadedAt").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("orderIndex").ascending().and(Sort.by("id")));
         return tutorialRepository.findBySectionId(sectionId, pageable);
     }
 
@@ -62,9 +62,10 @@ public class TutorialService {
                 .orElseThrow(() -> new RuntimeException("Section not found"));
 
         tutorial.setSection(sec);
-        tutorial.setOrderIndex(sec.getTutorials().size());
-
-        sec.getTutorials().add(tutorial);
+        if (tutorial.getId() == null) {
+            tutorial.setOrderIndex(sec.getTutorials().size());
+            sec.getTutorials().add(tutorial);
+        }
 
         return tutorialRepository.save(tutorial);
     }

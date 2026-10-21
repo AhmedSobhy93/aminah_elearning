@@ -79,7 +79,12 @@ public class PasswordController {
     public String resetPassword(@RequestParam("token") String token, @RequestParam("password") String password, Model model) {
 //        boolean success = userRepository.resetPassword(token, password);
 //        model.addAttribute("success", success);
-        PasswordResetToken resetTokenToken = resetTokenRepository.findByToken(token).orElseThrow(() -> new RuntimeException("Invalid token"));
+        model.addAttribute("token", token);
+        PasswordResetToken resetTokenToken = resetTokenRepository.findByToken(token).orElse(null);
+        if (resetTokenToken == null) {
+            model.addAttribute("error", "This reset link is invalid or has already been used. Request a new link.");
+            return "profile/reset-password";
+        }
 
         if (resetTokenToken.isExpired()) {
 
@@ -94,7 +99,7 @@ public class PasswordController {
         userRepository.save(user);
         resetTokenRepository.delete(resetTokenToken);
 
-        model.addAttribute("succuss", true);
+        model.addAttribute("success", true);
         return "profile/reset-result";
     }
 }

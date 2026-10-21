@@ -27,7 +27,7 @@
 
                             <div class="mb-3">
                                 <strong>Instructor:</strong>
-                                <span th:text="${course.author}"></span>
+                                <span th:text="${course.author != null ? course.author.fullName : 'Instructor unavailable'}"></span>
                             </div>
 
                             <div class="mb-3">
@@ -50,18 +50,8 @@
 <!--                            </div>-->
 
                             <div class="d-grid gap-2">
-                                <a th:if="${!enrolled}" th:href="@{/courses/{id}(id=${course.id})/enroll}" class="btn btn-primary rounded-pill">
-                                    <i class="fas fa-play-circle"></i> Enroll Now
-                                </a>
-
-                                <a th:if="${enrolled}" th:href="@{/course/{id}/content(id=${course.id})}" class="btn btn-success rounded-pill">
-                                    <i class="fas fa-book-open"></i> Continue Learning
-                                </a>
-
-                                <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
-                                   th:href="@{/admin/courses/manage/{id}(id=${course.id})}" class="btn btn-warning rounded-pill">
-                                    <i class="fas fa-cog"></i> Manage Course
-                                </a>
+                                <span class="badge bg-secondary" th:text="${course.published ? 'Published' : 'Draft'}"></span>
+                                <a th:href="@{/admin/courses}" class="btn btn-outline-primary">Back to course review</a>
                             </div>
                         </div>
                     </div>
@@ -69,52 +59,21 @@
 
                 <!-- Main Content -->
                 <main class="col-lg-8 col-md-7">
-                    <div class="card border-0 shadow-sm">
+                    <h1 th:text="${course.title}">Course review</h1>
+                    <p>Review the course structure and publication status.</p>
+                    <p th:if="${#lists.isEmpty(course.sections)}" class="alert alert-info">No sections have been added yet.</p>
+                    <article th:each="section : ${course.sections}" class="card mb-3">
                         <div class="card-body">
-
-<!--                            &lt;!&ndash; Course Media &ndash;&gt;-->
-<!--                            <div th:switch="${content.type}">-->
-<!--                                <div th:case="'VIDEO'">-->
-<!--                                    <div class="ratio ratio-16x9 mb-3">-->
-<!--                                        <iframe th:src="@{${content.url}}" allowfullscreen></iframe>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-
-<!--                                <div th:case="'PDF'">-->
-<!--                                    <iframe th:src="@{${content.url}}" width="100%" height="500px"></iframe>-->
-<!--                                </div>-->
-
-<!--                                <div th:case="'TEXT'">-->
-<!--                                    <p class="lead" th:utext="${content.text}"></p>-->
-<!--                                </div>-->
-
-<!--                                <div th:case="'QUIZ'">-->
-<!--                                    <div class="border rounded p-3">-->
-<!--                                        <h5><i class="bi bi-question-circle"></i> Quiz Section</h5>-->
-<!--                                        <p th:text="${content.quizDescription}"></p>-->
-<!--                                        <a th:href="@{/quiz/{id}(id=${content.id})}" class="btn btn-outline-primary rounded-pill mt-2">-->
-<!--                                            Start Quiz-->
-<!--                                        </a>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-
-<!--                                <div th:case="*">-->
-<!--                                    <p class="text-muted">No content available for this section.</p>-->
-<!--                                </div>-->
-<!--                            </div>-->
-
-                            <!-- Course Navigation -->
-                            <div class="d-flex justify-content-between mt-4">
-                                <a th:href="@{/course/{id}/previous(id=${course.id})}" class="btn btn-outline-secondary rounded-pill">
-                                    <i class="fas fa-arrow-left"></i> Previous
-                                </a>
-                                <a th:href="@{/course/{id}/next(id=${course.id})}" class="btn btn-outline-secondary rounded-pill">
-                                    Next <i class="fas fa-arrow-right"></i>
-                                </a>
-                            </div>
-
+                            <h2 class="h5" th:text="${section.title}">Section</h2>
+                            <p th:text="${section.description}"></p>
+                            <ul>
+                                <li th:each="tutorial : ${section.tutorials}">
+                                    <span th:text="${tutorial.title}"></span>
+                                    <span class="text-muted" th:text="${tutorial.type}"></span>
+                                </li>
+                            </ul>
                         </div>
-                    </div>
+                    </article>
                 </main>
             </div>
         </div>

@@ -15,6 +15,30 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class UserServiceTest {
+    @Test
+    void adminEditPersistsFullNameAndRejectsDuplicateEmailBeforeChangingRole() {
+        UserRepository users = mock(UserRepository.class);
+        UserService service = new UserService(users, mock(PasswordEncoder.class));
+        User current = new User(7L);
+        current.setRole(com.aminah.elearning.model.Role.STUDENT);
+        current.setPassword("existing-hash");
+        when(users.findById(7L)).thenReturn(Optional.of(current));
+        User submitted = new User();
+        submitted.setFullName(" New Name ");
+        submitted.setEmail(" NEW@EXAMPLE.COM ");
+        submitted.setRole(com.aminah.elearning.model.Role.DR);
+        submitted.setEnabled(true);
+        service.updateUser(7L, submitted);
+        assertThat(current.getFullName()).isEqualTo("New Name");
+        assertThat(current.getEmail()).isEqualTo("new@example.com");
+        assertThat(current.getRole()).isEqualTo(com.aminah.elearning.model.Role.DR);
+        assertThat(current.getPassword()).isEqualTo("existing-hash");
+        when(users.findByEmail("taken@example.com")).thenReturn(Optional.of(new User(8L)));
+        submitted.setEmail("taken@example.com");
+        submitted.setRole(com.aminah.elearning.model.Role.ADMIN);
+        assertThatThrownBy(() -> service.updateUser(7L, submitted)).isInstanceOf(IllegalArgumentException.class);
+        assertThat(current.getRole()).isEqualTo(com.aminah.elearning.model.Role.DR);
+    }
 
     @Test
     void profileUpdateUsesPrincipalAndKeepsPasswordWhenBlank() {

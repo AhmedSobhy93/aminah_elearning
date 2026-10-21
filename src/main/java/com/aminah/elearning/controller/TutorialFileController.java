@@ -13,6 +13,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.CacheControl;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,6 +47,15 @@ public class TutorialFileController {
         Tutorial tutorial = tutorialRepository.findByFilePath(filePath).orElse(null);
         if (tutorial == null || !canAccess(authentication.getName(), tutorial)) {
             return ResponseEntity.status(403).build();
+        }
+
+        var downloadUrl = storageService.getPrivateDownloadUrl(filePath);
+        if (downloadUrl.isPresent()) {
+            return ResponseEntity.status(302)
+                    .location(downloadUrl.get())
+                    .cacheControl(CacheControl.noStore())
+                    .header("Referrer-Policy", "no-referrer")
+                    .build();
         }
 
         Path path = storageService.getFilePath(filePath);

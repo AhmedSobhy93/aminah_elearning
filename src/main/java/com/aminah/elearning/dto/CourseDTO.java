@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 public class CourseDTO {
     private Long id;
     private String title;
+    private String courseName;
+    private boolean published;
+    private String videoUrl;
     private String description;
     private Double price;
     private boolean enrolled;

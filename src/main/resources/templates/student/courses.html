@@ -159,7 +159,7 @@
         </div>
     </div>
 
-    <!-- Search & Filters -->
+    <!-- Search & Searchs -->
     <form method="get" class="row g-2 mb-4">
         <div class="col-md-6">
             <div class="input-group">
@@ -168,22 +168,15 @@
                 </span>
                 <input type="text" name="keyword" th:value="${keyword}"
                        class="form-control"
-                       placeholder="Search courses, skills, instructors...">
+                       aria-label="Search courses by name" placeholder="Search courses by name">
             </div>
         </div>
 
-            <div class="col-md-3">
-                <select class="form-select" name="level">
-                    <option value="">All Levels</option>
-                    <option>BEGINNER</option>
-                    <option>INTERMEDIATE</option>
-                    <option>EXPERT</option>
-                </select>
-            </div>
+
 
         <div class="col-md-3">
             <button class="btn btn-primary w-100">
-                <i class="fa-solid fa-filter me-1"></i> Filter
+                <i class="fa-solid fa-filter me-1"></i> Search
             </button>
         </div>
     </form>

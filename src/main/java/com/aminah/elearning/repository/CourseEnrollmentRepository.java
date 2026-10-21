@@ -42,6 +42,10 @@ public interface CourseEnrollmentRepository extends JpaRepository<CourseEnrollme
     Optional<CourseEnrollment> findByUserIdAndCourseId(Long userId, Long courseId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select e from CourseEnrollment e where e.user.id = :userId and e.course.id = :courseId")
+    Optional<CourseEnrollment> findForUpdateByUserIdAndCourseId(Long userId, Long courseId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select e from CourseEnrollment e where e.id = :id")
     Optional<CourseEnrollment> findForUpdateById(Long id);
 }

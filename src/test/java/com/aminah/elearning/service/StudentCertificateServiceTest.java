@@ -29,6 +29,7 @@ class StudentCertificateServiceTest {
 
         when(enrollmentRepository.findByUserIdAndCourseId(7L, 12L))
                 .thenReturn(Optional.of(enrollment));
+        when(enrollmentRepository.findForUpdateByUserIdAndCourseId(7L, 12L)).thenReturn(Optional.of(enrollment));
 
         String certificateNumber = service.generateCertificate(7L, 12L);
 
@@ -51,6 +52,7 @@ class StudentCertificateServiceTest {
 
         when(enrollmentRepository.findByUserIdAndCourseId(7L, 12L))
                 .thenReturn(Optional.of(enrollment));
+        when(enrollmentRepository.findForUpdateByUserIdAndCourseId(7L, 12L)).thenReturn(Optional.of(enrollment));
 
         String certificateNumber = service.generateCertificate(7L, 12L);
 
@@ -69,10 +71,11 @@ class StudentCertificateServiceTest {
 
         when(enrollmentRepository.findByUserIdAndCourseId(7L, 12L))
                 .thenReturn(Optional.of(enrollment));
+        when(enrollmentRepository.findForUpdateByUserIdAndCourseId(7L, 12L)).thenReturn(Optional.of(enrollment));
 
         assertThatThrownBy(() -> service.generateCertificate(7L, 12L))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Course is not completed yet");
+                .isInstanceOf(org.springframework.web.server.ResponseStatusException.class)
+                .hasMessageContaining("Course is not completed yet");
         verify(enrollmentRepository, never()).save(enrollment);
         verify(emailService, never()).sendEmail(any(), any(), any());
     }
@@ -84,10 +87,41 @@ class StudentCertificateServiceTest {
         CourseEnrollment enrollment = completedEnrollment(false);
         enrollment.setUser(null);
         when(enrollmentRepository.findByUserIdAndCourseId(7L, 12L)).thenReturn(Optional.of(enrollment));
+        when(enrollmentRepository.findForUpdateByUserIdAndCourseId(7L, 12L)).thenReturn(Optional.of(enrollment));
 
         assertThatThrownBy(() -> service.generateCertificate(7L, 12L))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Certificate enrollment is incomplete");
+    }
+
+    @Test
+    void revokedEnrollmentCannotIssueOrReadCertificate() {
+        CourseEnrollmentRepository repository = mock(CourseEnrollmentRepository.class);
+        EmailService email = mock(EmailService.class);
+        StudentCertificateService service = new StudentCertificateService(repository, email);
+        CourseEnrollment enrollment = completedEnrollment(true);
+        enrollment.setPaymentStatus("REFUNDED");
+        when(repository.findByUserIdAndCourseId(7L, 12L)).thenReturn(Optional.of(enrollment));
+        when(repository.findForUpdateByUserIdAndCourseId(7L, 12L)).thenReturn(Optional.of(enrollment));
+        assertThatThrownBy(() -> service.generateCertificate(7L, 12L))
+                .isInstanceOf(org.springframework.web.server.ResponseStatusException.class);
+        assertThatThrownBy(() -> service.getCertificate(7L, 12L))
+                .isInstanceOf(org.springframework.web.server.ResponseStatusException.class);
+        verify(email, never()).sendEmail(any(), any(), any());
+    }
+
+    @Test
+    void certificateDetailsUseEnrollmentIdentityWithoutIssuing() {
+        CourseEnrollmentRepository repository = mock(CourseEnrollmentRepository.class);
+        EmailService email = mock(EmailService.class);
+        StudentCertificateService service = new StudentCertificateService(repository, email);
+        CourseEnrollment enrollment = completedEnrollment(false);
+        when(repository.findByUserIdAndCourseId(7L, 12L)).thenReturn(Optional.of(enrollment));
+        var details = service.getCertificate(7L, 12L);
+        assertThat(details.number()).isEqualTo("CERT-7-12-99");
+        assertThat(details.issued()).isFalse();
+        verify(repository, never()).save(any());
+        verify(email, never()).sendEmail(any(), any(), any());
     }
 
     private CourseEnrollment completedEnrollment(boolean certificateIssued) {
@@ -99,6 +133,7 @@ class StudentCertificateServiceTest {
         enrollment.setId(99L);
         enrollment.setUser(user);
         enrollment.setCourse(course);
+        enrollment.setPaymentStatus("SUCCESS");
         enrollment.setCompleted(true);
         enrollment.setCertificateIssued(certificateIssued);
         return enrollment;

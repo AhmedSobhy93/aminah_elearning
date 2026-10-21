@@ -322,314 +322,164 @@
 
 
 document.addEventListener("DOMContentLoaded", () => {
-
-    const offcanvasEl = document.getElementById("tutorialOffcanvas");
-    const offcanvasTitle = document.getElementById("offcanvasLabel");
-    const offcanvasBody = document.getElementById("offcanvasContent");
-
-    // ✅ Stop execution if page has no offcanvas (prevents crashes on other pages)
-    if (!offcanvasEl || !offcanvasBody) {
-        console.warn("Tutorial offcanvas not found on this page");
-        return;
-    }
-
-    let tutorialCompleted = false;
-    let currentTutorialId = null;
-
-    // ✅ Prevent double initialization
-    let offcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
-    if (!offcanvas) {
-        offcanvas = new bootstrap.Offcanvas(offcanvasEl);
-
-    }
-    const markCompletedOnce = (id) => {
-        if (tutorialCompleted) return;
-        tutorialCompleted = true;
-
-        console.log("Tutorial completed:", id);
-
-        if (typeof completeTutorial === "function") {
-            completeTutorial(id);
-        }
-
-        // ✅ UPDATE UI IMMEDIATELY
-        markTutorialAsReadInUI(id);
+    const panel = document.getElementById("tutorialOffcanvas");
+    if (!panel) return;
+    // Keep fixed overlays outside animated containers.
+    document.body.appendChild(panel);
+    const body = document.getElementById("offcanvasContent");
+    const status = document.getElementById("viewerStatus");
+    const offcanvas = bootstrap.Offcanvas.getOrCreateInstance(panel);
+    let version = 0, currentId = null, completed = false, pending = false, refreshProgress = false, opener = null;
+    const csrf = () => ({[document.querySelector('meta[name="_csrf_header"]').content]: document.querySelector('meta[name="_csrf"]').content});
+    const message = (text, error = false) => {
+        status.textContent = text;
+        status.className = error ? "alert alert-danger" : "text-muted mb-3";
     };
-
-    // const markCompletedOnce = (id) => {
-    //     if (tutorialCompleted) return;
-    //     tutorialCompleted = true;
-    //     console.log("Tutorial completed:", id);
-    //     if (typeof completeTutorial === "function") {
-    //         completeTutorial(id);
-    //     }
-    // };
-
-    function markTutorialAsReadInUI(tutorialId) {
-        const btn = document.querySelector(
-            `.view-tutorial-btn[data-tut-id="${tutorialId}"]`
-        );
-        if (!btn) return;
-
-        const card = btn.closest(".tutorial-card");
-        if (!card) return;
-
-        const badgeContainer = card.querySelector(".small.text-muted");
-        if (!badgeContainer) return;
-
-        badgeContainer.innerHTML = `
-        <span class="badge bg-success">
-            <i class="fa-solid fa-check-circle"></i> Read
-        </span>
-    `;
-
-        card.classList.remove("opacity-50");
-    }
-    // const markCompletedOnce = (id) => {
-    //     if (tutorialCompleted) return;
-    //     tutorialCompleted = true;
-    //
-    //     console.log("Tutorial completed:", id);
-    //
-    //     if (typeof completeTutorial === "function") {
-    //         completeTutorial(id);
-    //     }
-    //
-    //     // ✅ UPDATE UI IMMEDIATELY
-    //     markTutorialAsReadInUI(id);
-    // };
-
-    const resetOffcanvas = () => {
-        tutorialCompleted = false;
-        currentTutorialId = null;
-
-        if (offcanvasTitle) offcanvasTitle.textContent = "";
-
-        [
-            "#viewFileContainer",
-            "#viewArticleContent",
-            "#viewQuizQuestionsContainer",
-            "#quizResult"
-        ].forEach(sel => {
-            const el = offcanvasBody.querySelector(sel);
-            if (el) el.innerHTML = "";
-        });
-
-        [
-            "#viewFileSection",
-            "#viewArticleSection",
-            "#viewQuizSection"
-        ].forEach(sel => {
-            const el = offcanvasBody.querySelector(sel);
-            if (el) el.classList.add("d-none");
-        });
+    const markRead = id => {
+        const card = document.querySelector(`.view-tutorial-btn[data-tut-id="${id}"]`)?.closest(".tutorial-card");
+        const badge = card?.querySelector(".small.text-muted");
+        if (badge) {
+            badge.replaceChildren();
+            const read = document.createElement("span");
+            read.className = "badge bg-success";
+            read.textContent = "Read";
+            badge.appendChild(read);
+        }
+        refreshProgress = true;
     };
-
-    // ✅ Event delegation (works even if buttons re-render)
-    document.addEventListener("click", async (e) => {
-        const btn = e.target.closest(".view-tutorial-btn");
-        if (!btn) return;
-
-        e.preventDefault();
-        resetOffcanvas();
-        e.stopPropagation();
-
-        currentTutorialId = btn.dataset.tutId;
-        if (!currentTutorialId) return;
-
-        if (offcanvasTitle) {
-            offcanvasTitle.textContent =
-                btn.closest(".tutorial-card")?.querySelector("b")?.textContent || "Tutorial";
-        }
-
-        // Optional: remember active button
-        document.querySelectorAll(".view-tutorial-btn")
-            .forEach(b => b.removeAttribute("data-active"));
-        btn.setAttribute("data-active", "true");
-
-
-        offcanvas.show();
-
-        const fileContainer = offcanvasBody.querySelector("#viewFileContainer");
-        if (fileContainer) {
-            fileContainer.innerHTML = `
-                <div class="text-center py-4">
-                    <i class="fa-solid fa-spinner fa-spin fa-2x text-primary"></i>
-                </div>`;
-        }
-
+    async function complete(id) {
+        if (completed || pending || String(id) !== currentId) return;
+        pending = true;
         try {
-            const res = await fetch(`/student/tutorial/${currentTutorialId}/json`);
-            if (!res.ok) throw new Error("Failed to fetch tutorial");
-            const t = await res.json();
-
-            /* ================= VIDEO ================= */
-            if (t.type === "VIDEO") {
-                const container = offcanvasBody.querySelector("#viewFileContainer");
-                const section = offcanvasBody.querySelector("#viewFileSection");
-
-                if (container && section) {
-                    container.innerHTML = `
-                        <video id="tutorialVideo" class="w-100" controls
-                               controlsList="nodownload"
-                               disablePictureInPicture>
-                            <source src="${t.filePath}" type="video/mp4">
-                        </video>`;
-                    section.classList.remove("d-none");
-
-                    const video = document.getElementById("tutorialVideo");
-                    video?.addEventListener("ended", () => markCompletedOnce(t.id), { once: true });
+            const response = await fetch(`/student/tutorial/${id}/complete`, {method: "POST", headers: csrf()});
+            if (!response.ok) throw new Error("Completion could not be saved. Please retry.");
+            const result = await response.json();
+            if (!result.success) throw new Error("Completion could not be saved. Please retry.");
+            if (String(id) !== currentId) return;
+            completed = true;
+            markRead(id);
+            message("Progress saved.");
+        } catch (error) {
+            if (String(id) === currentId) message(error.message, true);
+        } finally { pending = false; }
+    }
+    function completionButton(host, id, label) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "btn btn-success mt-3";
+        button.textContent = label;
+        button.onclick = () => complete(id);
+        host.appendChild(button);
+    }
+    function reset() {
+        version++;
+        currentId = null;
+        completed = false;
+        pending = false;
+        body.querySelectorAll("video").forEach(video => video.pause());
+        ["viewFileContainer", "viewArticleContent", "viewQuizQuestionsContainer", "quizResult"].forEach(id => document.getElementById(id).replaceChildren());
+        ["viewFileSection", "viewArticleSection", "viewQuizSection"].forEach(id => document.getElementById(id).classList.add("d-none"));
+        const submit = document.getElementById("submitQuizBtn");
+        submit.onclick = null;
+        submit.disabled = false;
+        body.querySelectorAll(".completion-action").forEach(el => el.remove());
+        message("");
+    }
+    document.addEventListener("click", async event => {
+        const button = event.target.closest(".view-tutorial-btn");
+        if (!button) return;
+        event.preventDefault();
+        reset();
+        opener = button;
+        currentId = button.dataset.tutId;
+        const id = currentId, requestVersion = version;
+        document.getElementById("offcanvasLabel").textContent = button.closest(".tutorial-card")?.querySelector("b")?.textContent || "Tutorial";
+        message("Loading tutorial…");
+        offcanvas.show();
+        try {
+            const response = await fetch(`/student/tutorial/${id}/json`);
+            if (!response.ok) throw new Error("This tutorial is unavailable. Check your enrollment or retry.");
+            const tutorial = await response.json();
+            if (version !== requestVersion) return;
+            message("");
+            if (tutorial.type === "VIDEO" || tutorial.type === "PDF") {
+                const host = document.getElementById("viewFileContainer");
+                const media = document.createElement(tutorial.type === "VIDEO" ? "video" : "iframe");
+                media.src = tutorial.filePath;
+                media.className = "w-100";
+                if (tutorial.type === "VIDEO") {
+                    media.controls = true;
+                    media.onended = () => complete(id);
+                } else {
+                    media.title = tutorial.title || "Tutorial PDF";
+                    media.style.height = "60vh";
                 }
+                host.appendChild(media);
+                document.getElementById("viewFileSection").classList.remove("d-none");
+                completionButton(host, id, "Mark as complete");
             }
-
-            /* ================= PDF ================= */
-            if (t.type === "PDF") {
-                const container = offcanvasBody.querySelector("#viewFileContainer");
-                const section = offcanvasBody.querySelector("#viewFileSection");
-
-                if (container && section) {
-                    container.innerHTML = `
-                        <embed src="${t.filePath}" type="application/pdf"
-                               style="width:100%; height:60vh;">`;
-                    section.classList.remove("d-none");
-                    setTimeout(() => markCompletedOnce(t.id), 3000);
-                }
+            if (tutorial.type === "ARTICLE") {
+                const host = document.getElementById("viewArticleContent");
+                const article = document.createElement("div");
+                article.textContent = tutorial.articleContent;
+                article.style.whiteSpace = "pre-wrap";
+                host.appendChild(article);
+                completionButton(host, id, "Mark as read");
+                document.getElementById("viewArticleSection").classList.remove("d-none");
             }
-
-            /* ================= ARTICLE ================= */
-            if (t.type === "ARTICLE") {
-                const article = offcanvasBody.querySelector("#viewArticleContent");
-                const section = offcanvasBody.querySelector("#viewArticleSection");
-
-                if (article && section) {
-                    article.textContent = t.articleContent;
-                    article.style.whiteSpace = "pre-wrap";
-                    section.classList.remove("d-none");
-
-                    const checkEnd = () => {
-                        if (article.scrollTop + article.clientHeight >= article.scrollHeight - 5) {
-                            markCompletedOnce(t.id);
-                        }
-                    };
-                    article.addEventListener("scroll", checkEnd);
-                    setTimeout(checkEnd, 8000);
-                }
-            }
-
-            /* ================= QUIZ ================= */
-            if (t.type === "QUIZ") {
-                const quizContainer = offcanvasBody.querySelector("#viewQuizQuestionsContainer");
-                const quizSection = offcanvasBody.querySelector("#viewQuizSection");
-
-                if (!quizContainer || !quizSection) return;
-
-                quizContainer.innerHTML = "";
-
-                t.quizQuestions.forEach((q, i) => {
-                    const div = document.createElement("div");
-                    div.className = "mb-3 p-3 border rounded";
-                    const heading = document.createElement("strong");
-                    heading.textContent = `Q${i + 1}. ${q.question}`;
-                    const list = document.createElement("ul");
-                    list.className = "list-group mt-2";
-                    q.options.forEach((opt, idx) => {
-                        const item = document.createElement("li");
-                        item.className = "list-group-item";
+            if (tutorial.type === "QUIZ") {
+                const host = document.getElementById("viewQuizQuestionsContainer");
+                tutorial.quizQuestions.forEach((question, index) => {
+                    const group = document.createElement("fieldset");
+                    group.className = "mb-3 border rounded p-3";
+                    const legend = document.createElement("legend");
+                    legend.className = "h6";
+                    legend.textContent = `Q${index + 1}. ${question.question}`;
+                    group.appendChild(legend);
+                    question.options.forEach((option, optionIndex) => {
+                        const label = document.createElement("label");
+                        label.className = "d-block p-2";
                         const radio = document.createElement("input");
                         radio.type = "radio";
-                        radio.name = `q${i}`;
-                        radio.value = String(idx);
-                        const label = document.createElement("span");
-                        label.textContent = ` ${String.fromCharCode(65 + idx)}. ${opt}`;
-                        item.append(radio, label);
-                        list.appendChild(item);
+                        radio.name = `question-${question.id}`;
+                        radio.value = String(optionIndex);
+                        label.append(radio, document.createTextNode(` ${option}`));
+                        group.appendChild(label);
                     });
-                    div.append(heading, list);
-                    quizContainer.appendChild(div);
+                    host.appendChild(group);
                 });
-
-                quizSection.classList.remove("d-none");
-
-                const submitBtn = offcanvasBody.querySelector("#submitQuizBtn");
-                const resultDiv = offcanvasBody.querySelector("#quizResult");
-
-                submitBtn?.addEventListener("click", async () => {
+                document.getElementById("viewQuizSection").classList.remove("d-none");
+                const submit = document.getElementById("submitQuizBtn");
+                submit.onclick = async () => {
                     const answers = {};
-                    t.quizQuestions.forEach((q, i) => {
-                        const sel = offcanvasBody.querySelector(`input[name=q${i}]:checked`);
-                        if (sel) answers[q.id] = Number(sel.value);
-                    });
-                    const csrf = getCsrf();
-                    const response = await fetch(`/student/tutorial/${t.id}/quiz`, {
-                        method: "POST",
-                        headers: {"Content-Type": "application/json", [csrf.header]: csrf.token},
-                        body: JSON.stringify(answers)
-                    });
-                    if (!response.ok) throw new Error("Quiz submission failed");
-                    const result = await response.json();
-                    if (resultDiv) {
-                        resultDiv.textContent = result.passed
-                            ? "All correct! Tutorial completed."
-                            : `Score ${result.score}/${result.total}`;
-                        resultDiv.className = result.passed ? "alert alert-success" : "alert alert-warning";
+                    for (const question of tutorial.quizQuestions) {
+                        const selected = host.querySelector(`input[name="question-${question.id}"]:checked`);
+                        if (!selected) return message("Answer every question before submitting.", true);
+                        answers[question.id] = Number(selected.value);
                     }
-                });
+                    message("");
+                    submit.disabled = true;
+                    try {
+                        const response = await fetch(`/student/tutorial/${id}/quiz`, {method: "POST", headers: {...csrf(), "Content-Type": "application/json"}, body: JSON.stringify(answers)});
+                        if (!response.ok) throw new Error("Quiz submission failed. Please retry.");
+                        const result = await response.json();
+                        if (version !== requestVersion) return;
+                        const output = document.getElementById("quizResult");
+                        output.textContent = result.passed ? "All correct! Tutorial completed." : `Score ${result.score}/${result.total}. Try again.`;
+                        output.className = result.passed ? "alert alert-success" : "alert alert-warning";
+                        if (result.passed) { completed = true; markRead(id); }
+                    } catch (error) { if (version === requestVersion) message(error.message, true); }
+                    finally { submit.disabled = false; }
+                };
             }
-
-        } catch (err) {
-            console.error(err);
-            if (offcanvasBody) {
-                offcanvasBody.innerHTML =
-                    `<div class="alert alert-danger">Failed to load tutorial</div>`;
-            }
-        }
+        } catch (error) { if (version === requestVersion) message(error.message, true); }
     });
-
-// ========================
-//    MARK TUTORIAL COMPLETED
-//    ========================= */
-//
-
-
-async function completeTutorial(tutorialId) {
-
-    console.log("Tutorial completed:", tutorialId);
-
-    const csrf = getCsrf();
-
-    const res = await fetch(`/student/tutorial/${tutorialId}/complete`, {
-        method: "POST",
-        headers: {
-            [csrf.header]: csrf.token,
-            "Content-Type": "application/json"
-        }
+    panel.addEventListener("hidden.bs.offcanvas", () => {
+        reset();
+        if (refreshProgress) location.reload();
+        else if (opener?.isConnected) opener.focus();
     });
-
-    // const data = await res.json();
-    //
-    // if (data.success) {
-    //     location.reload(); // UI refresh (safe & simple)
-    // }
-}
-    function getCsrf() {
-        return {
-            token: document.querySelector('meta[name="_csrf"]').content,
-            header: document.querySelector('meta[name="_csrf_header"]').content
-        };
-    }
-
-    // ✅ Scoped correctly now
-    offcanvasEl.addEventListener("hidden.bs.offcanvas", resetOffcanvas);
-
-
-
 });
-
-
-
-// });
-
-
 ///////////////////
 // document.addEventListener("DOMContentLoaded", () => {
 //

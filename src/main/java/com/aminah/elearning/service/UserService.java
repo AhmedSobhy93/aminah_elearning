@@ -94,10 +94,19 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    @Transactional
     public void updateUser(Long id, User updatedUser) {
         User user = getUserById(id);
-//        user.setFullName(updatedUser.getFullName());
-        user.setEmail(updatedUser.getEmail());
+        if (!StringUtils.hasText(updatedUser.getFullName()) || !StringUtils.hasText(updatedUser.getEmail())
+                || updatedUser.getRole() == null) {
+            throw new IllegalArgumentException("Full name, email and role are required");
+        }
+        String email = updatedUser.getEmail().trim().toLowerCase(Locale.ROOT);
+        userRepository.findByEmail(email).filter(other -> !other.getId().equals(id)).ifPresent(other -> {
+            throw new IllegalArgumentException("Email is already in use");
+        });
+        user.setFullName(updatedUser.getFullName().trim());
+        user.setEmail(email);
         user.setRole(updatedUser.getRole());
         user.setEnabled(updatedUser.isEnabled());
         userRepository.save(user);

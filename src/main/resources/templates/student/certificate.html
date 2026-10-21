@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Certificate of completion | Aminah E-Learning</title>
+    <style>
+        body { margin: 0; padding: 2rem 1rem; background: #f3f7f8; color: #173d43; font: 1.1rem/1.6 Georgia, serif; }
+        main { max-width: 52rem; margin: auto; padding: clamp(1.5rem, 5vw, 4rem); border: 3px solid #176b69; background: white; text-align: center; }
+        h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.2; }
+        h2, p { overflow-wrap: anywhere; }
+        .eyebrow { font: bold .85rem/1.5 system-ui, sans-serif; letter-spacing: .15em; text-transform: uppercase; }
+        .actions { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 2rem; font-family: system-ui, sans-serif; }
+        a, button { color: #115957; padding: .65rem 1rem; }
+        button { background: #176b69; border: 0; color: white; border-radius: .4rem; font: inherit; cursor: pointer; }
+        :focus-visible { outline: 3px solid #8b4a00; outline-offset: 4px; }
+        @media print { body { background: white; padding: 0; } .actions { display: none; } main { border-width: 2px; } }
+    </style>
+</head>
+<body>
+<main>
+    <p class="eyebrow">Aminah E-Learning</p>
+    <h1 th:text="${certificate.issued ? 'Certificate of completion' : 'Your certificate is ready to issue'}">Certificate of completion</h1>
+    <p>This recognizes</p>
+    <h2 th:text="${certificate.studentName}">Student name</h2>
+    <p>for completing</p>
+    <h2 th:text="${certificate.courseTitle}">Course title</h2>
+    <p th:if="${certificate.issued}">Certificate number: <strong th:text="${certificate.number}"></strong></p>
+    <p th:unless="${certificate.issued}">Issue your certificate once, then download or print it whenever you need it.</p>
+    <div class="actions" th:unless="${download == true}">
+        <form th:unless="${certificate.issued}" method="post" th:action="@{/student/certificates/{id}/issue(id=${certificate.courseId})}">
+            <button type="submit">Issue certificate</button>
+        </form>
+        <a th:if="${certificate.issued}" th:href="@{/student/certificates/{id}/download(id=${certificate.courseId})}">Download printable certificate (HTML)</a>
+        <a th:href="@{/student/my-courses}">Back to my learning</a>
+    </div>
+    <p th:if="${download == true}">To save a PDF, open this file in your browser and choose Print, then Save as PDF.</p>
+</main>
+</body>
+</html>

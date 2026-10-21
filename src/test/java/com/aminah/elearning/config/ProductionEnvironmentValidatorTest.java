@@ -54,6 +54,28 @@ class ProductionEnvironmentValidatorTest {
         );
     }
 
+    @Test
+    void rejectsSchemaAutoUpdateAndDisabledMigrations() {
+        MockEnvironment environment = baseEnvironment()
+                .withProperty("spring.jpa.hibernate.ddl-auto", "update")
+                .withProperty("spring.flyway.enabled", "false");
+
+        assertThat(new ProductionEnvironmentValidator(environment).validate()).containsExactly(
+                "JPA_DDL_AUTO must be validate in production",
+                "FLYWAY_ENABLED must be true in production"
+        );
+    }
+
+    @Test
+    void schemaGuardRejectsUnsafeSettingsBeforeHibernateSchemaGeneration() {
+        var validator = new ProductionEnvironmentValidator(baseEnvironment()
+                .withProperty("spring.jpa.hibernate.ddl-auto", "update"));
+        org.assertj.core.api.Assertions.assertThatThrownBy(() ->
+                validator.productionSchemaGuard().customize(new java.util.HashMap<>()))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("JPA_DDL_AUTO must be validate");
+    }
+
     private MockEnvironment baseEnvironment() {
         return new MockEnvironment()
                 .withProperty("app.url", "https://aminah.example.com")

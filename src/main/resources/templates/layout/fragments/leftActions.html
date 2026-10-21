@@ -2,25 +2,25 @@
 
     <!-- LEFT ACTION BAR -->
     <div id="leftActionBar">
-        <button class="action-btn" data-label="Dashboard" th:onclick="|window.location='@{/}'|">
+        <button class="action-btn" data-label="Dashboard" title="Dashboard" aria-label="Dashboard" th:onclick="|window.location='@{/}'|">
             <i class="fas fa-tachometer-alt"></i>
         </button>
 
-        <button class="action-btn" data-label="Courses" sec:authorize="hasRole('DR')"
+        <button class="action-btn" data-label="Courses" title="Courses" aria-label="Courses" sec:authorize="hasRole('DR')"
                 th:onclick="|window.location='@{/dr/courses}'|">
             <i class="fas fa-book"></i>
         </button>
 
-        <button class="action-btn" data-label="Users" sec:authorize="hasRole('ADMIN')"
+        <button class="action-btn" data-label="Users" title="Users" aria-label="Users" sec:authorize="hasRole('ADMIN')"
                 th:onclick="|window.location='@{/admin/users}'|">
             <i class="fas fa-cog"></i>
         </button>
 
-        <button class="action-btn" data-label="Profile" th:onclick="|window.location='@{/profile/profile}'|">
+        <button class="action-btn" data-label="Profile" title="Profile" aria-label="Profile" th:onclick="|window.location='@{/profile/profile}'|">
             <i class="fas fa-user-circle"></i>
         </button>
 
-        <button class="action-btn" id="helpToggle" data-label="Help">
+        <button class="action-btn" id="helpToggle" data-label="Help" title="Help" aria-label="Help">
             <i class="fas fa-question-circle"></i>
         </button>
     </div>
