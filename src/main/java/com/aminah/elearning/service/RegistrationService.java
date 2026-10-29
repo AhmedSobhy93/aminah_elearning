@@ -106,6 +106,7 @@ public class RegistrationService {
         });
     }
 
+    @Transactional
     public boolean confirmToken(String token) {
         VerificationToken vToken = tokenRepository.findByToken(token)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid token"));
@@ -118,6 +119,7 @@ public class RegistrationService {
 
         user.setEnabled(true);
         userRepository.save(user);
+        tokenRepository.delete(vToken);
         return true;
     }
 }

@@ -20,6 +20,24 @@ import static org.mockito.Mockito.when;
 
 class ProfileControllerTest {
     @Test
+    void confirmationUsesRecoveryFormForExpiredInvalidAndReusedLinks() {
+        RegistrationService registrations = mock(RegistrationService.class);
+        ProfileController controller = new ProfileController(mock(UserRepository.class), mock(PasswordEncoder.class),
+                registrations, mock(VerificationTokenRepository.class), mock(UserService.class),
+                mock(AuthenticationManager.class), mock(RequestThrottleService.class), "http://localhost:8080");
+        when(registrations.confirmToken("expired")).thenReturn(false);
+        when(registrations.confirmToken("reused")).thenThrow(new IllegalArgumentException("Invalid token"));
+        when(registrations.confirmToken("valid")).thenReturn(true);
+        for (String token : new String[]{"expired", "reused"}) {
+            Model model = new org.springframework.ui.ConcurrentModel();
+            assertThat(controller.confirmAccount(token, model)).isEqualTo("profile/register");
+            assertThat(model.getAttribute("error")).as(token).isNotNull();
+        }
+        Model model = new org.springframework.ui.ConcurrentModel();
+        assertThat(controller.confirmAccount("valid", model)).isEqualTo("profile/login");
+        assertThat(model.getAttribute("message")).isEqualTo("Account verified successfully!");
+    }
+    @Test
     void duplicateProfileEmailReturnsFormBoundToAuthenticatedIdentity() {
         UserService users = mock(UserService.class);
         User submitted = new User(999L);

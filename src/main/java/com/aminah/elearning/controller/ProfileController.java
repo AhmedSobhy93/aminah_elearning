@@ -167,23 +167,16 @@ public class ProfileController {
 
     @GetMapping("/confirm")
     public String confirmAccount(@RequestParam("token") String token, Model model) {
-
-        VerificationToken verificationToken = verificationTokenRepository.findByToken(token).orElseThrow(() -> new RuntimeException("Invalid verification token"));
-
-        if (verificationToken.isExpired()) {
-            model.addAttribute("error", "Verification link expired.");
-            return "error/expired";
+        try {
+            if (registrationService.confirmToken(token)) {
+                model.addAttribute("message", "Account verified successfully!");
+                return "profile/login";
+            }
+            model.addAttribute("error", "Verification link expired. Request a new confirmation link below.");
+        } catch (IllegalArgumentException ex) {
+            model.addAttribute("error", "This verification link is invalid or has already been used. Request a new confirmation link below.");
         }
-
-        Optional<User> optionalUser = userRepository.findById(verificationToken.getUser().getId());
-        User user = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
-
-        user.setEnabled(true);
-        userRepository.save(user);
-        verificationTokenRepository.delete(verificationToken);
-
-        model.addAttribute("message", "Account verified successfully!");
-        return "profile/login";
+        return "profile/register";
     }
 
     @GetMapping("/login")

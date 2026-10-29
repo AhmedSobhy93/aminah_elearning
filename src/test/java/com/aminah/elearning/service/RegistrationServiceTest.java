@@ -25,6 +25,39 @@ import static org.mockito.Mockito.when;
 class RegistrationServiceTest {
 
     @Test
+    void confirmationConsumesTokenAndCannotReactivateDisabledUserOnReplay() {
+        UserRepository users = mock(UserRepository.class);
+        VerificationTokenRepository tokens = mock(VerificationTokenRepository.class);
+        RegistrationService service = new RegistrationService(users, tokens, mock(EmailService.class), mock(PasswordEncoder.class));
+        User user = new User(7L);
+        VerificationToken token = new VerificationToken();
+        token.setUser(user);
+        token.setExpiryDate(java.time.LocalDateTime.now().plusHours(1));
+        when(tokens.findByToken("valid")).thenReturn(Optional.of(token), Optional.empty());
+        when(users.findById(7L)).thenReturn(Optional.of(user));
+        assertThat(service.confirmToken("valid")).isTrue();
+        assertThat(user.isEnabled()).isTrue();
+        verify(tokens).delete(token);
+        user.setEnabled(false);
+        assertThatThrownBy(() -> service.confirmToken("valid")).isInstanceOf(IllegalArgumentException.class);
+        assertThat(user.isEnabled()).isFalse();
+        verify(users, org.mockito.Mockito.times(1)).save(user);
+    }
+
+    @Test
+    void expiredConfirmationDoesNotEnableUserOrConsumeToken() {
+        UserRepository users = mock(UserRepository.class);
+        VerificationTokenRepository tokens = mock(VerificationTokenRepository.class);
+        RegistrationService service = new RegistrationService(users, tokens, mock(EmailService.class), mock(PasswordEncoder.class));
+        VerificationToken token = new VerificationToken();
+        token.setUser(new User(7L));
+        token.setExpiryDate(java.time.LocalDateTime.now().minusSeconds(1));
+        when(tokens.findByToken("expired")).thenReturn(Optional.of(token));
+        assertThat(service.confirmToken("expired")).isFalse();
+        verify(users, never()).save(any());
+        verify(tokens, never()).delete(any(VerificationToken.class));
+    }
+    @Test
     void publicRegistrationNormalizesAndCreatesStudentOnly() {
         UserRepository userRepository = mock(UserRepository.class);
         VerificationTokenRepository tokenRepository = mock(VerificationTokenRepository.class);
