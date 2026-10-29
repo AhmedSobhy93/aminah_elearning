@@ -41,6 +41,13 @@ class RbacMatrixTest {
     }
 
     @Test
+    void publicContactRouteIsReachableButSubmissionsStillRequireCsrf() throws Exception {
+        mvc.perform(get("/contact")).andExpect(status().isOk());
+        mvc.perform(post("/contact")).andExpect(status().isForbidden());
+        mvc.perform(post("/contact").with(csrf())).andExpect(status().isOk());
+    }
+
+    @Test
     void anonymousUsersCannotReachRoleOrFallbackRoutes() throws Exception {
         mvc.perform(get("/admin/probe")).andExpect(status().is3xxRedirection());
         mvc.perform(get("/dr/probe")).andExpect(status().is3xxRedirection());
@@ -93,13 +100,18 @@ class RbacMatrixTest {
 
     @RestController
     static class ProbeController {
-        @GetMapping({"/profile/login", "/profile/register", "/actuator/health/readiness"})
+        @GetMapping({"/profile/login", "/profile/register", "/actuator/health/readiness", "/contact"})
         String publicGet() {
             return "ok";
         }
 
         @PostMapping("/payments/webhook")
         String webhook() {
+            return "ok";
+        }
+
+        @PostMapping("/contact")
+        String contact() {
             return "ok";
         }
 

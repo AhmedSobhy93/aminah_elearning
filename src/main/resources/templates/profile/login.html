@@ -11,6 +11,12 @@
         <div class="auth-card">
             <div class="profile-icon"><i class="fas fa-user-circle"></i></div>
             <h3>Login</h3>
+            <div th:if="${param.error != null}" class="alert alert-danger" role="alert">
+                Sign-in failed. Check your username and password and try again.
+            </div>
+            <div th:if="${param.logout != null}" class="alert alert-success" role="status">
+                You have been signed out successfully.
+            </div>
             <form th:action="@{/profile/login}" method="post">
                 <label for="login-username">Username</label><input id="login-username" type="text" name="username" autocomplete="username" placeholder="Username" required />
                 <label for="login-password">Password</label><input id="login-password" type="password" name="password" autocomplete="current-password" placeholder="Password" required />

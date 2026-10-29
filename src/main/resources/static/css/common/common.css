@@ -1218,3 +1218,4 @@ img, video, iframe { max-width: 100%; }
 .app-content > main, .app-content > section { flex: 1 1 auto; width: 100%; }
 /* Native titles and accessible names replace off-screen custom tooltips. */
 .action-btn::after { display: none !important; }
+.section-content { min-width: 0; width: 100%; overflow-wrap: anywhere; }

@@ -368,7 +368,7 @@
                             </span>
                             <span class="badge bg-info bg-opacity-10 text-info">
                                 <i class="fas fa-globe me-1"></i>
-                                <span th:text="${course.published}"></span>
+                                <span th:text="${course.published ? 'Published' : 'Draft'}"></span>
                             </span>
                         </div>
                     </div>

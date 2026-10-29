@@ -169,10 +169,11 @@
     </div>
 
     <!-- Pagination -->
-    <nav class="pagination-aminah mt-4" th:if="${totalPages > 0}">
+    <nav class="pagination-aminah mt-4" aria-label="My learning pagination" th:if="${totalPages > 0}">
         <ul class="pagination">
             <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
-                <a class="page-link"
+                <a class="page-link" aria-label="Previous page"
+                   th:attr="aria-disabled=${currentPage == 0},tabindex=${currentPage == 0 ? -1 : 0}"
                    th:href="@{/student/my-courses(page=${currentPage-1}, keyword=${keyword})}">
                     <i class="fa-solid fa-chevron-left"></i>
                 </a>
@@ -186,7 +187,8 @@
 
             <li class="page-item"
                 th:classappend="${currentPage + 1 >= totalPages ? 'disabled' : ''}">
-                <a class="page-link"
+                <a class="page-link" aria-label="Next page"
+                   th:attr="aria-disabled=${currentPage + 1 >= totalPages},tabindex=${currentPage + 1 >= totalPages ? -1 : 0}"
                    th:href="@{/student/my-courses(page=${currentPage+1}, keyword=${keyword})}">
                     <i class="fa-solid fa-chevron-right"></i>
                 </a>
