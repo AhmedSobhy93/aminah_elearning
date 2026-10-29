@@ -23,36 +23,47 @@ public class UserController {
 
     @GetMapping
     public String getAllUsers(Model model) {
-        model.addAttribute("users", userService.getAllUsers());
-        return "users/list";
+        return "redirect:/admin/users";
     }
     @GetMapping("/{id}")
     public String viewUser(@PathVariable Long id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
-        return "users/user-details";
+        return "admin/users/user-details";
     }
 
     @GetMapping("/edit/{id}")
     public String editUser(@PathVariable Long id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
-        return "users/user-edit";
+        return "admin/users/user-edit";
     }
 
     @PostMapping("/update/{id}")
-    public String updateUser(@PathVariable Long id, @ModelAttribute("user") User updatedUser) {
-        userService.updateUser(id, updatedUser);
-        return "redirect:/users";
+    public String updateUser(@PathVariable Long id, @ModelAttribute("user") User updatedUser, Model model) {
+        try {
+            userService.updateUser(id, updatedUser);
+        } catch (IllegalArgumentException ex) {
+            updatedUser.setId(id);
+            updatedUser.setUsername(userService.getUserById(id).getUsername());
+            model.addAttribute("user", updatedUser);
+            model.addAttribute("error", ex.getMessage());
+            return "admin/users/user-edit";
+        }
+        return "redirect:/admin/users";
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return "redirect:/users";
+    public String deleteUser(@PathVariable Long id, org.springframework.web.servlet.mvc.support.RedirectAttributes redirect) {
+        try {
+            userService.deleteUser(id);
+        } catch (IllegalArgumentException ex) {
+            redirect.addFlashAttribute("error", ex.getMessage());
+        }
+        return "redirect:/admin/users";
     }
 
     @PostMapping("/enable/{id}")
     public String enableUser(@PathVariable Long id) {
         userService.enableUser(id);
-        return "redirect:/users";
+        return "redirect:/admin/users";
     }
 }

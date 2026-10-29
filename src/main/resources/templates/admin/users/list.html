@@ -13,6 +13,7 @@
         <span class="text-muted small">Review accounts, update roles, and enable verified users.</span>
     </div>
 
+    <p th:if="${error}" th:text="${error}" class="alert alert-danger" role="alert"></p>
     <div class="card p-3 shadow-sm">
 
         <div class="table-responsive">

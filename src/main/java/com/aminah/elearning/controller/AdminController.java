@@ -77,8 +77,12 @@ public class AdminController {
     }
 
     @PostMapping("/users/delete/{id}")
-    public String deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    public String deleteUser(@PathVariable Long id, org.springframework.web.servlet.mvc.support.RedirectAttributes redirect) {
+        try {
+            userService.deleteUser(id);
+        } catch (IllegalArgumentException ex) {
+            redirect.addFlashAttribute("error", ex.getMessage());
+        }
         return "redirect:/admin/users";
     }
 

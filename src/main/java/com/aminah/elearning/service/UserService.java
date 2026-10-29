@@ -1,6 +1,7 @@
 package com.aminah.elearning.service;
 
 import com.aminah.elearning.model.User;
+import com.aminah.elearning.model.Role;
 import com.aminah.elearning.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -84,7 +85,10 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    @Transactional
     public void deleteUser(Long id) {
+        List<User> admins = userRepository.findByRoleForUpdate(Role.ADMIN);
+        protectLastActiveAdmin(getUserById(id), true, admins);
         userRepository.deleteById(id);
     }
 
@@ -96,7 +100,9 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void updateUser(Long id, User updatedUser) {
+        List<User> admins = userRepository.findByRoleForUpdate(Role.ADMIN);
         User user = getUserById(id);
+        protectLastActiveAdmin(user, updatedUser.getRole() != Role.ADMIN || !updatedUser.isEnabled(), admins);
         if (!StringUtils.hasText(updatedUser.getFullName()) || !StringUtils.hasText(updatedUser.getEmail())
                 || updatedUser.getRole() == null) {
             throw new IllegalArgumentException("Full name, email and role are required");
@@ -110,5 +116,11 @@ public class UserService implements UserDetailsService {
         user.setRole(updatedUser.getRole());
         user.setEnabled(updatedUser.isEnabled());
         userRepository.save(user);
+    }
+    private void protectLastActiveAdmin(User user, boolean removesAccess, List<User> admins) {
+        if (removesAccess && user.getRole() == Role.ADMIN && user.isEnabled()
+                && admins.stream().filter(User::isEnabled).count() <= 1) {
+            throw new IllegalArgumentException("Keep at least one active administrator. Enable another administrator before changing this account.");
+        }
     }
 }

@@ -13,4 +13,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     long countByRole(Role role);
 
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @org.springframework.data.jpa.repository.Query("select u from User u where u.role = :role order by u.id")
+    java.util.List<User> findByRoleForUpdate(@org.springframework.data.repository.query.Param("role") Role role);
+
 }
