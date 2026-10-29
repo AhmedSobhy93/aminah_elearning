@@ -1,20 +1,17 @@
 package com.aminah.elearning.controller;
 
-import com.aminah.elearning.model.PasswordResetToken;
 import com.aminah.elearning.model.User;
-import com.aminah.elearning.repository.PasswordResetTokenRepository;
+import com.aminah.elearning.model.PasswordResetToken;
 import com.aminah.elearning.repository.UserRepository;
 import com.aminah.elearning.service.EmailService;
 import com.aminah.elearning.service.TokenService;
 import com.aminah.elearning.service.RequestThrottleService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
 
 @Controller
 public class PasswordController {
@@ -22,8 +19,6 @@ public class PasswordController {
     private final UserRepository userRepository;
     private final TokenService tokenService;
     private final EmailService emailService;
-    private final PasswordResetTokenRepository resetTokenRepository;
-    private final PasswordEncoder passwordEncoder;
     private final RequestThrottleService throttle;
     private final String appUrl;
 
@@ -31,16 +26,12 @@ public class PasswordController {
             UserRepository userRepository,
             TokenService tokenService,
             EmailService emailService,
-            PasswordResetTokenRepository resetTokenRepository,
-            PasswordEncoder passwordEncoder,
             RequestThrottleService throttle,
             @Value("${app.url}") String appUrl
     ) {
         this.userRepository = userRepository;
         this.tokenService = tokenService;
         this.emailService = emailService;
-        this.resetTokenRepository = resetTokenRepository;
-        this.passwordEncoder = passwordEncoder;
         this.throttle = throttle;
         this.appUrl = appUrl;
     }
@@ -77,29 +68,19 @@ public class PasswordController {
 
     @PostMapping("/reset-password")
     public String resetPassword(@RequestParam("token") String token, @RequestParam("password") String password, Model model) {
-//        boolean success = userRepository.resetPassword(token, password);
-//        model.addAttribute("success", success);
         model.addAttribute("token", token);
-        PasswordResetToken resetTokenToken = resetTokenRepository.findByToken(token).orElse(null);
-        if (resetTokenToken == null) {
-            model.addAttribute("error", "This reset link is invalid or has already been used. Request a new link.");
-            return "profile/reset-password";
+        TokenService.ResetResult result = tokenService.resetPassword(token, password);
+        if (result == TokenService.ResetResult.SUCCESS) {
+            model.addAttribute("success", true);
+            return "profile/reset-result";
         }
-
-        if (resetTokenToken.isExpired()) {
-
-            model.addAttribute("error", "Reset token expired.");
-            return "profile/reset-password";
-        }
-
-        Optional<User> optionalUser = userRepository.findById(resetTokenToken.getUser().getId());
-        User user = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
-
-        user.setPassword(passwordEncoder.encode(password));
-        userRepository.save(user);
-        resetTokenRepository.delete(resetTokenToken);
-
-        model.addAttribute("success", true);
-        return "profile/reset-result";
+        String error = switch (result) {
+            case INVALID -> "This reset link is invalid or has already been used. Request a new link.";
+            case EXPIRED -> "Reset token expired.";
+            case PASSWORD_REQUIRED -> "A nonblank password is required.";
+            default -> throw new IllegalStateException("Unexpected reset result");
+        };
+        model.addAttribute("error", error);
+        return "profile/reset-password";
     }
 }

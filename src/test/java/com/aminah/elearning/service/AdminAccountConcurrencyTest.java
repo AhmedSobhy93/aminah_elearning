@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.*;
 @DataJpaTest(properties = {"spring.jpa.hibernate.ddl-auto=create-drop", "spring.flyway.enabled=false", "spring.jpa.show-sql=false"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import({EmbeddedPostgresConfig.class, UserService.class, AdminAccountConcurrencyTest.PasswordConfig.class})
+@org.springframework.test.annotation.DirtiesContext(classMode = org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS)
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 class AdminAccountConcurrencyTest {
     @Autowired UserRepository users;

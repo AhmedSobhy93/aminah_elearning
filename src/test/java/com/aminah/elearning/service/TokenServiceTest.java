@@ -18,7 +18,7 @@ class TokenServiceTest {
     void replacesPreviousResetTokenBeforeSavingNewOne() {
         VerificationTokenRepository verificationTokens = mock(VerificationTokenRepository.class);
         PasswordResetTokenRepository resetTokens = mock(PasswordResetTokenRepository.class);
-        TokenService service = new TokenService(verificationTokens, resetTokens);
+        TokenService service = new TokenService(verificationTokens, resetTokens, mock(com.aminah.elearning.repository.UserRepository.class), mock(org.springframework.security.crypto.password.PasswordEncoder.class));
         User user = new User(4L);
         when(resetTokens.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
