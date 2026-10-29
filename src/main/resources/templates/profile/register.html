@@ -14,15 +14,21 @@
                     <div class="profile-icon">📝</div>
                     <h3>Create Account</h3>
                     <form th:action="@{/profile/register}" method="post">
-                        <input type="text" name="fullName" placeholder="Full Name" required/>
-                        <input type="text" name="username" placeholder="Username" required/>
-                        <input type="email" name="email" placeholder="Email" required/>
-                        <input type="number" name="phoneNumber" placeholder="Phone Number" required/>
-                        <input type="password" name="password" placeholder="Password" required/>
+                        <label for="register-full-name">Full Name</label>
+                        <input id="register-full-name" type="text" name="fullName" autocomplete="name" placeholder="Full Name" required/>
+                        <label for="register-username">Username</label>
+                        <input id="register-username" type="text" name="username" autocomplete="username" placeholder="Username" required/>
+                        <label for="register-email">Email</label>
+                        <input id="register-email" type="email" name="email" autocomplete="email" placeholder="Email" required/>
+                        <label for="register-phone">Phone Number</label>
+                        <input id="register-phone" type="tel" name="phoneNumber" autocomplete="tel" placeholder="Phone Number" required/>
+                        <label for="register-password">Password</label>
+                        <input id="register-password" type="password" name="password" autocomplete="new-password" placeholder="Password" required/>
                         <button type="submit" class="btn btn-aminah">Register</button>
                     </form>
                     <form th:action="@{/profile/resend-confirmation}" method="post" class="mt-3">
-                        <input type="email" name="email" placeholder="Email" required/>
+                        <label for="resend-email">Confirmation email</label>
+                        <input id="resend-email" type="email" name="email" autocomplete="email" placeholder="Email" required/>
                         <button type="submit" class="btn btn-outline-secondary w-100">Resend Confirmation</button>
                     </form>
                     <p class="text-success" th:text="${message}"></p>
