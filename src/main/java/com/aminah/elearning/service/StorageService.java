@@ -24,12 +24,18 @@ public class StorageService {
     private static final Set<String> PDF_CONTENT_TYPES = Set.of("application/pdf");
     private static final Set<String> VIDEO_CONTENT_TYPES = Set.of("video/mp4", "application/mp4");
 
-    private final Path rootUpload = Paths.get("uploads");
+    private final Path rootUpload;
     private final ObjectProvider<PrivateObjectStorageService> objectStorage;
 
-    public StorageService(ObjectProvider<PrivateObjectStorageService> objectStorage) throws IOException {
+    public StorageService(ObjectProvider<PrivateObjectStorageService> objectStorage,
+                          @org.springframework.beans.factory.annotation.Value("${file.upload-dir:uploads}") String uploadDirectory) throws IOException {
         this.objectStorage = objectStorage;
-        Files.createDirectories(rootUpload);
+        if (!StringUtils.hasText(uploadDirectory)) {
+            throw new IllegalArgumentException("Upload directory is required");
+        }
+        Path configuredRoot = Paths.get(uploadDirectory).toAbsolutePath().normalize();
+        Files.createDirectories(configuredRoot);
+        this.rootUpload = configuredRoot.toRealPath();
     }
 
     public String storeFile(MultipartFile file, Long doctorId, Long courseId, TutorialType type) throws IOException {
@@ -73,7 +79,7 @@ public class StorageService {
 
     public Path getFilePath(String relativePath) throws IOException {
         String normalized = relativePath.startsWith("/") ? relativePath.substring(1) : relativePath;
-        String uploadPrefix = rootUpload + "/";
+        String uploadPrefix = "uploads/";
         if (normalized.startsWith(uploadPrefix)) {
             normalized = normalized.substring(uploadPrefix.length());
         }
